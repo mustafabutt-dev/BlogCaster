@@ -1,4 +1,4 @@
-name: Post to LinkedIn
+name: BlogCaster
 
 on:
   # Manual trigger with inputs
@@ -26,9 +26,9 @@ on:
         required: false
         type: string
 
-  # Scheduled: runs daily at 9:00 AM UTC
+  # Scheduled: weekdays at 10:00 AM PKT (5:00 AM UTC)
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 5 * * 1-5"
 
 jobs:
   post:
