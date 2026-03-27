@@ -107,8 +107,9 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
 
     logger.debug(f"LLM prompt: {user_prompt[:200]}...")
 
-    max_attempts = 2
-    content = None
+    min_words = 80
+    max_attempts = 3
+    result = None
 
     for attempt in range(1, max_attempts + 1):
         response = await client.chat.completions.create(
@@ -118,7 +119,7 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.7,
-            max_tokens=2000,
+            max_tokens=4000,
         )
 
         if not response or not response.choices:
@@ -126,25 +127,33 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
 
         content = response.choices[0].message.content
 
-        if content and content.strip():
-            logger.info(f"LLM returned content on attempt {attempt}")
+        if not content or not content.strip():
+            logger.warning(
+                f"LLM returned None/empty content (attempt {attempt}/{max_attempts}). "
+                "Reasoning model likely spent all tokens on chain-of-thought."
+            )
+            continue
+
+        # Strip thinking tags and markdown
+        cleaned = _strip_thinking_tags(content)
+        cleaned = _strip_markdown(cleaned)
+        word_count = len(cleaned.split())
+
+        if word_count >= min_words:
+            result = cleaned
+            logger.info(f"LLM returned valid post on attempt {attempt} ({word_count} words)")
             break
 
-        # content is None — reasoning model used all tokens on thinking
         logger.warning(
-            f"LLM returned None/empty content (attempt {attempt}/{max_attempts}). "
-            "This usually means the reasoning model spent all tokens on chain-of-thought."
+            f"LLM output too short (attempt {attempt}/{max_attempts}): "
+            f"{word_count} words, need {min_words}+. Retrying..."
         )
 
-    if not content or not content.strip():
+    if not result:
         raise ValueError(
-            "LLM returned None content after retries. "
-            "The reasoning model may need a higher max_tokens or different prompt."
+            f"LLM failed to produce a valid post after {max_attempts} attempts. "
+            "Output was None, empty, or under 80 words each time."
         )
-
-    # Strip <think>...</think> tags from reasoning models that embed them in content
-    result = _strip_thinking_tags(content)
-    result = _strip_markdown(result)
 
     # Ensure hashtags and URL are always present
     result = _ensure_hashtags_and_url(result, blog_url)
