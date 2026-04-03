@@ -52,10 +52,11 @@ def _parse_result(result) -> any:
 
 @dataclass
 class MCPSessions:
-    """Holds active MCP client sessions for all three servers."""
+    """Holds active MCP client sessions for all servers."""
     rss_fetcher: ClientSession
     record_keeper: ClientSession
     linkedin_poster: ClientSession
+    x_poster: ClientSession
 
 
 @asynccontextmanager
@@ -72,6 +73,7 @@ async def open_mcp_sessions():
     rss_path = settings.resolve_path(settings.RSS_FETCHER_PATH)
     record_path = settings.resolve_path(settings.RECORD_KEEPER_PATH)
     linkedin_path = settings.resolve_path(settings.LINKEDIN_POSTER_PATH)
+    x_path = settings.resolve_path(settings.X_POSTER_PATH)
 
     record_env = os.environ.copy()
     record_env["RECORDS_PATH"] = settings.resolve_path(settings.RECORDS_PATH)
@@ -79,9 +81,16 @@ async def open_mcp_sessions():
     linkedin_env = os.environ.copy()
     linkedin_env["LINKEDIN_ACCESS_TOKEN"] = settings.LINKEDIN_ACCESS_TOKEN
 
+    x_env = os.environ.copy()
+    x_env["X_API_KEY"] = settings.X_API_KEY
+    x_env["X_API_SECRET"] = settings.X_API_SECRET
+    x_env["X_ACCESS_TOKEN"] = settings.X_ACCESS_TOKEN
+    x_env["X_ACCESS_TOKEN_SECRET"] = settings.X_ACCESS_TOKEN_SECRET
+
     rss_params = StdioServerParameters(command=sys.executable, args=[rss_path])
     record_params = StdioServerParameters(command=sys.executable, args=[record_path], env=record_env)
     linkedin_params = StdioServerParameters(command=sys.executable, args=[linkedin_path], env=linkedin_env)
+    x_params = StdioServerParameters(command=sys.executable, args=[x_path], env=x_env)
 
     logger.info(f"{_MAGENTA}{_BOLD}Starting RSS Fetcher MCP server...{_RESET}")
     async with stdio_client(rss_params) as (rss_read, rss_write):
@@ -98,12 +107,18 @@ async def open_mcp_sessions():
                         async with ClientSession(li_read, li_write) as linkedin_session:
                             await linkedin_session.initialize()
 
-                            logger.info("All MCP servers started")
-                            yield MCPSessions(
-                                rss_fetcher=rss_session,
-                                record_keeper=record_session,
-                                linkedin_poster=linkedin_session,
-                            )
+                            logger.info(f"{_MAGENTA}{_BOLD}Starting X Poster MCP server...{_RESET}")
+                            async with stdio_client(x_params) as (x_read, x_write):
+                                async with ClientSession(x_read, x_write) as x_session:
+                                    await x_session.initialize()
+
+                                    logger.info("All MCP servers started")
+                                    yield MCPSessions(
+                                        rss_fetcher=rss_session,
+                                        record_keeper=record_session,
+                                        linkedin_poster=linkedin_session,
+                                        x_poster=x_session,
+                                    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -169,6 +184,25 @@ async def linkedin_post(sessions: MCPSessions, content: str, blog_url: str) -> d
     """Post content to LinkedIn."""
     result = await sessions.linkedin_poster.call_tool(
         "post_to_linkedin",
+        {"content": content, "blog_url": blog_url},
+    )
+    return _parse_result(result) or {"status": "failure", "post_id": None, "error": "Empty response"}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# X (Twitter) Poster Tools
+# ─────────────────────────────────────────────────────────────────────────────
+
+async def x_validate_credentials(sessions: MCPSessions) -> bool:
+    """Validate the X (Twitter) OAuth 1.0a credentials."""
+    result = await sessions.x_poster.call_tool("validate_credentials", {})
+    return _parse_result(result) or False
+
+
+async def x_post(sessions: MCPSessions, content: str, blog_url: str) -> dict:
+    """Post content to X (Twitter)."""
+    result = await sessions.x_poster.call_tool(
+        "post_to_x",
         {"content": content, "blog_url": blog_url},
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "error": "Empty response"}

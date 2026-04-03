@@ -18,17 +18,20 @@ on:
         type: choice
         options:
           - aspose
+          - aspose-cloud
           - groupdocs
+          - groupdocs-cloud
           - conholdate
+          - conholdate-cloud
         default: aspose
       url:
         description: "Blog post URL (for manual mode)"
         required: false
         type: string
 
-  # Scheduled: weekdays at 10:00 AM PKT (5:00 AM UTC)
+  # Scheduled: Monday and Friday at 10:00 AM PKT (5:00 AM UTC)
   schedule:
-    - cron: "0 5 * * 1-5"
+    - cron: "0 5 * * 1,5"
 
 jobs:
   post:
@@ -49,7 +52,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install mcp feedparser httpx beautifulsoup4 aiofiles openai pydantic-settings
+          pip install mcp feedparser httpx beautifulsoup4 aiofiles openai pydantic-settings tweepy
 
       - name: Ensure records directory exists
         run: mkdir -p content/records
@@ -61,6 +64,10 @@ jobs:
           PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
           PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           PLATFORM="${{ inputs.platform || 'aspose' }}"
           echo "Running Auto Mode for platform: $PLATFORM"
@@ -73,6 +80,10 @@ jobs:
           PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
           PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           echo "Running Manual Mode for URL: ${{ inputs.url }}"
           python -m agent_engine.social_agent.main --url "${{ inputs.url }}"

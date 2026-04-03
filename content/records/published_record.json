@@ -157,6 +157,18 @@
       }
     },
     {
+      "blog_url": "https://blog.aspose.com/cells/create-sunburst-chart-in-excel-using-csharp",
+      "title": "Create Sunburst Chart in Excel using C#",
+      "platform_id": "aspose",
+      "shared_on": {
+        "x": {
+          "status": "success",
+          "post_id": "2039601232692859033",
+          "shared_at": "2026-04-02 12:10:02"
+        }
+      }
+    },
+    {
       "blog_url": "https://blog.aspose.com/barcode/generate-aztec-barcode-in-python",
       "title": "Generate Aztec Barcode in Python",
       "platform_id": "aspose",
@@ -165,6 +177,11 @@
           "status": "success",
           "post_id": "urn:li:share:7445352962098593792",
           "shared_at": "2026-04-02 06:14:34"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2039650517983576395",
+          "shared_at": "2026-04-02 15:25:53"
         }
       }
     },
@@ -177,6 +194,11 @@
           "status": "success",
           "post_id": "urn:li:share:7445715373011935233",
           "shared_at": "2026-04-03 06:14:39"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2039651015784599916",
+          "shared_at": "2026-04-02 15:27:51"
         }
       }
     }

@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     # LinkedIn Configuration
     LINKEDIN_ACCESS_TOKEN: str = ""
 
+    # X (Twitter) Configuration
+    X_API_KEY: str = ""
+    X_API_SECRET: str = ""
+    X_ACCESS_TOKEN: str = ""
+    X_ACCESS_TOKEN_SECRET: str = ""
+
     # File Paths (relative to project root)
     REGISTRY_PATH: str = "registry/platforms_registry.json"
     RECORDS_PATH: str = "content/records/published_record.json"
@@ -31,6 +37,7 @@ class Settings(BaseSettings):
     # MCP Server Paths (relative to project root)
     RSS_FETCHER_PATH: str = "mcp-servers/rss-fetcher/server.py"
     LINKEDIN_POSTER_PATH: str = "mcp-servers/linkedin-poster/server.py"
+    X_POSTER_PATH: str = "mcp-servers/x-poster/server.py"
     RECORD_KEEPER_PATH: str = "mcp-servers/record-keeper/server.py"
 
     model_config = {

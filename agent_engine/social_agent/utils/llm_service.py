@@ -1,8 +1,8 @@
 """
 LLM Service
 
-Formats blog content into LinkedIn posts using the company's GPT-OSS LLM
-via the OpenAI Python SDK (AsyncOpenAI).
+Formats blog content into social media posts (LinkedIn, X) using the
+company's GPT-OSS LLM via the OpenAI Python SDK (AsyncOpenAI).
 """
 
 import logging
@@ -11,7 +11,12 @@ import re
 from openai import AsyncOpenAI
 
 from agent_engine.social_agent.config import settings
-from agent_engine.social_agent.utils.prompts import LINKEDIN_SYSTEM_PROMPT, build_linkedin_prompt
+from agent_engine.social_agent.utils.prompts import (
+    LINKEDIN_SYSTEM_PROMPT,
+    X_SYSTEM_PROMPT,
+    build_linkedin_prompt,
+    build_x_prompt,
+)
 
 logger = logging.getLogger("social_agent")
 
@@ -161,5 +166,106 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
     word_count = len(result.split())
     logger.info(f"LLM formatted post ({word_count} words)")
     logger.debug(f"LLM output: {result}")
+
+    return result
+
+
+MAX_TWEET_LENGTH = 280
+
+
+def _truncate_to_char_limit(text: str, max_chars: int) -> str:
+    """Truncate text to fit within a character limit, breaking at word boundary."""
+    if len(text) <= max_chars:
+        return text
+    truncated = text[:max_chars]
+    # Break at last space to avoid cutting mid-word
+    last_space = truncated.rfind(" ")
+    if last_space > 0:
+        truncated = truncated[:last_space]
+    return truncated.rstrip(".,;:!? ")
+
+
+def _ensure_url(text: str, blog_url: str) -> str:
+    """Ensure the blog URL is appended to the tweet text."""
+    if blog_url in text:
+        return text
+    # Calculate available space: total - url - space separator
+    url_with_space = " " + blog_url
+    max_text_chars = MAX_TWEET_LENGTH - len(url_with_space)
+    text = _truncate_to_char_limit(text.rstrip(), max_text_chars)
+    return text + url_with_space
+
+
+async def format_for_x(title: str, summary: str, blog_url: str) -> str:
+    """Format blog post content into a tweet for X (Twitter).
+
+    Generates a single punchy sentence + URL that fits within 280 characters.
+
+    Args:
+        title: Blog post title
+        summary: Blog post summary (HTML already stripped)
+        blog_url: URL of the blog post
+
+    Returns:
+        Formatted tweet text ready to publish (including URL)
+
+    Raises:
+        ValueError: If LLM returns empty response after retries
+    """
+    client = _get_client()
+    user_prompt = build_x_prompt(title, summary, blog_url)
+
+    logger.debug(f"X LLM prompt: {user_prompt[:200]}...")
+
+    max_attempts = 3
+    result = None
+
+    for attempt in range(1, max_attempts + 1):
+        response = await client.chat.completions.create(
+            model=settings.PROFESSIONALIZE_LLM_MODEL,
+            messages=[
+                {"role": "system", "content": X_SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=4000,
+        )
+
+        if not response or not response.choices:
+            raise ValueError("LLM returned empty response")
+
+        content = response.choices[0].message.content
+
+        if not content or not content.strip():
+            logger.warning(
+                f"LLM returned None/empty content for X (attempt {attempt}/{max_attempts}). "
+                "Reasoning model likely spent all tokens on chain-of-thought."
+            )
+            continue
+
+        # Strip thinking tags and markdown
+        cleaned = _strip_thinking_tags(content)
+        cleaned = _strip_markdown(cleaned)
+        # Remove URL if the LLM included it (we append it ourselves)
+        cleaned = cleaned.replace(blog_url, "").strip()
+
+        if len(cleaned) > 0:
+            result = cleaned
+            logger.info(f"LLM returned valid tweet on attempt {attempt} ({len(cleaned)} chars)")
+            break
+
+        logger.warning(f"LLM output empty after cleaning (attempt {attempt}/{max_attempts}). Retrying...")
+
+    if not result:
+        raise ValueError(
+            f"LLM failed to produce a valid tweet after {max_attempts} attempts. "
+            "Output was None or empty each time."
+        )
+
+    # Ensure URL is present and total length fits in 280 chars
+    result = _ensure_url(result, blog_url)
+
+    logger.info(f"X formatted tweet ({len(result)} chars)")
+    logger.debug(f"X LLM output: {result}")
 
     return result
