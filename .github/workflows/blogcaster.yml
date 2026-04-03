@@ -13,7 +13,7 @@ on:
           - manual
         default: auto
       platform:
-        description: "Platform ID (for auto mode)"
+        description: "Blog platform ID (for auto mode)"
         required: false
         type: choice
         options:
@@ -24,6 +24,15 @@ on:
           - conholdate
           - conholdate-cloud
         default: aspose
+      target:
+        description: "Social media target"
+        required: false
+        type: choice
+        options:
+          - All
+          - LinkedIn
+          - X
+        default: All
       url:
         description: "Blog post URL (for manual mode)"
         required: false
@@ -57,6 +66,13 @@ jobs:
       - name: Ensure records directory exists
         run: mkdir -p content/records
 
+      - name: Resolve target
+        id: target
+        run: |
+          RAW_TARGET="${{ inputs.target || 'All' }}"
+          # Convert to lowercase for CLI flag
+          echo "value=$(echo "$RAW_TARGET" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
       - name: Run BlogCaster (Auto Mode)
         if: ${{ github.event_name == 'schedule' || inputs.mode == 'auto' }}
         env:
@@ -70,8 +86,9 @@ jobs:
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           PLATFORM="${{ inputs.platform || 'aspose' }}"
-          echo "Running Auto Mode for platform: $PLATFORM"
-          python -m agent_engine.social_agent.main --auto --platform "$PLATFORM"
+          TARGET="${{ steps.target.outputs.value }}"
+          echo "Running Auto Mode for platform: $PLATFORM (target: $TARGET)"
+          python -m agent_engine.social_agent.main --auto --platform "$PLATFORM" --target "$TARGET"
 
       - name: Run BlogCaster (Manual Mode)
         if: ${{ inputs.mode == 'manual' && inputs.url != '' }}
@@ -85,8 +102,9 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
-          echo "Running Manual Mode for URL: ${{ inputs.url }}"
-          python -m agent_engine.social_agent.main --url "${{ inputs.url }}"
+          TARGET="${{ steps.target.outputs.value }}"
+          echo "Running Manual Mode for URL: ${{ inputs.url }} (target: $TARGET)"
+          python -m agent_engine.social_agent.main --url "${{ inputs.url }}" --target "$TARGET"
 
       - name: Commit updated records
         run: |

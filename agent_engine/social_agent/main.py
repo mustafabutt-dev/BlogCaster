@@ -24,7 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Build the CLI argument parser."""
     parser = argparse.ArgumentParser(
         prog="social-media-agent",
-        description="Post blog content to LinkedIn automatically.",
+        description="Post blog content to LinkedIn and X (Twitter).",
     )
     parser.add_argument(
         "--url",
@@ -40,6 +40,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--platform",
         type=str,
         help="Platform ID for Auto Mode (e.g. aspose, groupdocs, conholdate)",
+    )
+    parser.add_argument(
+        "--target",
+        type=str,
+        choices=["all", "linkedin", "x"],
+        default="all",
+        help="Social media target: all, linkedin, or x (default: all)",
     )
     return parser
 
@@ -91,19 +98,19 @@ def main() -> None:
         print_available_platforms()
         sys.exit(1)
 
-    async def _run_manual(url: str) -> bool:
+    async def _run_manual(url: str, target: str) -> bool:
         async with open_mcp_sessions() as sessions:
-            return await run_manual_mode(sessions, url)
+            return await run_manual_mode(sessions, url, target=target)
 
-    async def _run_auto(platform: str) -> bool:
+    async def _run_auto(platform: str, target: str) -> bool:
         async with open_mcp_sessions() as sessions:
-            return await run_auto_mode(sessions, platform)
+            return await run_auto_mode(sessions, platform, target=target)
 
     # Manual Mode
     if args.url:
-        logger.info(f"CLI: Manual Mode invoked for URL: {args.url}")
+        logger.info(f"CLI: Manual Mode invoked for URL: {args.url} (target: {args.target})")
         try:
-            success = asyncio.run(_run_manual(args.url))
+            success = asyncio.run(_run_manual(args.url, args.target))
             sys.exit(0 if success else 1)
         except KeyboardInterrupt:
             logger.info("Interrupted by user")
@@ -116,9 +123,9 @@ def main() -> None:
 
     # Auto Mode
     if args.auto and args.platform:
-        logger.info(f"CLI: Auto Mode invoked for platform: {args.platform}")
+        logger.info(f"CLI: Auto Mode invoked for platform: {args.platform} (target: {args.target})")
         try:
-            success = asyncio.run(_run_auto(args.platform))
+            success = asyncio.run(_run_auto(args.platform, args.target))
             sys.exit(0 if success else 1)
         except KeyboardInterrupt:
             logger.info("Interrupted by user")

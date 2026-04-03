@@ -67,16 +67,19 @@ async def _get_succeeded_platforms(sessions: MCPSessions, url: str) -> set:
     return set()
 
 
-async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None) -> dict:
+async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None, target: str = "all") -> dict:
     """Validate credentials for all platforms. Returns dict of platform → bool.
 
-    Platforms with empty credentials or in skip_platforms are marked False.
+    Platforms with empty credentials, in skip_platforms, or excluded by target are marked False.
     """
     skip_platforms = skip_platforms or set()
     results = {}
 
     # LinkedIn
-    if "linkedin" in skip_platforms:
+    if target not in ("all", "linkedin"):
+        logger.info(f"LinkedIn excluded by --target {target}")
+        results["linkedin"] = False
+    elif "linkedin" in skip_platforms:
         logger.info("LinkedIn already succeeded for this URL — skipping")
         results["linkedin"] = False
     elif settings.LINKEDIN_ACCESS_TOKEN:
@@ -91,7 +94,10 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None)
         results["linkedin"] = False
 
     # X (Twitter)
-    if "x" in skip_platforms:
+    if target not in ("all", "x"):
+        logger.info(f"X excluded by --target {target}")
+        results["x"] = False
+    elif "x" in skip_platforms:
         logger.info("X already succeeded for this URL — skipping")
         results["x"] = False
     elif all([settings.X_API_KEY, settings.X_API_SECRET, settings.X_ACCESS_TOKEN, settings.X_ACCESS_TOKEN_SECRET]):
@@ -166,8 +172,8 @@ async def _post_to_platforms(
     return results
 
 
-async def run_manual_mode(sessions: MCPSessions, url: str) -> bool:
-    """Execute Manual Mode: post a specific blog URL to LinkedIn and X.
+async def run_manual_mode(sessions: MCPSessions, url: str, target: str = "all") -> bool:
+    """Execute Manual Mode: post a specific blog URL to LinkedIn and/or X.
 
     If the URL was previously posted to some platforms but not all,
     this will only post to the platforms that haven't succeeded yet.
@@ -175,6 +181,7 @@ async def run_manual_mode(sessions: MCPSessions, url: str) -> bool:
     Args:
         sessions: Active MCP server sessions
         url: The blog post URL to share
+        target: Social media target — "all", "linkedin", or "x"
 
     Returns:
         True if at least one platform posted successfully, False otherwise
@@ -220,7 +227,7 @@ async def run_manual_mode(sessions: MCPSessions, url: str) -> bool:
     logger.info(f"Fetched post: \"{title}\" ({len(content)} chars)")
 
     # 4. Validate credentials (skip platforms that already succeeded)
-    valid_platforms = await _validate_platforms(sessions, skip_platforms=succeeded_platforms)
+    valid_platforms = await _validate_platforms(sessions, skip_platforms=succeeded_platforms, target=target)
 
     if not any(valid_platforms.values()):
         logger.error("No valid platform credentials found for remaining platforms")
@@ -253,7 +260,7 @@ async def run_manual_mode(sessions: MCPSessions, url: str) -> bool:
     return any_success
 
 
-async def run_auto_mode(sessions: MCPSessions, platform_id: str) -> bool:
+async def run_auto_mode(sessions: MCPSessions, platform_id: str, target: str = "all") -> bool:
     """Execute Auto Mode: find and post the latest unpublished blog for a platform.
 
     Fetches ALL posts from the RSS feed and ALL published records, then
@@ -263,6 +270,7 @@ async def run_auto_mode(sessions: MCPSessions, platform_id: str) -> bool:
     Args:
         sessions: Active MCP server sessions
         platform_id: The platform ID from the registry
+        target: Social media target — "all", "linkedin", or "x"
 
     Returns:
         True if at least one platform posted successfully, False otherwise
@@ -355,8 +363,8 @@ async def run_auto_mode(sessions: MCPSessions, platform_id: str) -> bool:
     logger.info(f"Skipped {skipped_published} already-published, {skipped_broken} broken URLs")
     logger.info(f"Selected unpublished post: \"{title}\" — {post_url}")
 
-    # 5. Validate credentials for all platforms
-    valid_platforms = await _validate_platforms(sessions)
+    # 5. Validate credentials for targeted platforms
+    valid_platforms = await _validate_platforms(sessions, target=target)
 
     if not any(valid_platforms.values()):
         logger.error("No valid platform credentials found")
