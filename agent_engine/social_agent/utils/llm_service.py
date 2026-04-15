@@ -7,18 +7,33 @@ company's GPT-OSS LLM via the OpenAI Python SDK (AsyncOpenAI).
 
 import logging
 import re
+from dataclasses import dataclass
 
 from openai import AsyncOpenAI
 
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.utils.prompts import (
+    FACEBOOK_SYSTEM_PROMPT,
     LINKEDIN_SYSTEM_PROMPT,
     X_SYSTEM_PROMPT,
+    build_facebook_prompt,
     build_linkedin_prompt,
     build_x_prompt,
 )
 
 logger = logging.getLogger("social_agent")
+
+
+@dataclass
+class LLMResult:
+    """Result from an LLM format call, including token usage."""
+
+    text: str
+    input_tokens: int
+    output_tokens: int
+    total_tokens: int
+    api_call_count: int  # number of LLM API calls (including retries)
+
 
 # Singleton client — initialized once
 _client: AsyncOpenAI | None = None
@@ -90,7 +105,7 @@ def _ensure_hashtags_and_url(text: str, blog_url: str) -> str:
     return text
 
 
-async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
+async def format_for_linkedin(title: str, summary: str, blog_url: str) -> LLMResult:
     """Format blog post content into a professional LinkedIn post.
 
     Retries once if the model returns None content (common with reasoning
@@ -102,7 +117,7 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
         blog_url: URL of the blog post
 
     Returns:
-        Formatted LinkedIn post text ready to publish
+        LLMResult with formatted text and token usage
 
     Raises:
         ValueError: If LLM returns empty response after retries
@@ -115,6 +130,10 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
     min_words = 80
     max_attempts = 3
     result = None
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_tokens = 0
+    api_call_count = 0
 
     for attempt in range(1, max_attempts + 1):
         response = await client.chat.completions.create(
@@ -126,6 +145,12 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
             temperature=0.7,
             max_tokens=4000,
         )
+        api_call_count += 1
+
+        if response.usage:
+            total_input_tokens += response.usage.prompt_tokens
+            total_output_tokens += response.usage.completion_tokens
+            total_tokens += response.usage.total_tokens
 
         if not response or not response.choices:
             raise ValueError("LLM returned empty response")
@@ -167,7 +192,109 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> str:
     logger.info(f"LLM formatted post ({word_count} words)")
     logger.debug(f"LLM output: {result}")
 
-    return result
+    return LLMResult(
+        text=result,
+        input_tokens=total_input_tokens,
+        output_tokens=total_output_tokens,
+        total_tokens=total_tokens,
+        api_call_count=api_call_count,
+    )
+
+
+async def format_for_facebook(title: str, summary: str, blog_url: str) -> LLMResult:
+    """Format blog post content into a Facebook Page post.
+
+    Same retry pattern as LinkedIn — retries up to 3 times if the model
+    returns None content or output under 80 words.
+
+    Args:
+        title: Blog post title
+        summary: Blog post summary (HTML already stripped)
+        blog_url: URL of the blog post
+
+    Returns:
+        LLMResult with formatted text and token usage
+
+    Raises:
+        ValueError: If LLM returns empty response after retries
+    """
+    client = _get_client()
+    user_prompt = build_facebook_prompt(title, summary, blog_url)
+
+    logger.debug(f"Facebook LLM prompt: {user_prompt[:200]}...")
+
+    min_words = 80
+    max_attempts = 3
+    result = None
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_tokens = 0
+    api_call_count = 0
+
+    for attempt in range(1, max_attempts + 1):
+        response = await client.chat.completions.create(
+            model=settings.PROFESSIONALIZE_LLM_MODEL,
+            messages=[
+                {"role": "system", "content": FACEBOOK_SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=4000,
+        )
+        api_call_count += 1
+
+        if response.usage:
+            total_input_tokens += response.usage.prompt_tokens
+            total_output_tokens += response.usage.completion_tokens
+            total_tokens += response.usage.total_tokens
+
+        if not response or not response.choices:
+            raise ValueError("LLM returned empty response")
+
+        content = response.choices[0].message.content
+
+        if not content or not content.strip():
+            logger.warning(
+                f"LLM returned None/empty content for Facebook (attempt {attempt}/{max_attempts}). "
+                "Reasoning model likely spent all tokens on chain-of-thought."
+            )
+            continue
+
+        # Strip thinking tags and markdown
+        cleaned = _strip_thinking_tags(content)
+        cleaned = _strip_markdown(cleaned)
+        word_count = len(cleaned.split())
+
+        if word_count >= min_words:
+            result = cleaned
+            logger.info(f"LLM returned valid Facebook post on attempt {attempt} ({word_count} words)")
+            break
+
+        logger.warning(
+            f"LLM output too short for Facebook (attempt {attempt}/{max_attempts}): "
+            f"{word_count} words, need {min_words}+. Retrying..."
+        )
+
+    if not result:
+        raise ValueError(
+            f"LLM failed to produce a valid Facebook post after {max_attempts} attempts. "
+            "Output was None, empty, or under 80 words each time."
+        )
+
+    # Ensure hashtags and URL are always present
+    result = _ensure_hashtags_and_url(result, blog_url)
+
+    word_count = len(result.split())
+    logger.info(f"Facebook formatted post ({word_count} words)")
+    logger.debug(f"Facebook LLM output: {result}")
+
+    return LLMResult(
+        text=result,
+        input_tokens=total_input_tokens,
+        output_tokens=total_output_tokens,
+        total_tokens=total_tokens,
+        api_call_count=api_call_count,
+    )
 
 
 MAX_TWEET_LENGTH = 280
@@ -196,7 +323,7 @@ def _ensure_url(text: str, blog_url: str) -> str:
     return text + url_with_space
 
 
-async def format_for_x(title: str, summary: str, blog_url: str) -> str:
+async def format_for_x(title: str, summary: str, blog_url: str) -> LLMResult:
     """Format blog post content into a tweet for X (Twitter).
 
     Generates a single punchy sentence + URL that fits within 280 characters.
@@ -207,7 +334,7 @@ async def format_for_x(title: str, summary: str, blog_url: str) -> str:
         blog_url: URL of the blog post
 
     Returns:
-        Formatted tweet text ready to publish (including URL)
+        LLMResult with formatted text and token usage
 
     Raises:
         ValueError: If LLM returns empty response after retries
@@ -219,6 +346,10 @@ async def format_for_x(title: str, summary: str, blog_url: str) -> str:
 
     max_attempts = 3
     result = None
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_tokens = 0
+    api_call_count = 0
 
     for attempt in range(1, max_attempts + 1):
         response = await client.chat.completions.create(
@@ -230,6 +361,12 @@ async def format_for_x(title: str, summary: str, blog_url: str) -> str:
             temperature=0.7,
             max_tokens=4000,
         )
+        api_call_count += 1
+
+        if response.usage:
+            total_input_tokens += response.usage.prompt_tokens
+            total_output_tokens += response.usage.completion_tokens
+            total_tokens += response.usage.total_tokens
 
         if not response or not response.choices:
             raise ValueError("LLM returned empty response")
@@ -268,4 +405,10 @@ async def format_for_x(title: str, summary: str, blog_url: str) -> str:
     logger.info(f"X formatted tweet ({len(result)} chars)")
     logger.debug(f"X LLM output: {result}")
 
-    return result
+    return LLMResult(
+        text=result,
+        input_tokens=total_input_tokens,
+        output_tokens=total_output_tokens,
+        total_tokens=total_tokens,
+        api_call_count=api_call_count,
+    )

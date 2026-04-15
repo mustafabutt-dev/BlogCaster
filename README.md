@@ -1,16 +1,16 @@
 # BlogCaster
 
-A CLI-based agent that fetches blog posts from Hugo-based blog platforms via RSS feeds, formats them into platform-specific social media posts using an LLM, and publishes them to LinkedIn and X (Twitter).
+A CLI-based agent that fetches blog posts from Hugo-based blog platforms via RSS feeds, formats them into platform-specific social media posts using an LLM, and publishes them to LinkedIn, X (Twitter), and Facebook.
 
 The agent is platform-driven — each blog platform is registered in a JSON registry and the agent can operate independently per platform. Adding a new blog platform requires only a new entry in the registry file, no code changes.
 
 ## How It Works
 
 ```
-RSS Feed ──> Record Check ──> Post Selection ──> LLM Formatting ──> LinkedIn + X Post ──> Record Save
+RSS Feed ──> Record Check ──> Post Selection ──> LLM Formatting ──> LinkedIn + X + Facebook Post ──> Record Save
 ```
 
-Four FastMCP servers handle the core operations, coordinated by a central orchestrator:
+Five FastMCP servers handle the core operations, coordinated by a central orchestrator:
 
 | MCP Server | Role |
 |---|---|
@@ -18,12 +18,13 @@ Four FastMCP servers handle the core operations, coordinated by a central orches
 | **record-keeper** | Tracks published posts in JSON, prevents duplicates |
 | **linkedin-poster** | Posts formatted content to LinkedIn personal profile |
 | **x-poster** | Posts formatted tweets to X (Twitter) via tweepy |
+| **facebook-poster** | Posts formatted content to a Facebook Page via Graph API |
 
 ## Two Operating Modes
 
 ### Manual Mode
 
-Provide a specific blog post URL. The agent auto-detects the platform, fetches the content, formats it, posts it to LinkedIn and X, and records the result. Also used to retry failed platforms for a previously posted URL.
+Provide a specific blog post URL. The agent auto-detects the platform, fetches the content, formats it, posts it to LinkedIn, X, and Facebook, and records the result. Also used to retry failed platforms for a previously posted URL.
 
 ```bash
 python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-post"
@@ -31,7 +32,7 @@ python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-pos
 
 ### Auto Mode
 
-Specify a platform ID. The agent fetches the RSS feed, picks the latest unpublished post, formats it, posts it to LinkedIn and X, and records the result.
+Specify a platform ID. The agent fetches the RSS feed, picks the latest unpublished post, formats it, posts it to LinkedIn, X, and Facebook, and records the result.
 
 ```bash
 python -m agent_engine.social_agent.main --auto --platform aspose
@@ -45,6 +46,7 @@ python -m agent_engine.social_agent.main --auto --platform conholdate
 - A self-hosted GPT-OSS LLM endpoint (OpenAI-compatible API)
 - A LinkedIn OAuth 2.0 access token with `w_member_social` scope
 - X (Twitter) OAuth 1.0a credentials with Read and Write permissions
+- A Facebook Page Access Token with `pages_read_engagement` and `pages_manage_posts` permissions
 
 ## Setup
 
@@ -84,6 +86,10 @@ X_API_KEY=your-x-api-key
 X_API_SECRET=your-x-api-secret
 X_ACCESS_TOKEN=your-x-access-token
 X_ACCESS_TOKEN_SECRET=your-x-access-token-secret
+
+# Facebook Page Configuration
+FACEBOOK_PAGE_ID=your-facebook-page-id
+FACEBOOK_PAGE_ACCESS_TOKEN=your-facebook-page-access-token
 ```
 
 | Variable | Description |
@@ -96,6 +102,86 @@ X_ACCESS_TOKEN_SECRET=your-x-access-token-secret
 | `X_API_SECRET` | X (Twitter) API consumer secret |
 | `X_ACCESS_TOKEN` | X (Twitter) OAuth 1.0a access token |
 | `X_ACCESS_TOKEN_SECRET` | X (Twitter) OAuth 1.0a access token secret |
+| `FACEBOOK_PAGE_ID` | Facebook Page numeric ID |
+| `FACEBOOK_PAGE_ACCESS_TOKEN` | Facebook Page Access Token (not User token) |
+
+## Facebook Page Setup
+
+Facebook requires a **Page Access Token** (not a User Access Token) to post to a Page. Follow these steps:
+
+### Step 1: Create a Facebook App
+
+1. Go to [Facebook Developers](https://developers.facebook.com/) and create an app (type: Business)
+2. Add the "Facebook Login for Business" product to your app
+
+### Step 2: Get a User Access Token
+
+1. Go to the [Graph API Explorer](https://developers.facebook.com/tools/explorer/)
+2. Select your app from the dropdown
+3. Click "Generate Access Token"
+4. Grant these permissions: `pages_read_engagement`, `pages_manage_posts`
+
+### Step 3: Exchange for a Page Access Token
+
+The User token gives you access to your Pages, but you need the **Page's own token** to post. Run:
+
+```bash
+curl "https://graph.facebook.com/v21.0/me/accounts?access_token=YOUR_USER_TOKEN"
+```
+
+This returns a list of Pages you manage:
+
+```json
+{
+  "data": [
+    {
+      "access_token": "EAAxxxxx_PAGE_TOKEN_xxxxx",
+      "name": "Your Page Name",
+      "id": "123456789012345"
+    }
+  ]
+}
+```
+
+Copy the `access_token` and `id` from the Page entry.
+
+### Step 4: Verify the Page Token
+
+```bash
+curl "https://graph.facebook.com/v21.0/me?access_token=YOUR_PAGE_TOKEN"
+```
+
+This should return the **Page's** name and ID (not your personal name). If it shows the Page name, the token is correct.
+
+### Step 5: Update `.env`
+
+```
+FACEBOOK_PAGE_ID=123456789012345
+FACEBOOK_PAGE_ACCESS_TOKEN=EAAxxxxx_PAGE_TOKEN_xxxxx
+```
+
+### Step 6: Test
+
+```bash
+python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-post" --target facebook
+```
+
+### Common Mistake: Using a User Token Instead of a Page Token
+
+If you see this error:
+
+```
+Insufficient permissions to post: (#200) If posting to a group, requires app being
+installed in the group...
+```
+
+You are using a **User Access Token** instead of a **Page Access Token**. Go back to Step 3 and use the `me/accounts` endpoint to get the Page's own token.
+
+### Token Expiration
+
+- Tokens from the Graph API Explorer expire in ~1 hour
+- For production, exchange for a long-lived token (60 days) via the [Access Token Debugger](https://developers.facebook.com/tools/debug/accesstoken/) or the token exchange endpoint
+- Long-lived Page tokens obtained from a long-lived User token do not expire
 
 ## Usage
 
@@ -111,6 +197,22 @@ python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-pos
 
 ```bash
 python -m agent_engine.social_agent.main --auto --platform aspose
+```
+
+### Target a specific social media platform
+
+```bash
+# Post to Facebook only
+python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-post" --target facebook
+
+# Post to LinkedIn only
+python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-post" --target linkedin
+
+# Post to X only
+python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-post" --target x
+
+# Post to all platforms (default)
+python -m agent_engine.social_agent.main --url "https://blog.aspose.com/some-post" --target all
 ```
 
 ### List available platforms
@@ -176,6 +278,7 @@ socialAgent/
 │   ├── rss-fetcher/server.py        # RSS feed parsing (feedparser + httpx + bs4)
 │   ├── linkedin-poster/server.py    # LinkedIn API posting (httpx)
 │   ├── x-poster/server.py           # X (Twitter) API posting (tweepy)
+│   ├── facebook-poster/server.py    # Facebook Page posting (httpx + Graph API)
 │   └── record-keeper/server.py      # JSON-based record storage (aiofiles)
 ├── registry/
 │   └── platforms_registry.json      # Blog platform registry
@@ -226,6 +329,13 @@ Records are only saved when at least one platform succeeds. If all platforms fai
 - Blog URL appended automatically
 - Total tweet fits within 280 characters
 
+### Facebook
+- Community-focused, friendly conversational tone, 150-200 words
+- Curiosity-driven hook line
+- Clear call-to-action (read the article, share thoughts, tag someone)
+- 3-5 relevant hashtags
+- Blog URL attached as a link
+
 ## Troubleshooting
 
 | Issue | Solution |
@@ -236,17 +346,19 @@ Records are only saved when at least one platform succeeds. If all platforms fai
 | `All recent posts have already been shared` | All RSS feed posts are already in the record — wait for new blog posts |
 | `X credentials have insufficient permissions (403)` | Regenerate X Access Token & Secret after enabling Read and Write permissions |
 | `X API rate limit exceeded (429)` | Wait a few minutes and try again |
+| `Facebook token is expired or invalid` | Get a new Page Access Token (see Facebook Page Setup above) |
+| `Insufficient permissions to post: (#200)` | You are using a User token instead of a Page token — use `me/accounts` to get the Page token |
+| `Facebook API rate limit exceeded` | Wait a few minutes and try again |
 | `Platform 'xxx' not found` | Check `registry/platforms_registry.json` for available platform IDs |
 
 ## Future Developments
 
 ### Additional Social Media Platforms
-- **Facebook** — Community-focused posts with casual tone and call-to-action
 - **Medium / Dev.to** — Full article republishing (not just social snippets) for stronger SEO backlinks
 - **Blogger / WordPress** — Cross-post full articles to blogging platforms for wider reach and backlink injection
 
 ### Performance Improvements
-- **Parallel LLM calls** — Run `format_for_linkedin()` and `format_for_x()` concurrently via `asyncio.gather()` instead of sequentially, reducing total formatting time as more platforms are added
+- **Parallel LLM calls** — Run `format_for_linkedin()`, `format_for_x()`, and `format_for_facebook()` concurrently via `asyncio.gather()` instead of sequentially, reducing total formatting time as more platforms are added
 - **Content quality validation** — Pre-validate scraped content quality before sending to LLM, preventing wasted LLM calls on low-quality or garbage pages
 
 ### Architecture Enhancements

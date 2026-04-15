@@ -24,7 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Build the CLI argument parser."""
     parser = argparse.ArgumentParser(
         prog="social-media-agent",
-        description="Post blog content to LinkedIn and X (Twitter).",
+        description="Post blog content to LinkedIn, X (Twitter), and Facebook.",
     )
     parser.add_argument(
         "--url",
@@ -44,9 +44,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--target",
         type=str,
-        choices=["all", "linkedin", "x"],
+        choices=["all", "linkedin", "x", "facebook"],
         default="all",
-        help="Social media target: all, linkedin, or x (default: all)",
+        help="Social media target: all, linkedin, x, or facebook (default: all)",
     )
     return parser
 
@@ -86,6 +86,7 @@ def main() -> None:
     # Import orchestrator here to avoid circular imports and ensure logger is set up
     from agent_engine.social_agent.agent_logic.orchestrator import run_auto_mode, run_manual_mode
     from agent_engine.social_agent.tools.mcp_tools import open_mcp_sessions
+    from agent_engine.social_agent.utils.metrics import MetricsRecorder
 
     # No flags — print usage
     if not args.url and not args.auto:
@@ -99,12 +100,34 @@ def main() -> None:
         sys.exit(1)
 
     async def _run_manual(url: str, target: str) -> bool:
-        async with open_mcp_sessions() as sessions:
-            return await run_manual_mode(sessions, url, target=target)
+        metrics = MetricsRecorder()
+        metrics.start()
+        try:
+            async with open_mcp_sessions() as sessions:
+                success = await run_manual_mode(sessions, url, target=target, metrics=metrics)
+            metrics.finish("success" if success else "failure")
+            return success
+        except Exception:
+            metrics.finish("error")
+            raise
+        finally:
+            await metrics.send()
+            metrics.print_summary()
 
     async def _run_auto(platform: str, target: str) -> bool:
-        async with open_mcp_sessions() as sessions:
-            return await run_auto_mode(sessions, platform, target=target)
+        metrics = MetricsRecorder()
+        metrics.start()
+        try:
+            async with open_mcp_sessions() as sessions:
+                success = await run_auto_mode(sessions, platform, target=target, metrics=metrics)
+            metrics.finish("success" if success else "failure")
+            return success
+        except Exception:
+            metrics.finish("error")
+            raise
+        finally:
+            await metrics.send()
+            metrics.print_summary()
 
     # Manual Mode
     if args.url:

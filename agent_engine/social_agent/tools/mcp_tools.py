@@ -57,6 +57,7 @@ class MCPSessions:
     record_keeper: ClientSession
     linkedin_poster: ClientSession
     x_poster: ClientSession
+    facebook_poster: ClientSession
 
 
 @asynccontextmanager
@@ -74,6 +75,7 @@ async def open_mcp_sessions():
     record_path = settings.resolve_path(settings.RECORD_KEEPER_PATH)
     linkedin_path = settings.resolve_path(settings.LINKEDIN_POSTER_PATH)
     x_path = settings.resolve_path(settings.X_POSTER_PATH)
+    facebook_path = settings.resolve_path(settings.FACEBOOK_POSTER_PATH)
 
     record_env = os.environ.copy()
     record_env["RECORDS_PATH"] = settings.resolve_path(settings.RECORDS_PATH)
@@ -87,10 +89,15 @@ async def open_mcp_sessions():
     x_env["X_ACCESS_TOKEN"] = settings.X_ACCESS_TOKEN
     x_env["X_ACCESS_TOKEN_SECRET"] = settings.X_ACCESS_TOKEN_SECRET
 
+    facebook_env = os.environ.copy()
+    facebook_env["FACEBOOK_PAGE_ID"] = settings.FACEBOOK_PAGE_ID
+    facebook_env["FACEBOOK_PAGE_ACCESS_TOKEN"] = settings.FACEBOOK_PAGE_ACCESS_TOKEN
+
     rss_params = StdioServerParameters(command=sys.executable, args=[rss_path])
     record_params = StdioServerParameters(command=sys.executable, args=[record_path], env=record_env)
     linkedin_params = StdioServerParameters(command=sys.executable, args=[linkedin_path], env=linkedin_env)
     x_params = StdioServerParameters(command=sys.executable, args=[x_path], env=x_env)
+    facebook_params = StdioServerParameters(command=sys.executable, args=[facebook_path], env=facebook_env)
 
     logger.info(f"{_MAGENTA}{_BOLD}Starting RSS Fetcher MCP server...{_RESET}")
     async with stdio_client(rss_params) as (rss_read, rss_write):
@@ -112,13 +119,19 @@ async def open_mcp_sessions():
                                 async with ClientSession(x_read, x_write) as x_session:
                                     await x_session.initialize()
 
-                                    logger.info("All MCP servers started")
-                                    yield MCPSessions(
-                                        rss_fetcher=rss_session,
-                                        record_keeper=record_session,
-                                        linkedin_poster=linkedin_session,
-                                        x_poster=x_session,
-                                    )
+                                    logger.info(f"{_MAGENTA}{_BOLD}Starting Facebook Poster MCP server...{_RESET}")
+                                    async with stdio_client(facebook_params) as (fb_read, fb_write):
+                                        async with ClientSession(fb_read, fb_write) as facebook_session:
+                                            await facebook_session.initialize()
+
+                                            logger.info("All MCP servers started")
+                                            yield MCPSessions(
+                                                rss_fetcher=rss_session,
+                                                record_keeper=record_session,
+                                                linkedin_poster=linkedin_session,
+                                                x_poster=x_session,
+                                                facebook_poster=facebook_session,
+                                            )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -203,6 +216,25 @@ async def x_post(sessions: MCPSessions, content: str, blog_url: str) -> dict:
     """Post content to X (Twitter)."""
     result = await sessions.x_poster.call_tool(
         "post_to_x",
+        {"content": content, "blog_url": blog_url},
+    )
+    return _parse_result(result) or {"status": "failure", "post_id": None, "error": "Empty response"}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Facebook Page Poster Tools
+# ─────────────────────────────────────────────────────────────────────────────
+
+async def facebook_validate_token(sessions: MCPSessions) -> bool:
+    """Validate the Facebook Page Access Token."""
+    result = await sessions.facebook_poster.call_tool("validate_token", {})
+    return _parse_result(result) or False
+
+
+async def facebook_post(sessions: MCPSessions, content: str, blog_url: str) -> dict:
+    """Post content to a Facebook Page."""
+    result = await sessions.facebook_poster.call_tool(
+        "post_to_facebook",
         {"content": content, "blog_url": blog_url},
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "error": "Empty response"}

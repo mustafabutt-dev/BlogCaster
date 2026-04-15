@@ -15,6 +15,8 @@ from urllib.parse import urlparse, urlunparse
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.tools.mcp_tools import (
     MCPSessions,
+    facebook_post,
+    facebook_validate_token,
     linkedin_post,
     linkedin_validate_token,
     record_get_all,
@@ -30,11 +32,12 @@ from agent_engine.social_agent.utils.helpers import (
     get_active_platforms,
     load_registry,
 )
-from agent_engine.social_agent.utils.llm_service import format_for_linkedin, format_for_x
+from agent_engine.social_agent.utils.llm_service import LLMResult, format_for_facebook, format_for_linkedin, format_for_x
+from agent_engine.social_agent.utils.metrics import MetricsRecorder
 
 logger = logging.getLogger("social_agent")
 
-ALL_PLATFORMS = ("linkedin", "x")
+ALL_PLATFORMS = ("linkedin", "x", "facebook")
 
 
 def _normalize_url(url: str) -> str:
@@ -111,6 +114,24 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None,
         logger.info("X credentials not configured — skipping")
         results["x"] = False
 
+    # Facebook
+    if target not in ("all", "facebook"):
+        logger.info(f"Facebook excluded by --target {target}")
+        results["facebook"] = False
+    elif "facebook" in skip_platforms:
+        logger.info("Facebook already succeeded for this URL — skipping")
+        results["facebook"] = False
+    elif all([settings.FACEBOOK_PAGE_ID, settings.FACEBOOK_PAGE_ACCESS_TOKEN]):
+        logger.info("Validating Facebook token...")
+        results["facebook"] = await facebook_validate_token(sessions)
+        if results["facebook"]:
+            logger.info("Facebook token is valid")
+        else:
+            logger.warning("Facebook token is invalid or expired")
+    else:
+        logger.info("Facebook credentials not configured — skipping")
+        results["facebook"] = False
+
     return results
 
 
@@ -136,18 +157,30 @@ async def _format_for_platforms(
             logger.error(f"LLM formatting for X failed: {e}")
             print(f"Error formatting for X: {e}")
 
+    if valid_platforms.get("facebook"):
+        logger.info("Formatting post for Facebook via LLM...")
+        try:
+            formatted["facebook"] = await format_for_facebook(title, content, blog_url)
+        except Exception as e:
+            logger.error(f"LLM formatting for Facebook failed: {e}")
+            print(f"Error formatting for Facebook: {e}")
+
     return formatted
 
 
 async def _post_to_platforms(
     sessions: MCPSessions, formatted: dict, blog_url: str
 ) -> dict:
-    """Post formatted content to each platform. Returns dict of platform → result dict."""
+    """Post formatted content to each platform. Returns dict of platform → result dict.
+
+    Values in `formatted` may be LLMResult objects or plain strings.
+    """
     results = {}
 
     if "linkedin" in formatted:
         logger.info("Posting to LinkedIn...")
-        linkedin_result = await linkedin_post(sessions, formatted["linkedin"], blog_url)
+        text = formatted["linkedin"].text if isinstance(formatted["linkedin"], LLMResult) else formatted["linkedin"]
+        linkedin_result = await linkedin_post(sessions, text, blog_url)
         results["linkedin"] = linkedin_result
         if linkedin_result.get("status") == "success":
             post_id = linkedin_result.get("post_id", "")
@@ -159,7 +192,8 @@ async def _post_to_platforms(
 
     if "x" in formatted:
         logger.info("Posting to X...")
-        x_result = await x_post(sessions, formatted["x"], blog_url)
+        text = formatted["x"].text if isinstance(formatted["x"], LLMResult) else formatted["x"]
+        x_result = await x_post(sessions, text, blog_url)
         results["x"] = x_result
         if x_result.get("status") == "success":
             post_id = x_result.get("post_id", "")
@@ -169,10 +203,25 @@ async def _post_to_platforms(
             logger.error(f"X posting failed: {x_result.get('error')}")
             print(f"Error posting to X: {x_result.get('error')}")
 
+    if "facebook" in formatted:
+        logger.info("Posting to Facebook...")
+        text = formatted["facebook"].text if isinstance(formatted["facebook"], LLMResult) else formatted["facebook"]
+        facebook_result = await facebook_post(sessions, text, blog_url)
+        results["facebook"] = facebook_result
+        if facebook_result.get("status") == "success":
+            post_id = facebook_result.get("post_id", "")
+            logger.info(f"Facebook post successful: post_id={post_id}")
+            print(f"Successfully posted to Facebook! Post ID: {post_id}")
+        else:
+            logger.error(f"Facebook posting failed: {facebook_result.get('error')}")
+            print(f"Error posting to Facebook: {facebook_result.get('error')}")
+
     return results
 
 
-async def run_manual_mode(sessions: MCPSessions, url: str, target: str = "all") -> bool:
+async def run_manual_mode(
+    sessions: MCPSessions, url: str, target: str = "all", metrics: MetricsRecorder | None = None
+) -> bool:
     """Execute Manual Mode: post a specific blog URL to LinkedIn and/or X.
 
     If the URL was previously posted to some platforms but not all,
@@ -182,6 +231,7 @@ async def run_manual_mode(sessions: MCPSessions, url: str, target: str = "all") 
         sessions: Active MCP server sessions
         url: The blog post URL to share
         target: Social media target — "all", "linkedin", or "x"
+        metrics: Optional MetricsRecorder to track run metrics
 
     Returns:
         True if at least one platform posted successfully, False otherwise
@@ -196,9 +246,14 @@ async def run_manual_mode(sessions: MCPSessions, url: str, target: str = "all") 
     if platform:
         platform_id = platform["id"]
         logger.info(f"Platform detected: {platform_id}")
+        if metrics:
+            metrics.product = platform_id
+            metrics.website = urlparse(platform.get("url", "")).netloc
     else:
         platform_id = "unknown"
         logger.warning(f"URL does not match any registered platform, using platform_id='unknown'")
+        if metrics:
+            metrics.product = "unknown"
 
     # 2. Check which platforms already succeeded for this URL
     logger.info("Checking published status per platform...")
@@ -226,6 +281,9 @@ async def run_manual_mode(sessions: MCPSessions, url: str, target: str = "all") 
     content = post_data.get("content", "")
     logger.info(f"Fetched post: \"{title}\" ({len(content)} chars)")
 
+    if metrics:
+        metrics.items_discovered = 1
+
     # 4. Validate credentials (skip platforms that already succeeded)
     valid_platforms = await _validate_platforms(sessions, skip_platforms=succeeded_platforms, target=target)
 
@@ -242,8 +300,25 @@ async def run_manual_mode(sessions: MCPSessions, url: str, target: str = "all") 
         print("Error: LLM failed to format content for any platform")
         return False
 
+    # Record LLM usage from each platform's formatting result
+    if metrics:
+        for plat, llm_result in formatted.items():
+            if isinstance(llm_result, LLMResult):
+                metrics.record_llm_usage(
+                    llm_result.input_tokens, llm_result.output_tokens,
+                    llm_result.total_tokens, llm_result.api_call_count,
+                )
+
     # 6. Post to each platform independently
     post_results = await _post_to_platforms(sessions, formatted, url)
+
+    # Track posting results in metrics
+    if metrics:
+        for plat, result in post_results.items():
+            if result.get("status") == "success":
+                metrics.record_success()
+            else:
+                metrics.record_failure()
 
     # 7. Save record only if at least one platform succeeded
     any_success = any(r.get("status") == "success" for r in post_results.values())
@@ -260,7 +335,9 @@ async def run_manual_mode(sessions: MCPSessions, url: str, target: str = "all") 
     return any_success
 
 
-async def run_auto_mode(sessions: MCPSessions, platform_id: str, target: str = "all") -> bool:
+async def run_auto_mode(
+    sessions: MCPSessions, platform_id: str, target: str = "all", metrics: MetricsRecorder | None = None
+) -> bool:
     """Execute Auto Mode: find and post the latest unpublished blog for a platform.
 
     Fetches ALL posts from the RSS feed and ALL published records, then
@@ -271,6 +348,7 @@ async def run_auto_mode(sessions: MCPSessions, platform_id: str, target: str = "
         sessions: Active MCP server sessions
         platform_id: The platform ID from the registry
         target: Social media target — "all", "linkedin", or "x"
+        metrics: Optional MetricsRecorder to track run metrics
 
     Returns:
         True if at least one platform posted successfully, False otherwise
@@ -296,6 +374,10 @@ async def run_auto_mode(sessions: MCPSessions, platform_id: str, target: str = "
 
     rss_url = platform["rss_feed"]
     logger.info(f"Platform '{platform_id}' found: {platform['name']} (RSS: {rss_url})")
+
+    if metrics:
+        metrics.product = platform_id
+        metrics.website = urlparse(platform.get("url", "")).netloc
 
     # 2. Fetch ALL posts from RSS feed (limit=0 means no limit)
     logger.info("Fetching all posts from RSS feed...")
@@ -363,6 +445,9 @@ async def run_auto_mode(sessions: MCPSessions, platform_id: str, target: str = "
     logger.info(f"Skipped {skipped_published} already-published, {skipped_broken} broken URLs")
     logger.info(f"Selected unpublished post: \"{title}\" — {post_url}")
 
+    if metrics:
+        metrics.items_discovered = 1
+
     # 5. Validate credentials for targeted platforms
     valid_platforms = await _validate_platforms(sessions, target=target)
 
@@ -380,8 +465,25 @@ async def run_auto_mode(sessions: MCPSessions, platform_id: str, target: str = "
         print("Error: LLM failed to format content for any platform")
         return False
 
+    # Record LLM usage from each platform's formatting result
+    if metrics:
+        for plat, llm_result in formatted.items():
+            if isinstance(llm_result, LLMResult):
+                metrics.record_llm_usage(
+                    llm_result.input_tokens, llm_result.output_tokens,
+                    llm_result.total_tokens, llm_result.api_call_count,
+                )
+
     # 7. Post to each platform independently
     post_results = await _post_to_platforms(sessions, formatted, post_url)
+
+    # Track posting results in metrics
+    if metrics:
+        for plat, result in post_results.items():
+            if result.get("status") == "success":
+                metrics.record_success()
+            else:
+                metrics.record_failure()
 
     # 8. Save record only if at least one platform succeeded
     any_success = any(r.get("status") == "success" for r in post_results.values())

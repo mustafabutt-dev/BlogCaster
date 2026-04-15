@@ -29,6 +29,16 @@ class Settings(BaseSettings):
     X_ACCESS_TOKEN: str = ""
     X_ACCESS_TOKEN_SECRET: str = ""
 
+    # Facebook Page Configuration
+    FACEBOOK_PAGE_ID: str = ""
+    FACEBOOK_PAGE_ACCESS_TOKEN: str = ""
+
+    # Metrics Configuration (Google Sheets endpoints)
+    METRICS_GOOGLE_SCRIPT_URL_TEAM: str = ""
+    METRICS_TOKEN_TEAM: str = ""
+    METRICS_GOOGLE_SCRIPT_URL_PROD: str = ""
+    METRICS_TOKEN_PROD: str = ""
+
     # File Paths (relative to project root)
     REGISTRY_PATH: str = "registry/platforms_registry.json"
     RECORDS_PATH: str = "content/records/published_record.json"
@@ -38,6 +48,7 @@ class Settings(BaseSettings):
     RSS_FETCHER_PATH: str = "mcp-servers/rss-fetcher/server.py"
     LINKEDIN_POSTER_PATH: str = "mcp-servers/linkedin-poster/server.py"
     X_POSTER_PATH: str = "mcp-servers/x-poster/server.py"
+    FACEBOOK_POSTER_PATH: str = "mcp-servers/facebook-poster/server.py"
     RECORD_KEEPER_PATH: str = "mcp-servers/record-keeper/server.py"
 
     model_config = {
