@@ -39,9 +39,9 @@ on:
         required: false
         type: string
 
-  # Scheduled: Monday and Friday at 10:00 AM PKT (5:00 AM UTC)
+  # TEMP: Test schedule — revert to "0 5 * * 1,5" after test
   schedule:
-    - cron: "0 5 * * 1,5"
+    - cron: "13 8 * * *"
 
 jobs:
   post:
