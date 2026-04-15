@@ -177,11 +177,52 @@ installed in the group...
 
 You are using a **User Access Token** instead of a **Page Access Token**. Go back to Step 3 and use the `me/accounts` endpoint to get the Page's own token.
 
-### Token Expiration
+### Token Expiration & Long-Lived Tokens
 
-- Tokens from the Graph API Explorer expire in ~1 hour
-- For production, exchange for a long-lived token (60 days) via the [Access Token Debugger](https://developers.facebook.com/tools/debug/accesstoken/) or the token exchange endpoint
-- Long-lived Page tokens obtained from a long-lived User token do not expire
+Tokens from the Graph API Explorer expire in ~1 hour. For production use, exchange for a **long-lived token** (~60 days):
+
+**1. Exchange short-lived User Token for a long-lived User Token:**
+
+```bash
+curl -G "https://graph.facebook.com/v19.0/oauth/access_token" \
+  --data-urlencode "grant_type=fb_exchange_token" \
+  --data-urlencode "client_id=YOUR_APP_ID" \
+  --data-urlencode "client_secret=YOUR_APP_SECRET" \
+  --data-urlencode "fb_exchange_token=YOUR_SHORT_LIVED_USER_TOKEN"
+```
+
+Response:
+
+```json
+{
+  "access_token": "LONG_LIVED_USER_TOKEN",
+  "token_type": "bearer",
+  "expires_in": 5183423
+}
+```
+
+`expires_in` is in seconds (~60 days).
+
+**2. Exchange long-lived User Token for a Page Token:**
+
+```bash
+curl "https://graph.facebook.com/v19.0/me/accounts?access_token=LONG_LIVED_USER_TOKEN"
+```
+
+The Page Access Token returned from a long-lived User Token **does not expire**. Copy the `access_token` and `id` from your Page entry and update `.env` / GitHub Actions secrets.
+
+**3. Verify your token:**
+
+```bash
+curl "https://graph.facebook.com/v19.0/debug_token?input_token=YOUR_PAGE_TOKEN&access_token=YOUR_APP_ID|YOUR_APP_SECRET"
+```
+
+Check `expires_at` — a value of `0` means the token never expires.
+
+**Security notes:**
+- Never expose `client_secret` in frontend code
+- Store tokens in environment variables or GitHub Actions secrets
+- Rotate credentials immediately if exposed
 
 ## Usage
 
