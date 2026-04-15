@@ -79,6 +79,8 @@ def _strip_markdown(text: str) -> str:
     text = re.sub(r"^#{1,6}\s+", "", text, flags=re.MULTILINE)
     # Remove bullet point markers at line start
     text = re.sub(r"^[-*]\s+", "", text, flags=re.MULTILINE)
+    # Remove section labels (HOOK, BODY, CALL-TO-ACTION, etc.)
+    text = re.sub(r"^(?:HOOK|BODY|CALL[- ]TO[- ]ACTION)\s*\n?", "", text, flags=re.MULTILINE | re.IGNORECASE)
     return text.strip()
 
 
