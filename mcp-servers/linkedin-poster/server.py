@@ -152,7 +152,7 @@ async def post_to_linkedin(content: str, blog_url: str) -> dict:
             headers = {
                 **_auth_headers(token),
                 "Content-Type": "application/json",
-                "LinkedIn-Version": "202504",
+                "LinkedIn-Version": "202604",
                 "X-Restli-Protocol-Version": "2.0.0",
             }
 
