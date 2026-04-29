@@ -220,7 +220,8 @@ async def _post_to_platforms(
 
 
 async def run_manual_mode(
-    sessions: MCPSessions, url: str, target: str = "all", metrics: MetricsRecorder | None = None
+    sessions: MCPSessions, url: str, target: str = "all", metrics: MetricsRecorder | None = None,
+    dry_run: bool = False,
 ) -> bool:
     """Execute Manual Mode: post a specific blog URL to LinkedIn and/or X.
 
@@ -232,6 +233,7 @@ async def run_manual_mode(
         url: The blog post URL to share
         target: Social media target — "all", "linkedin", or "x"
         metrics: Optional MetricsRecorder to track run metrics
+        dry_run: If True, skip posting and record save — just show formatted text
 
     Returns:
         True if at least one platform posted successfully, False otherwise
@@ -309,6 +311,17 @@ async def run_manual_mode(
                     llm_result.total_tokens, llm_result.api_call_count,
                 )
 
+    # 6. Dry run — print formatted text and skip posting/record save
+    if dry_run:
+        logger.info("Dry run — skipping posting and record save")
+        print("\n--- DRY RUN — would post the following ---")
+        for plat, llm_result in formatted.items():
+            text = llm_result.text if isinstance(llm_result, LLMResult) else llm_result
+            print(f"\n[{plat.upper()}]\n{text}")
+        print("\n--- DRY RUN complete ---")
+        logger.info(f"Manual Mode dry run complete for: {url}")
+        return True
+
     # 6. Post to each platform independently
     post_results = await _post_to_platforms(sessions, formatted, url)
 
@@ -336,7 +349,8 @@ async def run_manual_mode(
 
 
 async def run_auto_mode(
-    sessions: MCPSessions, platform_id: str, target: str = "all", metrics: MetricsRecorder | None = None
+    sessions: MCPSessions, platform_id: str, target: str = "all", metrics: MetricsRecorder | None = None,
+    dry_run: bool = False,
 ) -> bool:
     """Execute Auto Mode: find and post the latest unpublished blog for a platform.
 
@@ -349,6 +363,7 @@ async def run_auto_mode(
         platform_id: The platform ID from the registry
         target: Social media target — "all", "linkedin", or "x"
         metrics: Optional MetricsRecorder to track run metrics
+        dry_run: If True, skip posting and record save — just show formatted text
 
     Returns:
         True if at least one platform posted successfully, False otherwise
@@ -473,6 +488,17 @@ async def run_auto_mode(
                     llm_result.input_tokens, llm_result.output_tokens,
                     llm_result.total_tokens, llm_result.api_call_count,
                 )
+
+    # 7. Dry run — print formatted text and skip posting/record save
+    if dry_run:
+        logger.info("Dry run — skipping posting and record save")
+        print("\n--- DRY RUN — would post the following ---")
+        for plat, llm_result in formatted.items():
+            text = llm_result.text if isinstance(llm_result, LLMResult) else llm_result
+            print(f"\n[{plat.upper()}]\n{text}")
+        print("\n--- DRY RUN complete ---")
+        logger.info(f"Auto Mode dry run complete for platform: {platform_id}")
+        return True
 
     # 7. Post to each platform independently
     post_results = await _post_to_platforms(sessions, formatted, post_url)

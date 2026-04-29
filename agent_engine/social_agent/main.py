@@ -48,6 +48,11 @@ def build_parser() -> argparse.ArgumentParser:
         default="all",
         help="Social media target: all, linkedin, x, or facebook (default: all)",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Run full pipeline (fetch + LLM format) but skip posting and record save",
+    )
     return parser
 
 
@@ -99,12 +104,12 @@ def main() -> None:
         print_available_platforms()
         sys.exit(1)
 
-    async def _run_manual(url: str, target: str) -> bool:
+    async def _run_manual(url: str, target: str, dry_run: bool = False) -> bool:
         metrics = MetricsRecorder()
         metrics.start()
         try:
             async with open_mcp_sessions() as sessions:
-                success = await run_manual_mode(sessions, url, target=target, metrics=metrics)
+                success = await run_manual_mode(sessions, url, target=target, metrics=metrics, dry_run=dry_run)
             metrics.finish("success" if success else "failure")
             return success
         except Exception:
@@ -114,12 +119,12 @@ def main() -> None:
             await metrics.send()
             metrics.print_summary()
 
-    async def _run_auto(platform: str, target: str) -> bool:
+    async def _run_auto(platform: str, target: str, dry_run: bool = False) -> bool:
         metrics = MetricsRecorder()
         metrics.start()
         try:
             async with open_mcp_sessions() as sessions:
-                success = await run_auto_mode(sessions, platform, target=target, metrics=metrics)
+                success = await run_auto_mode(sessions, platform, target=target, metrics=metrics, dry_run=dry_run)
             metrics.finish("success" if success else "failure")
             return success
         except Exception:
@@ -133,7 +138,7 @@ def main() -> None:
     if args.url:
         logger.info(f"CLI: Manual Mode invoked for URL: {args.url} (target: {args.target})")
         try:
-            success = asyncio.run(_run_manual(args.url, args.target))
+            success = asyncio.run(_run_manual(args.url, args.target, dry_run=args.dry_run))
             sys.exit(0 if success else 1)
         except KeyboardInterrupt:
             logger.info("Interrupted by user")
@@ -148,7 +153,7 @@ def main() -> None:
     if args.auto and args.platform:
         logger.info(f"CLI: Auto Mode invoked for platform: {args.platform} (target: {args.target})")
         try:
-            success = asyncio.run(_run_auto(args.platform, args.target))
+            success = asyncio.run(_run_auto(args.platform, args.target, dry_run=args.dry_run))
             sys.exit(0 if success else 1)
         except KeyboardInterrupt:
             logger.info("Interrupted by user")

@@ -51,7 +51,7 @@ class MetricsRecorder:
     @property
     def run_env(self) -> str:
         """Auto-detect run environment from GITHUB_ACTIONS env var."""
-        return "github_actions" if os.environ.get("GITHUB_ACTIONS") else "local"
+        return "github_actions" if os.environ.get("GITHUB_ACTIONS") else "DEV"
 
     @property
     def run_duration_ms(self) -> int:
@@ -98,17 +98,17 @@ class MetricsRecorder:
             f"succeeded={self.items_succeeded}, failed={self.items_failed}"
         )
 
-    def to_payload(self) -> dict:
-        """Build the payload dict that the Google Sheet expects."""
+    def _base_payload(self) -> dict:
+        """Build the base payload dict shared by both endpoints."""
         return {
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "status": self.status,
             "agent_name": self.agent_name,
             "agent_owner": self.agent_owner,
             "job_type": self.job_type,
             "run_id": self.run_id,
-            "product": "NA",
-            "platform": "NA",
+            "status": self.status,
+            "product": self.product or "NA",
+            "platform": self.platform or "NA",
             "website": self.website,
             "website_section": self.website_section,
             "item_name": self.item_name,
@@ -116,36 +116,46 @@ class MetricsRecorder:
             "items_failed": self.items_failed,
             "items_succeeded": self.items_succeeded,
             "run_duration_ms": self.run_duration_ms,
-            "run_env": self.run_env,
             "token_usage": self.token_usage,
             "api_calls_count": self.api_calls_count,
         }
 
+    def to_payload(self, include_run_env: bool = True) -> dict:
+        """Build the payload dict that the Google Sheet expects.
+
+        Args:
+            include_run_env: If True, include run_env field (Team sheet only).
+        """
+        payload = self._base_payload()
+        if include_run_env:
+            payload["run_env"] = self.run_env
+        return payload
+
     async def send(self) -> None:
         """POST metrics to both Team and Prod Google Sheets endpoints.
 
+        Team payload includes run_env; Prod payload does not.
         Skips silently if endpoints are not configured. Errors are logged
         but never raised — metrics should never break the main workflow.
         """
-        payload = self.to_payload()
-
         endpoints = []
         if settings.METRICS_GOOGLE_SCRIPT_URL_TEAM and settings.METRICS_TOKEN_TEAM:
-            endpoints.append(("Team", settings.METRICS_GOOGLE_SCRIPT_URL_TEAM, settings.METRICS_TOKEN_TEAM))
+            endpoints.append(("Team", settings.METRICS_GOOGLE_SCRIPT_URL_TEAM, settings.METRICS_TOKEN_TEAM, True))
         if settings.METRICS_GOOGLE_SCRIPT_URL_PROD and settings.METRICS_TOKEN_PROD:
-            endpoints.append(("Prod", settings.METRICS_GOOGLE_SCRIPT_URL_PROD, settings.METRICS_TOKEN_PROD))
+            endpoints.append(("Prod", settings.METRICS_GOOGLE_SCRIPT_URL_PROD, settings.METRICS_TOKEN_PROD, False))
 
         if not endpoints:
             logger.info("Metrics: no endpoints configured — skipping send")
             return
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            for label, url, token in endpoints:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+            for label, url, token, include_run_env in endpoints:
+                payload = self.to_payload(include_run_env=include_run_env)
                 try:
                     response = await client.post(
                         url,
+                        params={"token": token},
                         json=payload,
-                        headers={"Authorization": f"Bearer {token}"},
                     )
                     if response.status_code == 200:
                         logger.info(f"Metrics: sent to {label} endpoint successfully")
