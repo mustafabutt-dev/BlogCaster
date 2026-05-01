@@ -1,0 +1,129 @@
+name: BlogCaster — GroupDocs Cloud
+
+on:
+  # Manual trigger with inputs
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode"
+        required: true
+        type: choice
+        options:
+          - auto
+          - manual
+        default: auto
+      platform:
+        description: "Blog platform ID (for auto mode)"
+        required: false
+        type: choice
+        options:
+          - aspose
+          - aspose-cloud
+          - groupdocs
+          - groupdocs-cloud
+          - conholdate
+          - conholdate-cloud
+        default: groupdocs-cloud
+      target:
+        description: "Social media target"
+        required: false
+        type: choice
+        options:
+          - All
+          - LinkedIn
+          - X
+          - Facebook
+        default: All
+      url:
+        description: "Blog post URL (for manual mode)"
+        required: false
+        type: string
+
+  # Scheduled: Tuesday and Thursday at 10:00 AM PKT (5:00 AM UTC)
+  schedule:
+    - cron: "0 5 * * 2,4"
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+
+    # Allow the job to push the updated records file back to the repo
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install mcp feedparser httpx beautifulsoup4 aiofiles openai pydantic-settings tweepy
+
+      - name: Ensure records directory exists
+        run: mkdir -p content/records
+
+      - name: Resolve target
+        id: target
+        run: |
+          RAW_TARGET="${{ inputs.target || 'All' }}"
+          # Convert to lowercase for CLI flag
+          echo "value=$(echo "$RAW_TARGET" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Run BlogCaster (Auto Mode)
+        if: ${{ github.event_name == 'schedule' || inputs.mode == 'auto' }}
+        env:
+          PROFESSIONALIZE_BASE_URL: ${{ secrets.PROFESSIONALIZE_BASE_URL }}
+          PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
+          PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
+          METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
+          METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
+          METRICS_TOKEN_PROD: ${{ secrets.METRICS_TOKEN_PROD }}
+        run: |
+          PLATFORM="${{ inputs.platform || 'groupdocs-cloud' }}"
+          TARGET="${{ steps.target.outputs.value }}"
+          echo "Running Auto Mode for platform: $PLATFORM (target: $TARGET)"
+          python -m agent_engine.social_agent.main --auto --platform "$PLATFORM" --target "$TARGET"
+
+      - name: Run BlogCaster (Manual Mode)
+        if: ${{ inputs.mode == 'manual' && inputs.url != '' }}
+        env:
+          PROFESSIONALIZE_BASE_URL: ${{ secrets.PROFESSIONALIZE_BASE_URL }}
+          PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
+          PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+          METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
+          METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
+          METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
+          METRICS_TOKEN_PROD: ${{ secrets.METRICS_TOKEN_PROD }}
+        run: |
+          TARGET="${{ steps.target.outputs.value }}"
+          echo "Running Manual Mode for URL: ${{ inputs.url }} (target: $TARGET)"
+          python -m agent_engine.social_agent.main --url "${{ inputs.url }}" --target "$TARGET"
+
+      - name: Commit updated records
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/records/published_record.json
+          git diff --cached --quiet || git commit -m "Update published records [skip ci]"
+          git pull --rebase
+          git push
