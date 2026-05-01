@@ -512,6 +512,23 @@
           "shared_at": "2026-05-01 07:28:09"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/metadata/extract-mp3-metadata-in-dotnet-output-tags-as-json",
+      "title": "Extract MP3 Metadata in .NET: Output Tags as JSON",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7456054401221361664",
+          "shared_at": "2026-05-01 18:58:16"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2050288714329321892",
+          "shared_at": "2026-05-01 18:58:16"
+        }
+      }
     }
   ]
 }
