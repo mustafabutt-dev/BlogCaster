@@ -32,7 +32,6 @@ on:
           - All
           - LinkedIn
           - X
-          - Facebook
         default: All
       url:
         description: "Blog post URL (for manual mode)"
@@ -85,8 +84,6 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
-          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
-          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
           METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
@@ -108,8 +105,6 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
-          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
-          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
           METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
