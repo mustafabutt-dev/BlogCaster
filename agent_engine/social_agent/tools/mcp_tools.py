@@ -93,12 +93,21 @@ async def open_mcp_sessions(platform: str = ""):
     x_env["X_ACCESS_TOKEN_SECRET"] = settings.X_ACCESS_TOKEN_SECRET
 
     facebook_env = os.environ.copy()
-    if platform == "groupdocs-cloud" and settings.FACEBOOK_GROUPDOCS_PAGE_ID:
-        facebook_env["FACEBOOK_PAGE_ID"] = settings.FACEBOOK_GROUPDOCS_PAGE_ID
-        facebook_env["FACEBOOK_PAGE_ACCESS_TOKEN"] = settings.FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN
-    else:
-        facebook_env["FACEBOOK_PAGE_ID"] = settings.FACEBOOK_PAGE_ID
-        facebook_env["FACEBOOK_PAGE_ACCESS_TOKEN"] = settings.FACEBOOK_PAGE_ACCESS_TOKEN
+    # Resolve platform-specific Facebook credentials.
+    # Convention: FACEBOOK_{BRAND}_PAGE_ID / FACEBOOK_{BRAND}_PAGE_ACCESS_TOKEN
+    # e.g. groupdocs-cloud → FACEBOOK_GROUPDOCS_PAGE_ID
+    # Fallback: FACEBOOK_PAGE_ID (default, used by aspose-cloud)
+    fb_page_id = settings.FACEBOOK_PAGE_ID
+    fb_token = settings.FACEBOOK_PAGE_ACCESS_TOKEN
+    if platform:
+        brand = platform.split("-")[0].upper()  # groupdocs-cloud → GROUPDOCS
+        brand_page_id = os.environ.get(f"FACEBOOK_{brand}_PAGE_ID", "")
+        brand_token = os.environ.get(f"FACEBOOK_{brand}_PAGE_ACCESS_TOKEN", "")
+        if brand_page_id and brand_token:
+            fb_page_id = brand_page_id
+            fb_token = brand_token
+    facebook_env["FACEBOOK_PAGE_ID"] = fb_page_id
+    facebook_env["FACEBOOK_PAGE_ACCESS_TOKEN"] = fb_token
 
     rss_params = StdioServerParameters(command=sys.executable, args=[rss_path])
     record_params = StdioServerParameters(command=sys.executable, args=[record_path], env=record_env)
