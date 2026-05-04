@@ -6,10 +6,15 @@ All credentials and paths are configured here.
 """
 
 import os
+
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
 # Resolve project root (three levels up from this file: config.py → social_agent → agent_engine → socialAgent)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Load .env into os.environ so dynamic lookups (e.g. platform-specific credentials) work
+load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
 
 
 class Settings(BaseSettings):
