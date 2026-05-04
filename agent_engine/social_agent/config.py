@@ -29,9 +29,13 @@ class Settings(BaseSettings):
     X_ACCESS_TOKEN: str = ""
     X_ACCESS_TOKEN_SECRET: str = ""
 
-    # Facebook Page Configuration
+    # Facebook Page Configuration (default — Aspose Cloud)
     FACEBOOK_PAGE_ID: str = ""
     FACEBOOK_PAGE_ACCESS_TOKEN: str = ""
+
+    # Facebook Page Configuration (GroupDocs Cloud)
+    FACEBOOK_GROUPDOCS_PAGE_ID: str = ""
+    FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN: str = ""
 
     # Metrics Configuration (Google Sheets endpoints)
     METRICS_GOOGLE_SCRIPT_URL_TEAM: str = ""

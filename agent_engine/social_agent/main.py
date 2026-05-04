@@ -104,11 +104,11 @@ def main() -> None:
         print_available_platforms()
         sys.exit(1)
 
-    async def _run_manual(url: str, target: str, dry_run: bool = False) -> bool:
+    async def _run_manual(url: str, target: str, platform: str = "", dry_run: bool = False) -> bool:
         metrics = MetricsRecorder()
         metrics.start()
         try:
-            async with open_mcp_sessions() as sessions:
+            async with open_mcp_sessions(platform) as sessions:
                 success = await run_manual_mode(sessions, url, target=target, metrics=metrics, dry_run=dry_run)
             metrics.finish("success" if success else "failure")
             return success
@@ -123,7 +123,7 @@ def main() -> None:
         metrics = MetricsRecorder()
         metrics.start()
         try:
-            async with open_mcp_sessions() as sessions:
+            async with open_mcp_sessions(platform) as sessions:
                 success = await run_auto_mode(sessions, platform, target=target, metrics=metrics, dry_run=dry_run)
             metrics.finish("success" if success else "failure")
             return success
@@ -138,7 +138,7 @@ def main() -> None:
     if args.url:
         logger.info(f"CLI: Manual Mode invoked for URL: {args.url} (target: {args.target})")
         try:
-            success = asyncio.run(_run_manual(args.url, args.target, dry_run=args.dry_run))
+            success = asyncio.run(_run_manual(args.url, args.target, platform=args.platform or "", dry_run=args.dry_run))
             sys.exit(0 if success else 1)
         except KeyboardInterrupt:
             logger.info("Interrupted by user")

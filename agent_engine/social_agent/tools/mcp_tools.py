@@ -61,14 +61,17 @@ class MCPSessions:
 
 
 @asynccontextmanager
-async def open_mcp_sessions():
-    """Open all three MCP server sessions. Use as an async context manager.
+async def open_mcp_sessions(platform: str = ""):
+    """Open all MCP server sessions. Use as an async context manager.
 
     Starts each server subprocess once and yields an MCPSessions object.
     All sessions are closed when the context exits.
 
+    Args:
+        platform: Platform ID used to select platform-specific credentials.
+
     Usage:
-        async with open_mcp_sessions() as sessions:
+        async with open_mcp_sessions(platform) as sessions:
             result = await rss_get_latest_posts(sessions, ...)
     """
     rss_path = settings.resolve_path(settings.RSS_FETCHER_PATH)
@@ -90,8 +93,12 @@ async def open_mcp_sessions():
     x_env["X_ACCESS_TOKEN_SECRET"] = settings.X_ACCESS_TOKEN_SECRET
 
     facebook_env = os.environ.copy()
-    facebook_env["FACEBOOK_PAGE_ID"] = settings.FACEBOOK_PAGE_ID
-    facebook_env["FACEBOOK_PAGE_ACCESS_TOKEN"] = settings.FACEBOOK_PAGE_ACCESS_TOKEN
+    if platform == "groupdocs-cloud" and settings.FACEBOOK_GROUPDOCS_PAGE_ID:
+        facebook_env["FACEBOOK_PAGE_ID"] = settings.FACEBOOK_GROUPDOCS_PAGE_ID
+        facebook_env["FACEBOOK_PAGE_ACCESS_TOKEN"] = settings.FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN
+    else:
+        facebook_env["FACEBOOK_PAGE_ID"] = settings.FACEBOOK_PAGE_ID
+        facebook_env["FACEBOOK_PAGE_ACCESS_TOKEN"] = settings.FACEBOOK_PAGE_ACCESS_TOKEN
 
     rss_params = StdioServerParameters(command=sys.executable, args=[rss_path])
     record_params = StdioServerParameters(command=sys.executable, args=[record_path], env=record_env)
