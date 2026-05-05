@@ -568,6 +568,28 @@
           "shared_at": "2026-05-05 07:13:53"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/classification/classify-pdf-files-in-dotnet-tutorial-and-sample-code",
+      "title": "Classify PDF Files in .NET: Tutorial and Sample Code",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7457401703844167680",
+          "shared_at": "2026-05-05 12:12:03"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2051636015517843936",
+          "shared_at": "2026-05-05 12:12:03"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1480145770253687",
+          "shared_at": "2026-05-05 12:12:03"
+        }
+      }
     }
   ]
 }
