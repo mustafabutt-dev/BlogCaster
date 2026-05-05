@@ -115,9 +115,10 @@ jobs:
           METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
           METRICS_TOKEN_PROD: ${{ secrets.METRICS_TOKEN_PROD }}
         run: |
+          PLATFORM="${{ inputs.platform || 'aspose-cloud' }}"
           TARGET="${{ steps.target.outputs.value }}"
-          echo "Running Manual Mode for URL: ${{ inputs.url }} (target: $TARGET)"
-          python -m agent_engine.social_agent.main --url "${{ inputs.url }}" --target "$TARGET"
+          echo "Running Manual Mode for URL: ${{ inputs.url }} (platform: $PLATFORM, target: $TARGET)"
+          python -m agent_engine.social_agent.main --url "${{ inputs.url }}" --platform "$PLATFORM" --target "$TARGET"
 
       - name: Commit updated records
         run: |
