@@ -9,6 +9,7 @@ same URL will only post to the platforms that haven't succeeded yet.
 """
 
 import logging
+import os
 from datetime import datetime
 from urllib.parse import urlparse, urlunparse
 
@@ -70,7 +71,7 @@ async def _get_succeeded_platforms(sessions: MCPSessions, url: str) -> set:
     return set()
 
 
-async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None, target: str = "all") -> dict:
+async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None, target: str = "all", platform: str = "") -> dict:
     """Validate credentials for all platforms. Returns dict of platform → bool.
 
     Platforms with empty credentials, in skip_platforms, or excluded by target are marked False.
@@ -114,14 +115,24 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None,
         logger.info("X credentials not configured — skipping")
         results["x"] = False
 
-    # Facebook
+    # Facebook — check default and platform-specific credentials
+    fb_page_id = settings.FACEBOOK_PAGE_ID
+    fb_token = settings.FACEBOOK_PAGE_ACCESS_TOKEN
+    if platform:
+        brand = platform.split("-")[0].upper()
+        brand_page_id = os.environ.get(f"FACEBOOK_{brand}_PAGE_ID", "")
+        brand_token = os.environ.get(f"FACEBOOK_{brand}_PAGE_ACCESS_TOKEN", "")
+        if brand_page_id and brand_token:
+            fb_page_id = brand_page_id
+            fb_token = brand_token
+
     if target not in ("all", "facebook"):
         logger.info(f"Facebook excluded by --target {target}")
         results["facebook"] = False
     elif "facebook" in skip_platforms:
         logger.info("Facebook already succeeded for this URL — skipping")
         results["facebook"] = False
-    elif all([settings.FACEBOOK_PAGE_ID, settings.FACEBOOK_PAGE_ACCESS_TOKEN]):
+    elif all([fb_page_id, fb_token]):
         logger.info("Validating Facebook token...")
         results["facebook"] = await facebook_validate_token(sessions)
         if results["facebook"]:
@@ -287,7 +298,7 @@ async def run_manual_mode(
         metrics.items_discovered = 1
 
     # 4. Validate credentials (skip platforms that already succeeded)
-    valid_platforms = await _validate_platforms(sessions, skip_platforms=succeeded_platforms, target=target)
+    valid_platforms = await _validate_platforms(sessions, skip_platforms=succeeded_platforms, target=target, platform=platform_id)
 
     if not any(valid_platforms.values()):
         logger.error("No valid platform credentials found for remaining platforms")
@@ -464,7 +475,7 @@ async def run_auto_mode(
         metrics.items_discovered = 1
 
     # 5. Validate credentials for targeted platforms
-    valid_platforms = await _validate_platforms(sessions, target=target)
+    valid_platforms = await _validate_platforms(sessions, target=target, platform=platform_id)
 
     if not any(valid_platforms.values()):
         logger.error("No valid platform credentials found")
