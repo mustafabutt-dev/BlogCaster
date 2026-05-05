@@ -87,9 +87,15 @@ X_API_SECRET=your-x-api-secret
 X_ACCESS_TOKEN=your-x-access-token
 X_ACCESS_TOKEN_SECRET=your-x-access-token-secret
 
-# Facebook Page Configuration
+# Facebook Page Configuration (default — used by aspose-cloud)
 FACEBOOK_PAGE_ID=your-facebook-page-id
 FACEBOOK_PAGE_ACCESS_TOKEN=your-facebook-page-access-token
+
+# Facebook Page Configuration (platform-specific overrides)
+FACEBOOK_GROUPDOCS_PAGE_ID=your-groupdocs-facebook-page-id
+FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN=your-groupdocs-facebook-page-access-token
+FACEBOOK_CONHOLDATE_PAGE_ID=your-conholdate-facebook-page-id
+FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN=your-conholdate-facebook-page-access-token
 ```
 
 | Variable | Description |
@@ -102,8 +108,10 @@ FACEBOOK_PAGE_ACCESS_TOKEN=your-facebook-page-access-token
 | `X_API_SECRET` | X (Twitter) API consumer secret |
 | `X_ACCESS_TOKEN` | X (Twitter) OAuth 1.0a access token |
 | `X_ACCESS_TOKEN_SECRET` | X (Twitter) OAuth 1.0a access token secret |
-| `FACEBOOK_PAGE_ID` | Facebook Page numeric ID |
-| `FACEBOOK_PAGE_ACCESS_TOKEN` | Facebook Page Access Token (not User token) |
+| `FACEBOOK_PAGE_ID` | Facebook Page numeric ID (default, used by aspose-cloud) |
+| `FACEBOOK_PAGE_ACCESS_TOKEN` | Facebook Page Access Token (default, used by aspose-cloud) |
+| `FACEBOOK_{BRAND}_PAGE_ID` | Platform-specific Facebook Page ID (e.g. `FACEBOOK_GROUPDOCS_PAGE_ID`) |
+| `FACEBOOK_{BRAND}_PAGE_ACCESS_TOKEN` | Platform-specific Facebook Page Access Token |
 
 ## Facebook Page Setup
 
@@ -281,23 +289,70 @@ python -m agent_engine.social_agent.main
 
 ## Adding a New Blog Platform
 
+Adding a new brand requires **no code changes** — just configuration:
+
+### 1. Add to platform registry
+
 Edit `registry/platforms_registry.json` and add a new entry:
 
 ```json
 {
-  "id": "your-platform",
-  "name": "Your Platform Blog",
-  "url": "https://blog.yourplatform.com",
-  "rss_feed": "https://blog.yourplatform.com/index.xml",
+  "id": "conholdate",
+  "name": "Conholdate Blog",
+  "url": "https://blog.conholdate.com",
+  "rss_feed": "https://blog.conholdate.com/index.xml",
   "active": true
 }
 ```
 
-No code changes required. The new platform is immediately available:
+### 2. Add platform-specific Facebook credentials
+
+Facebook credentials are resolved dynamically based on the platform name. The naming convention:
+
+```
+FACEBOOK_{BRAND}_PAGE_ID
+FACEBOOK_{BRAND}_PAGE_ACCESS_TOKEN
+```
+
+Where `{BRAND}` is the first part of the platform ID (before `-`), uppercased.
+
+| Platform ID | Facebook env vars |
+|---|---|
+| `aspose-cloud` | `FACEBOOK_PAGE_ID` + `FACEBOOK_PAGE_ACCESS_TOKEN` (default) |
+| `groupdocs-cloud` | `FACEBOOK_GROUPDOCS_PAGE_ID` + `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN` |
+| `conholdate-cloud` | `FACEBOOK_CONHOLDATE_PAGE_ID` + `FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN` |
+
+Add these to your `.env` file locally and as GitHub Actions secrets.
+
+If no platform-specific credentials are found, the default `FACEBOOK_PAGE_ID` / `FACEBOOK_PAGE_ACCESS_TOKEN` are used.
+
+LinkedIn and X credentials are shared across all brands.
+
+### 3. Create a GitHub Actions workflow
+
+Copy an existing workflow file (e.g. `.github/workflows/blogcaster-groupdocs-cloud.yml`) and change:
+
+- `name`: `BlogCaster — Your Brand`
+- `schedule`: Pick days that don't overlap with existing workflows
+- `platform default`: Your platform ID (e.g. `conholdate-cloud`)
+- Facebook env vars: Use your brand-specific secret names
+
+Current schedule:
+
+| Workflow | Days | Cron |
+|---|---|---|
+| BlogCaster — Aspose Cloud | Mon & Fri | `0 5 * * 1,5` |
+| BlogCaster — GroupDocs Cloud | Tue & Thu | `0 5 * * 2,4` |
+
+### 4. Test locally
 
 ```bash
-python -m agent_engine.social_agent.main --auto --platform your-platform
+python -m agent_engine.social_agent.main --auto --platform conholdate-cloud --target facebook
 ```
+
+### 5. Test on GitHub Actions
+
+Trigger manually via `workflow_dispatch` in the Actions tab, then confirm the scheduled run fires on the expected day.
 
 ## Project Structure
 
