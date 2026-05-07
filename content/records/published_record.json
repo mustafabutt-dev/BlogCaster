@@ -590,6 +590,28 @@
           "shared_at": "2026-05-05 12:12:03"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/metadata/step-by-step-guide-to-remove-zip-metadata-in-java",
+      "title": "STEP-by-STEP Guide to Remove ZIP Metadata in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7458057836841934850",
+          "shared_at": "2026-05-07 07:39:19"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2052292148989734991",
+          "shared_at": "2026-05-07 07:39:19"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1481555793446018",
+          "shared_at": "2026-05-07 07:39:19"
+        }
+      }
     }
   ]
 }
