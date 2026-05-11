@@ -27,6 +27,7 @@ class Settings(BaseSettings):
 
     # LinkedIn Configuration
     LINKEDIN_ACCESS_TOKEN: str = ""
+    LINKEDIN_TOKEN_EXPIRES_AT: str = ""  # ISO date, e.g. "2026-07-01"
 
     # X (Twitter) Configuration
     X_API_KEY: str = ""

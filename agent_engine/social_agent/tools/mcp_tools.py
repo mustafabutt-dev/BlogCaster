@@ -247,6 +247,15 @@ async def facebook_validate_token(sessions: MCPSessions) -> bool:
     return _parse_result(result) or False
 
 
+async def facebook_check_token_expiry(sessions: MCPSessions) -> dict:
+    """Check when the Facebook Page Access Token expires.
+
+    Returns dict with expires_at (ISO string or None), days_remaining (int or None), error.
+    """
+    result = await sessions.facebook_poster.call_tool("check_token_expiry", {})
+    return _parse_result(result) or {"error": "Empty response", "expires_at": None, "days_remaining": None}
+
+
 async def facebook_post(sessions: MCPSessions, content: str, blog_url: str) -> dict:
     """Post content to a Facebook Page."""
     result = await sessions.facebook_poster.call_tool(

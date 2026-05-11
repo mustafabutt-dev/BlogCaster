@@ -2,8 +2,9 @@
 Facebook Page Poster MCP Server
 
 FastMCP server that posts formatted content to a Facebook Page.
-Provides two tools:
+Provides three tools:
   - validate_token: Check if the Page Access Token is still valid
+  - check_token_expiry: Check when the token expires (days remaining)
   - post_to_facebook: Create a post on the Facebook Page
 
 Uses the Facebook Graph API v21.0 with a pre-generated Page Access Token.
@@ -11,6 +12,7 @@ Uses the Facebook Graph API v21.0 with a pre-generated Page Access Token.
 
 import logging
 import os
+from datetime import datetime, timezone
 
 import httpx
 from mcp.server.fastmcp import FastMCP
@@ -84,6 +86,58 @@ async def validate_token() -> bool:
     except httpx.RequestError as e:
         logger.error(f"Network error validating token: {e}")
         return False
+
+
+@mcp.tool()
+async def check_token_expiry() -> dict:
+    """Check when the Facebook Page Access Token expires.
+
+    Uses the Graph API debug_token endpoint to inspect the token's expiry.
+
+    Returns:
+        Dict with expires_at (ISO timestamp) and days_remaining (int),
+        or error info if the check fails.
+    """
+    logger.info("Checking Facebook token expiry")
+
+    try:
+        token = _get_token()
+    except ValueError as e:
+        logger.error(str(e))
+        return {"error": str(e), "expires_at": None, "days_remaining": None}
+
+    try:
+        async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
+            response = await client.get(
+                f"{GRAPH_API_BASE}/debug_token",
+                params={"input_token": token, "access_token": token},
+            )
+
+        if response.status_code != 200:
+            error_msg = response.text[:200]
+            logger.warning(f"debug_token request failed: {error_msg}")
+            return {"error": f"API error: {error_msg}", "expires_at": None, "days_remaining": None}
+
+        data = response.json().get("data", {})
+        expires_at_ts = data.get("expires_at", 0)
+
+        if not expires_at_ts:
+            # Token never expires (long-lived page tokens can be permanent)
+            return {"expires_at": None, "days_remaining": None, "error": None}
+
+        expires_at = datetime.fromtimestamp(expires_at_ts, tz=timezone.utc)
+        now = datetime.now(tz=timezone.utc)
+        days_remaining = (expires_at - now).days
+
+        return {
+            "expires_at": expires_at.isoformat(),
+            "days_remaining": days_remaining,
+            "error": None,
+        }
+
+    except httpx.RequestError as e:
+        logger.error(f"Network error checking token expiry: {e}")
+        return {"error": f"Network error: {e}", "expires_at": None, "days_remaining": None}
 
 
 @mcp.tool()

@@ -10,12 +10,13 @@ same URL will only post to the platforms that haven't succeeded yet.
 
 import logging
 import os
-from datetime import datetime
+from datetime import date, datetime
 from urllib.parse import urlparse, urlunparse
 
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.tools.mcp_tools import (
     MCPSessions,
+    facebook_check_token_expiry,
     facebook_post,
     facebook_validate_token,
     linkedin_post,
@@ -144,6 +145,49 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None,
         results["facebook"] = False
 
     return results
+
+
+_EXPIRY_WARNING_DAYS = 7
+
+# ANSI colors for warnings
+_YELLOW = "\033[33m"
+_BOLD = "\033[1m"
+_RESET = "\033[0m"
+
+
+async def _check_token_expiry_warnings(sessions: MCPSessions, valid_platforms: dict) -> None:
+    """Check token expiry for validated platforms and print warnings if close to expiring."""
+
+    # Facebook — use Graph API debug_token
+    if valid_platforms.get("facebook"):
+        try:
+            result = await facebook_check_token_expiry(sessions)
+            if not result.get("error") and result.get("days_remaining") is not None:
+                days = result["days_remaining"]
+                if days <= _EXPIRY_WARNING_DAYS:
+                    expires_at = result["expires_at"]
+                    print(
+                        f"{_YELLOW}{_BOLD}WARNING: Facebook token expires in {days} days "
+                        f"({expires_at}). Refresh it soon!{_RESET}"
+                    )
+        except Exception as e:
+            logger.debug(f"Could not check Facebook token expiry: {e}")
+
+    # LinkedIn — use LINKEDIN_TOKEN_EXPIRES_AT env var
+    if valid_platforms.get("linkedin") and settings.LINKEDIN_TOKEN_EXPIRES_AT:
+        try:
+            expires_date = date.fromisoformat(settings.LINKEDIN_TOKEN_EXPIRES_AT)
+            days_remaining = (expires_date - date.today()).days
+            if days_remaining <= _EXPIRY_WARNING_DAYS:
+                print(
+                    f"{_YELLOW}{_BOLD}WARNING: LinkedIn token expires in {days_remaining} days "
+                    f"({settings.LINKEDIN_TOKEN_EXPIRES_AT}). Refresh it soon!{_RESET}"
+                )
+        except ValueError:
+            logger.warning(
+                f"Invalid LINKEDIN_TOKEN_EXPIRES_AT value: '{settings.LINKEDIN_TOKEN_EXPIRES_AT}' "
+                f"(expected ISO date like 2026-07-01)"
+            )
 
 
 async def _format_for_platforms(
@@ -304,6 +348,9 @@ async def run_manual_mode(
         logger.error("No valid platform credentials found for remaining platforms")
         print("Error: No valid credentials for any remaining platform.")
         return False
+
+    # 4b. Check token expiry warnings
+    await _check_token_expiry_warnings(sessions, valid_platforms)
 
     # 5. Format via LLM for each valid platform
     formatted = await _format_for_platforms(valid_platforms, title, content, url)
@@ -481,6 +528,9 @@ async def run_auto_mode(
         logger.error("No valid platform credentials found")
         print("Error: No valid credentials for any platform. Check LinkedIn token and X credentials.")
         return False
+
+    # 5b. Check token expiry warnings
+    await _check_token_expiry_warnings(sessions, valid_platforms)
 
     # 6. Format via LLM for each valid platform (prefer fetched page content over RSS summary)
     content_for_llm = fetched_content if fetched_content else summary

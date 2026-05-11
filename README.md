@@ -468,3 +468,4 @@ Records are only saved when at least one platform succeeds. If all platforms fai
 | Add a new blog platform | New entry in `registry/platforms_registry.json` |
 | Add a web UI | FastAPI layer wrapping the existing MCP tools |
 | Switch to a database | Replace `record-keeper/server.py` internals (same MCP interface) |
+
