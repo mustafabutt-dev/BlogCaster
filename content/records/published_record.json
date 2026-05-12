@@ -656,6 +656,28 @@
           "shared_at": "2026-05-11 08:26:22"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/metadata/extract-metadata-from-xls-in-java",
+      "title": "Extract Metadata from XLS in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7459869817638952960",
+          "shared_at": "2026-05-12 07:39:28"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2054104129539285469",
+          "shared_at": "2026-05-12 07:39:28"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1485710409697223",
+          "shared_at": "2026-05-12 07:39:28"
+        }
+      }
     }
   ]
 }
