@@ -678,6 +678,28 @@
           "shared_at": "2026-05-12 07:39:28"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/editor/best-practices-for-csv-editor-development-in-java",
+      "title": "Best Practices for CSV Editor Development in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7460594434758336512",
+          "shared_at": "2026-05-14 07:38:50"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2054828746524197059",
+          "shared_at": "2026-05-14 07:38:50"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1487612992840298",
+          "shared_at": "2026-05-14 07:38:50"
+        }
+      }
     }
   ]
 }
