@@ -108,7 +108,7 @@ class MetricsRecorder:
             "run_id": self.run_id,
             "status": self.status,
             "product": self.product or "NA",
-            "platform": self.platform or "NA",
+            "platform": "All",
             "website": self.website,
             "website_section": self.website_section,
             "item_name": self.item_name,
@@ -154,8 +154,8 @@ class MetricsRecorder:
                 try:
                     response = await client.post(
                         url,
-                        params={"token": token},
                         json=payload,
+                        headers={"Authorization": f"Bearer {token}"},
                     )
                     if response.status_code == 200:
                         logger.info(f"Metrics: sent to {label} endpoint successfully")
