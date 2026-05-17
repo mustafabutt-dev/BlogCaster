@@ -158,7 +158,7 @@ class MetricsRecorder:
                         headers={"Authorization": f"Bearer {token}"},
                     )
                     if response.status_code == 200:
-                        logger.info(f"Metrics: sent to {label} endpoint successfully")
+                        logger.info(f"Metrics: sent to {label} endpoint successfully — response: {response.text[:300]}")
                     else:
                         logger.warning(
                             f"Metrics: {label} endpoint returned {response.status_code}: {response.text[:200]}"
