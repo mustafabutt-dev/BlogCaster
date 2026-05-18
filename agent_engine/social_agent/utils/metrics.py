@@ -154,8 +154,8 @@ class MetricsRecorder:
                 try:
                     response = await client.post(
                         url,
+                        params={"token": token},
                         json=payload,
-                        headers={"Authorization": f"Bearer {token}"},
                     )
                     if response.status_code == 200:
                         logger.info(f"Metrics: sent to {label} endpoint successfully — response: {response.text[:300]}")
