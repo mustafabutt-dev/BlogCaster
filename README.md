@@ -113,6 +113,33 @@ FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN=your-conholdate-facebook-page-access-token
 | `FACEBOOK_{BRAND}_PAGE_ID` | Platform-specific Facebook Page ID (e.g. `FACEBOOK_GROUPDOCS_PAGE_ID`) |
 | `FACEBOOK_{BRAND}_PAGE_ACCESS_TOKEN` | Platform-specific Facebook Page Access Token |
 
+## LinkedIn Token Renewal
+
+LinkedIn OAuth tokens expire every **60 days**. When the agent logs `LinkedIn token is invalid or expired`, follow these steps to renew:
+
+### Step 1: Generate a new token
+
+1. Go to [LinkedIn Developer Apps](https://www.linkedin.com/developers/apps)
+2. Select your app
+3. Go to the **Auth** tab
+4. Under **OAuth 2.0 tools**, click **Generate token**
+5. Select scopes: `w_member_social`, `openid`, `profile`
+6. Authorize and copy the new token
+
+> **Note:** Token generation works on **Safari** but may fail on Google Chrome. If you get errors in Chrome, switch to Safari.
+
+### Step 2: Update credentials
+
+1. Update `LINKEDIN_ACCESS_TOKEN` in your `.env` file (local)
+2. Update `LINKEDIN_ACCESS_TOKEN` in GitHub repo **Settings > Secrets and variables > Actions** (for GitHub Actions)
+3. Update `LINKEDIN_TOKEN_EXPIRES_AT` to the new expiry date (today + 60 days):
+
+```
+LINKEDIN_TOKEN_EXPIRES_AT=2026-07-19
+```
+
+The agent prints a console warning when the token is within 7 days of expiring, so you can renew proactively.
+
 ## Facebook Page Setup
 
 Facebook requires a **Page Access Token** (not a User Access Token) to post to a Page. Follow these steps:
