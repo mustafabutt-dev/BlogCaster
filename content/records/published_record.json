@@ -795,6 +795,28 @@
           "shared_at": "2026-05-19 08:21:55"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/editor/update-pptx-file-in-dotnet",
+      "title": "Update PPTX File in .NET",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7463143813801373696",
+          "shared_at": "2026-05-21 08:29:18"
+        },
+        "x": {
+          "status": "success",
+          "post_id": "2057378126020345908",
+          "shared_at": "2026-05-21 08:29:18"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1493524912249106",
+          "shared_at": "2026-05-21 08:29:18"
+        }
+      }
     }
   ]
 }
