@@ -868,6 +868,23 @@
           "shared_at": "2026-05-26 08:28:04"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/watermark/image-watermark-ppt-csharp",
+      "title": "Add Image Watermark to PowerPoint Presentation using .NET REST API",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7465683073846706176",
+          "shared_at": "2026-05-28 08:39:17"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1499315841670013",
+          "shared_at": "2026-05-28 08:39:17"
+        }
+      }
     }
   ]
 }
