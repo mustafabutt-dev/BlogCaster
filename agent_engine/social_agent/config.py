@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     X_ACCESS_TOKEN: str = ""
     X_ACCESS_TOKEN_SECRET: str = ""
 
+    # Dev.to Configuration
+    DEVTO_API_KEY: str = ""
+
     # Facebook Page Configuration (default)
     FACEBOOK_PAGE_ID: str = ""
     FACEBOOK_PAGE_ACCESS_TOKEN: str = ""
@@ -58,6 +61,7 @@ class Settings(BaseSettings):
     LINKEDIN_POSTER_PATH: str = "mcp-servers/linkedin-poster/server.py"
     X_POSTER_PATH: str = "mcp-servers/x-poster/server.py"
     FACEBOOK_POSTER_PATH: str = "mcp-servers/facebook-poster/server.py"
+    DEVTO_POSTER_PATH: str = "mcp-servers/devto-poster/server.py"
     RECORD_KEEPER_PATH: str = "mcp-servers/record-keeper/server.py"
 
     model_config = {

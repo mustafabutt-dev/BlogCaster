@@ -5,42 +5,48 @@
       "name": "Aspose Blog",
       "url": "https://blog.aspose.com",
       "rss_feed": "https://blog.aspose.com/index.xml",
-      "active": true
+      "active": true,
+      "devto_org_id": null
     },
     {
       "id": "aspose-cloud",
       "name": "Aspose Cloud Blog",
       "url": "https://blog.aspose.cloud",
       "rss_feed": "https://blog.aspose.cloud/index.xml",
-      "active": true
+      "active": true,
+      "devto_org_id": 13759
     },
     {
       "id": "groupdocs",
       "name": "GroupDocs Blog",
       "url": "https://blog.groupdocs.com",
       "rss_feed": "https://blog.groupdocs.com/index.xml",
-      "active": true
+      "active": true,
+      "devto_org_id": null
     },
     {
       "id": "groupdocs-cloud",
       "name": "GroupDocs Cloud Blog",
       "url": "https://blog.groupdocs.cloud",
       "rss_feed": "https://blog.groupdocs.cloud/index.xml",
-      "active": true
+      "active": true,
+      "devto_org_id": null
     },
     {
       "id": "conholdate",
       "name": "Conholdate Blog",
       "url": "https://blog.conholdate.com",
       "rss_feed": "https://blog.conholdate.com/index.xml",
-      "active": true
+      "active": true,
+      "devto_org_id": null
     },
     {
       "id": "conholdate-cloud",
       "name": "Conholdate Cloud Blog",
       "url": "https://blog.conholdate.cloud",
       "rss_feed": "https://blog.conholdate.cloud/index.xml",
-      "active": true
+      "active": true,
+      "devto_org_id": null
     }
   ]
 }

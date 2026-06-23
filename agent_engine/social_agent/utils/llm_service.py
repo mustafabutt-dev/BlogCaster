@@ -13,9 +13,11 @@ from openai import AsyncOpenAI
 
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.utils.prompts import (
+    DEVTO_SYSTEM_PROMPT,
     FACEBOOK_SYSTEM_PROMPT,
     LINKEDIN_SYSTEM_PROMPT,
     X_SYSTEM_PROMPT,
+    build_devto_prompt,
     build_facebook_prompt,
     build_linkedin_prompt,
     build_x_prompt,
@@ -33,6 +35,7 @@ class LLMResult:
     output_tokens: int
     total_tokens: int
     api_call_count: int  # number of LLM API calls (including retries)
+    tags: list = None    # Populated for Dev.to articles only
 
 
 # Singleton client — initialized once
@@ -413,4 +416,125 @@ async def format_for_x(title: str, summary: str, blog_url: str) -> LLMResult:
         output_tokens=total_output_tokens,
         total_tokens=total_tokens,
         api_call_count=api_call_count,
+    )
+
+
+def _parse_devto_output(text: str) -> tuple[str, list[str]]:
+    """Parse LLM output for Dev.to into (body_markdown, tags).
+
+    Expected format:
+        TAGS: tag1, tag2, tag3
+        <blank line>
+        [article body in markdown]
+    """
+    lines = text.strip().split("\n")
+    tags: list[str] = []
+    body_start = 0
+
+    if lines and lines[0].upper().startswith("TAGS:"):
+        tag_str = lines[0][5:].strip()
+        tags = [t.strip().lower().replace(" ", "-") for t in tag_str.split(",") if t.strip()][:4]
+        body_start = 1
+        while body_start < len(lines) and not lines[body_start].strip():
+            body_start += 1
+
+    body = "\n".join(lines[body_start:]).strip()
+    return body, tags
+
+
+async def format_for_devto(title: str, summary: str, blog_url: str) -> LLMResult:
+    """Format blog post content into a Dev.to article in Markdown.
+
+    Returns an LLMResult where:
+      - text: article body markdown (without the TAGS line)
+      - tags: list of up to 4 tags parsed from the LLM output
+
+    Args:
+        title: Blog post title
+        summary: Blog post content (HTML already stripped)
+        blog_url: URL of the original blog post (set as canonical URL)
+
+    Returns:
+        LLMResult with formatted markdown body, tags, and token usage
+
+    Raises:
+        ValueError: If LLM returns empty/invalid response after retries
+    """
+    client = _get_client()
+    user_prompt = build_devto_prompt(title, summary, blog_url)
+
+    logger.debug(f"Dev.to LLM prompt: {user_prompt[:200]}...")
+
+    min_words = 150
+    max_attempts = 3
+    result_body = None
+    result_tags: list[str] = []
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_tokens = 0
+    api_call_count = 0
+
+    for attempt in range(1, max_attempts + 1):
+        response = await client.chat.completions.create(
+            model=settings.PROFESSIONALIZE_LLM_MODEL,
+            messages=[
+                {"role": "system", "content": DEVTO_SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=4000,
+        )
+        api_call_count += 1
+
+        if response.usage:
+            total_input_tokens += response.usage.prompt_tokens
+            total_output_tokens += response.usage.completion_tokens
+            total_tokens += response.usage.total_tokens
+
+        if not response or not response.choices:
+            raise ValueError("LLM returned empty response")
+
+        content = response.choices[0].message.content
+
+        if not content or not content.strip():
+            logger.warning(
+                f"LLM returned None/empty content for Dev.to (attempt {attempt}/{max_attempts}). "
+                "Reasoning model likely spent all tokens on chain-of-thought."
+            )
+            continue
+
+        cleaned = _strip_thinking_tags(content)
+        body, tags = _parse_devto_output(cleaned)
+        word_count = len(body.split())
+
+        if word_count >= min_words:
+            result_body = body
+            result_tags = tags
+            logger.info(f"LLM returned valid Dev.to article on attempt {attempt} ({word_count} words, {len(tags)} tags)")
+            break
+
+        logger.warning(
+            f"Dev.to LLM output too short (attempt {attempt}/{max_attempts}): "
+            f"{word_count} words, need {min_words}+. Retrying..."
+        )
+
+    if not result_body:
+        raise ValueError(
+            f"LLM failed to produce a valid Dev.to article after {max_attempts} attempts. "
+            "Output was None, empty, or under 150 words each time."
+        )
+
+    if not result_tags:
+        logger.warning("LLM did not produce tags for Dev.to — using defaults")
+        result_tags = ["programming", "tutorial"]
+
+    logger.info(f"Dev.to formatted article ({len(result_body.split())} words, tags: {result_tags})")
+
+    return LLMResult(
+        text=result_body,
+        input_tokens=total_input_tokens,
+        output_tokens=total_output_tokens,
+        total_tokens=total_tokens,
+        api_call_count=api_call_count,
+        tags=result_tags,
     )

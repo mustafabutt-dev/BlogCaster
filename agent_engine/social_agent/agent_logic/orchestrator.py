@@ -16,6 +16,8 @@ from urllib.parse import urlparse, urlunparse
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.tools.mcp_tools import (
     MCPSessions,
+    devto_post,
+    devto_validate_credentials,
     facebook_check_token_expiry,
     facebook_post,
     facebook_validate_token,
@@ -34,12 +36,18 @@ from agent_engine.social_agent.utils.helpers import (
     get_active_platforms,
     load_registry,
 )
-from agent_engine.social_agent.utils.llm_service import LLMResult, format_for_facebook, format_for_linkedin, format_for_x
+from agent_engine.social_agent.utils.llm_service import LLMResult, format_for_devto, format_for_facebook, format_for_linkedin, format_for_x
 from agent_engine.social_agent.utils.metrics import MetricsRecorder
 
 logger = logging.getLogger("social_agent")
 
-ALL_PLATFORMS = ("linkedin", "x", "facebook")
+
+def _get_expected_platforms(platform_config: dict | None) -> frozenset:
+    """Return the set of platforms that could be posted to for a given blog platform."""
+    platforms = {"linkedin", "x", "facebook"}
+    if platform_config and platform_config.get("devto_org_id"):
+        platforms.add("devto")
+    return frozenset(platforms)
 
 
 def _normalize_url(url: str) -> str:
@@ -72,7 +80,7 @@ async def _get_succeeded_platforms(sessions: MCPSessions, url: str) -> set:
     return set()
 
 
-async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None, target: str = "all", platform: str = "") -> dict:
+async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None, target: str = "all", platform: str = "", devto_org_id: int | None = None) -> dict:
     """Validate credentials for all platforms. Returns dict of platform → bool.
 
     Platforms with empty credentials, in skip_platforms, or excluded by target are marked False.
@@ -143,6 +151,24 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None,
     else:
         logger.info("Facebook credentials not configured — skipping")
         results["facebook"] = False
+
+    # Dev.to — requires API key and a configured org_id for this platform
+    if target not in ("all", "devto"):
+        logger.info(f"Dev.to excluded by --target {target}")
+        results["devto"] = False
+    elif "devto" in skip_platforms:
+        logger.info("Dev.to already succeeded for this URL — skipping")
+        results["devto"] = False
+    elif settings.DEVTO_API_KEY and devto_org_id:
+        logger.info("Validating Dev.to credentials...")
+        results["devto"] = await devto_validate_credentials(sessions)
+        if results["devto"]:
+            logger.info("Dev.to credentials are valid")
+        else:
+            logger.warning("Dev.to credentials are invalid or expired")
+    else:
+        logger.info("Dev.to not configured for this platform — skipping")
+        results["devto"] = False
 
     return results
 
@@ -220,11 +246,20 @@ async def _format_for_platforms(
             logger.error(f"LLM formatting for Facebook failed: {e}")
             print(f"Error formatting for Facebook: {e}")
 
+    if valid_platforms.get("devto"):
+        logger.info("Formatting article for Dev.to via LLM...")
+        try:
+            formatted["devto"] = await format_for_devto(title, content, blog_url)
+        except Exception as e:
+            logger.error(f"LLM formatting for Dev.to failed: {e}")
+            print(f"Error formatting for Dev.to: {e}")
+
     return formatted
 
 
 async def _post_to_platforms(
-    sessions: MCPSessions, formatted: dict, blog_url: str
+    sessions: MCPSessions, formatted: dict, blog_url: str,
+    blog_title: str = "", devto_org_id: int | None = None,
 ) -> dict:
     """Post formatted content to each platform. Returns dict of platform → result dict.
 
@@ -271,6 +306,22 @@ async def _post_to_platforms(
             logger.error(f"Facebook posting failed: {facebook_result.get('error')}")
             print(f"Error posting to Facebook: {facebook_result.get('error')}")
 
+    if "devto" in formatted:
+        logger.info("Posting to Dev.to...")
+        llm_result = formatted["devto"]
+        body = llm_result.text if isinstance(llm_result, LLMResult) else llm_result
+        tags = llm_result.tags if isinstance(llm_result, LLMResult) and llm_result.tags else []
+        devto_result = await devto_post(sessions, blog_title, body, blog_url, tags, devto_org_id)
+        results["devto"] = devto_result
+        if devto_result.get("status") == "success":
+            post_id = devto_result.get("post_id", "")
+            url = devto_result.get("url", "")
+            logger.info(f"Dev.to post successful: post_id={post_id} url={url}")
+            print(f"Successfully posted to Dev.to! URL: {url}")
+        else:
+            logger.error(f"Dev.to posting failed: {devto_result.get('error')}")
+            print(f"Error posting to Dev.to: {devto_result.get('error')}")
+
     return results
 
 
@@ -302,12 +353,14 @@ async def run_manual_mode(
 
     if platform:
         platform_id = platform["id"]
+        devto_org_id = platform.get("devto_org_id")
         logger.info(f"Platform detected: {platform_id}")
         if metrics:
             metrics.product = platform_id
             metrics.website = urlparse(platform.get("url", "")).netloc
     else:
         platform_id = "unknown"
+        devto_org_id = None
         logger.warning(f"URL does not match any registered platform, using platform_id='unknown'")
         if metrics:
             metrics.product = "unknown"
@@ -316,7 +369,8 @@ async def run_manual_mode(
     logger.info("Checking published status per platform...")
     succeeded_platforms = await _get_succeeded_platforms(sessions, url)
 
-    if succeeded_platforms >= set(ALL_PLATFORMS):
+    expected_platforms = _get_expected_platforms(platform)
+    if succeeded_platforms >= expected_platforms:
         logger.info(f"Already posted to all platforms: {url} — skipping")
         print(f"This URL has already been posted to all platforms: {url}")
         return False
@@ -342,7 +396,7 @@ async def run_manual_mode(
         metrics.items_discovered = 1
 
     # 4. Validate credentials (skip platforms that already succeeded)
-    valid_platforms = await _validate_platforms(sessions, skip_platforms=succeeded_platforms, target=target, platform=platform_id)
+    valid_platforms = await _validate_platforms(sessions, skip_platforms=succeeded_platforms, target=target, platform=platform_id, devto_org_id=devto_org_id)
 
     if not any(valid_platforms.values()):
         logger.error("No valid platform credentials found for remaining platforms")
@@ -381,7 +435,7 @@ async def run_manual_mode(
         return True
 
     # 6. Post to each platform independently
-    post_results = await _post_to_platforms(sessions, formatted, url)
+    post_results = await _post_to_platforms(sessions, formatted, url, blog_title=title, devto_org_id=devto_org_id)
 
     # Track posting results in metrics
     if metrics:
@@ -446,6 +500,7 @@ async def run_auto_mode(
         return False
 
     rss_url = platform["rss_feed"]
+    devto_org_id = platform.get("devto_org_id")
     logger.info(f"Platform '{platform_id}' found: {platform['name']} (RSS: {rss_url})")
 
     if metrics:
@@ -522,7 +577,7 @@ async def run_auto_mode(
         metrics.items_discovered = 1
 
     # 5. Validate credentials for targeted platforms
-    valid_platforms = await _validate_platforms(sessions, target=target, platform=platform_id)
+    valid_platforms = await _validate_platforms(sessions, target=target, platform=platform_id, devto_org_id=devto_org_id)
 
     if not any(valid_platforms.values()):
         logger.error("No valid platform credentials found")
@@ -562,7 +617,7 @@ async def run_auto_mode(
         return True
 
     # 7. Post to each platform independently
-    post_results = await _post_to_platforms(sessions, formatted, post_url)
+    post_results = await _post_to_platforms(sessions, formatted, post_url, blog_title=title, devto_org_id=devto_org_id)
 
     # Track posting results in metrics
     if metrics:
