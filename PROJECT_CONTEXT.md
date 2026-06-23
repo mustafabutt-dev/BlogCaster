@@ -15,6 +15,7 @@ A CLI-based agent that fetches blog posts from Hugo-based blog platforms via RSS
 | LLM | Self-hosted GPT-OSS via OpenAI Python SDK (AsyncOpenAI) |
 | LinkedIn API | LinkedIn Personal Profile API (OAuth 2.0 pre-generated token) |
 | X (Twitter) API | X API v2 via tweepy (OAuth 1.0a) |
+| Dev.to API | Forem REST API v1 (API key auth) |
 | Config | Pydantic BaseSettings + .env file |
 | Data Source | Hugo RSS feeds |
 | State Storage | JSON files (published_record.json) |
@@ -31,13 +32,15 @@ A CLI-based agent that fetches blog posts from Hugo-based blog platforms via RSS
 | X_API_SECRET | X (Twitter) API consumer secret |
 | X_ACCESS_TOKEN | X (Twitter) OAuth 1.0a access token |
 | X_ACCESS_TOKEN_SECRET | X (Twitter) OAuth 1.0a access token secret |
+| DEVTO_API_KEY | Dev.to personal API key |
 
 ## Architecture
 Four FastMCP servers communicating via stdio, orchestrated by a central agent:
 1. **rss-fetcher** — Fetches and parses Hugo RSS feeds and individual blog posts
 2. **linkedin-poster** — Posts formatted content to LinkedIn personal profile
 3. **x-poster** — Posts formatted tweets to X (Twitter) via tweepy
-4. **record-keeper** — Tracks published posts in JSON, prevents duplicates
+4. **devto-poster** — Publishes full markdown articles to Dev.to organization via Forem API
+5. **record-keeper** — Tracks published posts in JSON, prevents duplicates
 
 ## Directory Structure
 ```
@@ -91,6 +94,7 @@ Adding a new platform = new JSON entry only, no code change.
 | Stage 5 | Orchestrator + CLI | COMPLETE |
 | Stage 6 | Integration + Docs | COMPLETE |
 | Stage 7 | X (Twitter) Poster Integration | COMPLETE |
+| Stage 8 | Dev.to Poster Integration | COMPLETE |
 
 ## Decision Log
 | ID | Decision | Rationale |
@@ -102,6 +106,8 @@ Adding a new platform = new JSON entry only, no code change.
 | D-005 | JSON file storage | Simple, no DB dependency, future web UI can read same files |
 | D-006 | tweepy for X API | OAuth 1.0a signing required for X API v2 posting |
 | D-007 | Independent platform failures | LinkedIn failure doesn't block X and vice versa |
+| D-008 | Dev.to publishes full articles | Dev.to is a content platform — LLM generates a 400-600 word markdown article (not a social snippet), with canonical_url pointing to the original blog for SEO |
+| D-009 | devto_org_id per platform in registry | Each blog platform can map to its own Dev.to org; null means Dev.to skipped for that platform |
 
 ## Current State
 - ALL STAGES COMPLETE
@@ -112,6 +118,7 @@ Adding a new platform = new JSON entry only, no code change.
 - Stage 5 COMPLETE — Orchestrator + CLI (config, helpers, prompts, LLM service, MCP wrappers, orchestrator, CLI)
 - Stage 6 COMPLETE — Integration tested end-to-end, 3 successful LinkedIn posts
 - Stage 7 COMPLETE — X (Twitter) Poster MCP server + dual-platform orchestrator
+- Stage 8 COMPLETE — Dev.to Poster MCP server; asposecloud org (ID 13759) wired to aspose-cloud platform
 
 ## Integration Test Results
 | Test | Post ID | Status |
@@ -122,4 +129,4 @@ Adding a new platform = new JSON entry only, no code change.
 | Manual Mode duplicate check | N/A — correctly skipped | SUCCESS |
 
 ## Last Updated
-2026-04-01 — Stage 7 completed, X (Twitter) support added, dual-platform posting
+2026-06-23 — Stage 8 completed, Dev.to support added; asposecloud org mapped to aspose-cloud platform

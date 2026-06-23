@@ -58,6 +58,7 @@ class MCPSessions:
     linkedin_poster: ClientSession
     x_poster: ClientSession
     facebook_poster: ClientSession
+    devto_poster: ClientSession
 
 
 @asynccontextmanager
@@ -79,6 +80,7 @@ async def open_mcp_sessions(platform: str = ""):
     linkedin_path = settings.resolve_path(settings.LINKEDIN_POSTER_PATH)
     x_path = settings.resolve_path(settings.X_POSTER_PATH)
     facebook_path = settings.resolve_path(settings.FACEBOOK_POSTER_PATH)
+    devto_path = settings.resolve_path(settings.DEVTO_POSTER_PATH)
 
     record_env = os.environ.copy()
     record_env["RECORDS_PATH"] = settings.resolve_path(settings.RECORDS_PATH)
@@ -115,6 +117,10 @@ async def open_mcp_sessions(platform: str = ""):
     x_params = StdioServerParameters(command=sys.executable, args=[x_path], env=x_env)
     facebook_params = StdioServerParameters(command=sys.executable, args=[facebook_path], env=facebook_env)
 
+    devto_env = os.environ.copy()
+    devto_env["DEVTO_API_KEY"] = settings.DEVTO_API_KEY
+    devto_params = StdioServerParameters(command=sys.executable, args=[devto_path], env=devto_env)
+
     logger.info(f"{_MAGENTA}{_BOLD}Starting RSS Fetcher MCP server...{_RESET}")
     async with stdio_client(rss_params) as (rss_read, rss_write):
         async with ClientSession(rss_read, rss_write) as rss_session:
@@ -140,14 +146,20 @@ async def open_mcp_sessions(platform: str = ""):
                                         async with ClientSession(fb_read, fb_write) as facebook_session:
                                             await facebook_session.initialize()
 
-                                            logger.info("All MCP servers started")
-                                            yield MCPSessions(
-                                                rss_fetcher=rss_session,
-                                                record_keeper=record_session,
-                                                linkedin_poster=linkedin_session,
-                                                x_poster=x_session,
-                                                facebook_poster=facebook_session,
-                                            )
+                                            logger.info(f"{_MAGENTA}{_BOLD}Starting Dev.to Poster MCP server...{_RESET}")
+                                            async with stdio_client(devto_params) as (dt_read, dt_write):
+                                                async with ClientSession(dt_read, dt_write) as devto_session:
+                                                    await devto_session.initialize()
+
+                                                    logger.info("All MCP servers started")
+                                                    yield MCPSessions(
+                                                        rss_fetcher=rss_session,
+                                                        record_keeper=record_session,
+                                                        linkedin_poster=linkedin_session,
+                                                        x_poster=x_session,
+                                                        facebook_poster=facebook_session,
+                                                        devto_poster=devto_session,
+                                                    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -263,3 +275,35 @@ async def facebook_post(sessions: MCPSessions, content: str, blog_url: str) -> d
         {"content": content, "blog_url": blog_url},
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "error": "Empty response"}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Dev.to Poster Tools
+# ─────────────────────────────────────────────────────────────────────────────
+
+async def devto_validate_credentials(sessions: MCPSessions) -> bool:
+    """Validate the Dev.to API key."""
+    result = await sessions.devto_poster.call_tool("validate_credentials", {})
+    return _parse_result(result) or False
+
+
+async def devto_post(
+    sessions: MCPSessions,
+    title: str,
+    body_markdown: str,
+    canonical_url: str,
+    tags: list,
+    org_id: int | None = None,
+) -> dict:
+    """Publish an article to Dev.to."""
+    result = await sessions.devto_poster.call_tool(
+        "post_to_devto",
+        {
+            "title": title,
+            "body_markdown": body_markdown,
+            "canonical_url": canonical_url,
+            "tags": tags,
+            "org_id": org_id,
+        },
+    )
+    return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}

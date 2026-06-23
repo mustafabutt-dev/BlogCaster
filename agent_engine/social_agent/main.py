@@ -44,9 +44,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--target",
         type=str,
-        choices=["all", "linkedin", "x", "facebook"],
+        choices=["all", "linkedin", "x", "facebook", "devto"],
         default="all",
-        help="Social media target: all, linkedin, x, or facebook (default: all)",
+        help="Social media target: all, linkedin, x, facebook, or devto (default: all)",
     )
     parser.add_argument(
         "--dry-run",

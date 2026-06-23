@@ -33,6 +33,7 @@ on:
           - LinkedIn
           - X
           - Facebook
+          - Dev.to
         default: All
       url:
         description: "Blog post URL (for manual mode)"
@@ -71,8 +72,9 @@ jobs:
         id: target
         run: |
           RAW_TARGET="${{ inputs.target || 'All' }}"
-          # Convert to lowercase for CLI flag
-          echo "value=$(echo "$RAW_TARGET" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          # Convert to lowercase and normalise "dev.to" → "devto"
+          LOWER=$(echo "$RAW_TARGET" | tr '[:upper:]' '[:lower:]')
+          echo "value=$(echo "$LOWER" | tr -d '.')" >> "$GITHUB_OUTPUT"
 
       - name: Run BlogCaster (Auto Mode)
         if: ${{ github.event_name == 'schedule' || inputs.mode == 'auto' }}
@@ -87,6 +89,7 @@ jobs:
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           FACEBOOK_GROUPDOCS_PAGE_ID: ${{ secrets.FACEBOOK_GROUPDOCS_PAGE_ID }}
           FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
           METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
@@ -110,6 +113,7 @@ jobs:
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           FACEBOOK_GROUPDOCS_PAGE_ID: ${{ secrets.FACEBOOK_GROUPDOCS_PAGE_ID }}
           FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
           METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}

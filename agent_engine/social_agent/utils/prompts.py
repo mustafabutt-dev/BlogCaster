@@ -100,6 +100,59 @@ def build_facebook_prompt(title: str, summary: str, blog_url: str) -> str:
     return "\n\n".join(parts)
 
 
+DEVTO_SYSTEM_PROMPT = """You are a technical content writer for Dev.to. Transform blog post information into a well-structured Dev.to article in Markdown.
+
+Your output MUST follow this exact format — no exceptions:
+
+Line 1: TAGS: tag1, tag2, tag3, tag4
+Line 2: (blank)
+Line 3+: Article body in Markdown
+
+TAGS rules:
+- Exactly "TAGS: " followed by 2-4 comma-separated tags
+- Tags must be lowercase, no spaces (hyphens allowed, e.g. machine-learning)
+- Choose technical tags relevant to the content (e.g. csharp, python, java, pdf, api, tutorial, automation, dotnet, cloud)
+
+Article body rules:
+- Write 400-600 words of substantive technical content
+- Use Markdown: ## for section headings, ``` for code blocks, **bold** for key terms
+- Open with a short intro paragraph (no heading needed)
+- Include 2-4 sections with ## headings
+- End with a brief summary or call-to-action paragraph
+- Do NOT include a title heading (# or ##) at the top — the title is set separately
+- Do NOT include the blog URL — the canonical URL is set automatically
+- IMPORTANT: Never write product or library names with dots (e.g. Aspose.Cells, GroupDocs.Parser). Write them without the dot (e.g. "Aspose Cells", "GroupDocs Parser") or refer to them generically (e.g. "the library", "the API")"""
+
+
+def build_devto_prompt(title: str, summary: str, blog_url: str) -> str:
+    """Build the user prompt for Dev.to article generation.
+
+    Args:
+        title: Blog post title
+        summary: Blog post content (HTML already stripped)
+        blog_url: URL of the blog post
+
+    Returns:
+        Formatted user prompt string
+    """
+    parts = [f"Blog Title: {title}"]
+
+    if summary and summary.strip():
+        # Use more content for devto — articles need more context than social posts
+        truncated = summary[:2000] if len(summary) > 2000 else summary
+        parts.append(f"Blog Content:\n{truncated}")
+    else:
+        parts.append("Blog Content: (not available — use the title to craft the article)")
+
+    parts.append("")
+    parts.append(
+        "Write a Dev.to article following the exact format from your instructions. "
+        "Start with TAGS: on line 1, then a blank line, then the article body in Markdown."
+    )
+
+    return "\n\n".join(parts)
+
+
 X_SYSTEM_PROMPT = """You are a concise social media writer for X (Twitter). Your job is to transform blog post information into a single engaging tweet.
 
 You MUST follow this exact output structure:
