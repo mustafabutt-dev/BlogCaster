@@ -1123,6 +1123,23 @@
           "shared_at": "2026-06-22 10:41:42"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/total/security-updates-self-hosted-docker-images",
+      "title": "Security Update for GroupDocs Cloud Self-Hosted Docker Images",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7475101496251101184",
+          "shared_at": "2026-06-23 08:24:44"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1521777299423867",
+          "shared_at": "2026-06-23 08:24:44"
+        }
+      }
     }
   ]
 }
