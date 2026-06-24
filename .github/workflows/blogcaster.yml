@@ -92,8 +92,8 @@ jobs:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
-          METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
-          METRICS_TOKEN_PROD: ${{ secrets.METRICS_TOKEN_PROD }}
+          METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
+          METRICS_API_KEY: ${{ secrets.METRICS_API_KEY }}
         run: |
           PLATFORM="${{ inputs.platform || 'aspose-cloud' }}"
           TARGET="${{ steps.target.outputs.value }}"
@@ -116,8 +116,8 @@ jobs:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
-          METRICS_GOOGLE_SCRIPT_URL_PROD: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_PROD }}
-          METRICS_TOKEN_PROD: ${{ secrets.METRICS_TOKEN_PROD }}
+          METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
+          METRICS_API_KEY: ${{ secrets.METRICS_API_KEY }}
         run: |
           PLATFORM="${{ inputs.platform || 'aspose-cloud' }}"
           TARGET="${{ steps.target.outputs.value }}"

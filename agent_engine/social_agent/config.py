@@ -45,11 +45,12 @@ class Settings(BaseSettings):
     # FACEBOOK_{BRAND}_PAGE_ID / FACEBOOK_{BRAND}_PAGE_ACCESS_TOKEN
     # e.g. FACEBOOK_GROUPDOCS_PAGE_ID, FACEBOOK_CONHOLDATE_PAGE_ID
 
-    # Metrics Configuration (Google Sheets endpoints)
+    # Metrics — Team (Google Sheets via POST + token query param)
     METRICS_GOOGLE_SCRIPT_URL_TEAM: str = ""
     METRICS_TOKEN_TEAM: str = ""
-    METRICS_GOOGLE_SCRIPT_URL_PROD: str = ""
-    METRICS_TOKEN_PROD: str = ""
+    # Metrics — Prod (REST API via PUT + X-Api-Key header)
+    METRICS_API_URL: str = ""
+    METRICS_API_KEY: str = ""
 
     # File Paths (relative to project root)
     REGISTRY_PATH: str = "registry/platforms_registry.json"

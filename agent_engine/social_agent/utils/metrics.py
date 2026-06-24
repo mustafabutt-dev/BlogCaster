@@ -132,39 +132,50 @@ class MetricsRecorder:
         return payload
 
     async def send(self) -> None:
-        """POST metrics to both Team and Prod Google Sheets endpoints.
+        """Send metrics to Team (Google Sheets) and Prod (REST API) endpoints.
 
-        Team payload includes run_env; Prod payload does not.
+        Team: POST to Google Apps Script with token query param, payload includes run_env.
+        Prod: PUT to REST API with X-Api-Key header, payload excludes run_env.
         Skips silently if endpoints are not configured. Errors are logged
         but never raised — metrics should never break the main workflow.
         """
-        endpoints = []
-        if settings.METRICS_GOOGLE_SCRIPT_URL_TEAM and settings.METRICS_TOKEN_TEAM:
-            endpoints.append(("Team", settings.METRICS_GOOGLE_SCRIPT_URL_TEAM, settings.METRICS_TOKEN_TEAM, True))
-        if settings.METRICS_GOOGLE_SCRIPT_URL_PROD and settings.METRICS_TOKEN_PROD:
-            endpoints.append(("Prod", settings.METRICS_GOOGLE_SCRIPT_URL_PROD, settings.METRICS_TOKEN_PROD, False))
-
-        if not endpoints:
-            logger.info("Metrics: no endpoints configured — skipping send")
-            return
-
         async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-            for label, url, token, include_run_env in endpoints:
-                payload = self.to_payload(include_run_env=include_run_env)
+
+            # Team — Google Sheets via POST + token query param
+            if settings.METRICS_GOOGLE_SCRIPT_URL_TEAM and settings.METRICS_TOKEN_TEAM:
+                payload = self.to_payload(include_run_env=True)
                 try:
                     response = await client.post(
-                        url,
-                        params={"token": token},
+                        settings.METRICS_GOOGLE_SCRIPT_URL_TEAM,
+                        params={"token": settings.METRICS_TOKEN_TEAM},
                         json=payload,
                     )
                     if response.status_code == 200:
-                        logger.info(f"Metrics: sent to {label} endpoint successfully — response: {response.text[:300]}")
+                        logger.info(f"Metrics: sent to Team endpoint successfully — response: {response.text[:300]}")
                     else:
-                        logger.warning(
-                            f"Metrics: {label} endpoint returned {response.status_code}: {response.text[:200]}"
-                        )
+                        logger.warning(f"Metrics: Team endpoint returned {response.status_code}: {response.text[:200]}")
                 except Exception as e:
-                    logger.warning(f"Metrics: failed to send to {label} endpoint: {e}")
+                    logger.warning(f"Metrics: failed to send to Team endpoint: {e}")
+            else:
+                logger.info("Metrics: Team endpoint not configured — skipping")
+
+            # Prod — REST API via PUT + X-Api-Key header
+            if settings.METRICS_API_URL and settings.METRICS_API_KEY:
+                payload = self.to_payload(include_run_env=False)
+                try:
+                    response = await client.put(
+                        settings.METRICS_API_URL,
+                        headers={"X-Api-Key": settings.METRICS_API_KEY},
+                        json=payload,
+                    )
+                    if response.status_code == 200:
+                        logger.info(f"Metrics: sent to Prod endpoint successfully — response: {response.text[:300]}")
+                    else:
+                        logger.warning(f"Metrics: Prod endpoint returned {response.status_code}: {response.text[:200]}")
+                except Exception as e:
+                    logger.warning(f"Metrics: failed to send to Prod endpoint: {e}")
+            else:
+                logger.info("Metrics: Prod endpoint not configured — skipping")
 
     def print_summary(self) -> None:
         """Print a human-readable metrics summary and full payload to stdout."""
