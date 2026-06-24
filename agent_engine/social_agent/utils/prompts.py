@@ -100,54 +100,45 @@ def build_facebook_prompt(title: str, summary: str, blog_url: str) -> str:
     return "\n\n".join(parts)
 
 
-DEVTO_SYSTEM_PROMPT = """You are a technical content writer for Dev.to. Transform blog post information into a well-structured Dev.to article in Markdown.
+DEVTO_SYSTEM_PROMPT = """You are a technical content writer for Dev.to. Transform blog post information into a short teaser post that hooks developers and drives them to read the full article on the original blog.
 
 Your output MUST follow this exact format — no exceptions:
 
 Line 1: TAGS: tag1, tag2, tag3, tag4
 Line 2: (blank)
-Line 3+: Article body in Markdown
+Line 3+: Teaser body in Markdown
 
 TAGS rules:
 - Exactly "TAGS: " followed by 2-4 comma-separated tags
 - Tags must be lowercase, alphanumeric only — no hyphens, no spaces (e.g. "machinelearning" not "machine-learning")
 - Choose technical tags relevant to the content (e.g. csharp, python, java, pdf, api, tutorial, automation, dotnet, cloud)
 
-Article body rules:
-- Write 400-600 words of substantive technical content
-- Use Markdown: ## for section headings, ``` for code blocks, **bold** for key terms
-- Open with a short intro paragraph (no heading needed)
-- Include 2-4 sections with ## headings
-- End with a brief summary or call-to-action paragraph
-- Do NOT include a title heading (# or ##) at the top — the title is set separately
-- Do NOT include the blog URL — the canonical URL is set automatically
-- IMPORTANT: Never write product or library names with dots (e.g. Aspose.Cells, GroupDocs.Parser). Write them without the dot (e.g. "Aspose Cells", "GroupDocs Parser") or refer to them generically (e.g. "the library", "the API")"""
+Teaser body rules:
+- Write 120-160 words total
+- Open with one punchy sentence that states the problem or benefit
+- Write 2-3 short paragraphs covering what the article is about and what the reader will learn
+- End with a clear call-to-action on its own line: "Read the full guide → [blog URL]" (use the exact blog URL provided)
+- Use **bold** sparingly for key terms, no section headings needed
+- Do NOT include a title heading at the top — the title is set separately
+- IMPORTANT: Never write product or library names with dots (e.g. Aspose.Cells, GroupDocs.Parser). Write them without the dot (e.g. "Aspose Cells", "GroupDocs Parser") or refer to them generically"""
 
 
 def build_devto_prompt(title: str, summary: str, blog_url: str) -> str:
-    """Build the user prompt for Dev.to article generation.
-
-    Args:
-        title: Blog post title
-        summary: Blog post content (HTML already stripped)
-        blog_url: URL of the blog post
-
-    Returns:
-        Formatted user prompt string
-    """
+    """Build the user prompt for Dev.to teaser generation."""
     parts = [f"Blog Title: {title}"]
 
     if summary and summary.strip():
-        # Use more content for devto — articles need more context than social posts
-        truncated = summary[:2000] if len(summary) > 2000 else summary
-        parts.append(f"Blog Content:\n{truncated}")
+        truncated = summary[:1000] if len(summary) > 1000 else summary
+        parts.append(f"Blog Summary:\n{truncated}")
     else:
-        parts.append("Blog Content: (not available — use the title to craft the article)")
+        parts.append("Blog Summary: (not available — use the title to craft the teaser)")
 
+    parts.append(f"Blog URL: {blog_url}")
     parts.append("")
     parts.append(
-        "Write a Dev.to article following the exact format from your instructions. "
-        "Start with TAGS: on line 1, then a blank line, then the article body in Markdown."
+        "Write a Dev.to teaser following the exact format from your instructions. "
+        "Start with TAGS: on line 1, then a blank line, then the teaser body. "
+        "End the teaser with the call-to-action linking to the blog URL above."
     )
 
     return "\n\n".join(parts)

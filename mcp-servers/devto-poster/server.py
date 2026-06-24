@@ -100,7 +100,6 @@ def post_to_devto(
         "title": title,
         "body_markdown": body_markdown,
         "published": True,
-        "canonical_url": canonical_url,
         "tags": tags[:4],
     }
     if org_id:

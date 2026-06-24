@@ -466,7 +466,7 @@ async def format_for_devto(title: str, summary: str, blog_url: str) -> LLMResult
 
     logger.debug(f"Dev.to LLM prompt: {user_prompt[:200]}...")
 
-    min_words = 150
+    min_words = 60
     max_attempts = 3
     result_body = None
     result_tags: list[str] = []
