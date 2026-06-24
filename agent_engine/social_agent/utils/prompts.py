@@ -110,7 +110,7 @@ Line 3+: Article body in Markdown
 
 TAGS rules:
 - Exactly "TAGS: " followed by 2-4 comma-separated tags
-- Tags must be lowercase, no spaces (hyphens allowed, e.g. machine-learning)
+- Tags must be lowercase, alphanumeric only — no hyphens, no spaces (e.g. "machinelearning" not "machine-learning")
 - Choose technical tags relevant to the content (e.g. csharp, python, java, pdf, api, tutorial, automation, dotnet, cloud)
 
 Article body rules:

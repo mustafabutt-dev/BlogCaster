@@ -433,7 +433,8 @@ def _parse_devto_output(text: str) -> tuple[str, list[str]]:
 
     if lines and lines[0].upper().startswith("TAGS:"):
         tag_str = lines[0][5:].strip()
-        tags = [t.strip().lower().replace(" ", "-") for t in tag_str.split(",") if t.strip()][:4]
+        tags = [re.sub(r"[^a-z0-9]", "", t.strip().lower()) for t in tag_str.split(",") if t.strip()]
+        tags = [t for t in tags if t][:4]
         body_start = 1
         while body_start < len(lines) and not lines[body_start].strip():
             body_start += 1
