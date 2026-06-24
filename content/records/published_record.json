@@ -1157,6 +1157,28 @@
           "shared_at": "2026-06-24 07:57:11"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/svg-to-jpg-conversion-without-external-tools-in-php",
+      "title": "SVG to JPG Conversion Without External Tools in PHP",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7475463383480352769",
+          "shared_at": "2026-06-24 08:22:44"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1522601526008111",
+          "shared_at": "2026-06-24 08:22:44"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "3976932",
+          "shared_at": "2026-06-24 08:22:44"
+        }
+      }
     }
   ]
 }
