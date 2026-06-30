@@ -1269,6 +1269,23 @@
           "shared_at": "2026-06-29 09:29:28"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/step-by-step-html-to-xlsx-conversion-tutorial-in-php",
+      "title": "Step-by-Step HTML to XLSX Conversion Tutorial in PHP",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7477653042864144384",
+          "shared_at": "2026-06-30 09:24:04"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4029158",
+          "shared_at": "2026-06-30 09:24:04"
+        }
+      }
     }
   ]
 }
