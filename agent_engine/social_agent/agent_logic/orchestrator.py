@@ -31,6 +31,7 @@ from agent_engine.social_agent.tools.mcp_tools import (
     x_validate_credentials,
 )
 from agent_engine.social_agent.utils.helpers import (
+    build_utm_urls,
     detect_platform_from_url,
     find_platform_by_id,
     get_active_platforms,
@@ -217,15 +218,17 @@ async def _check_token_expiry_warnings(sessions: MCPSessions, valid_platforms: d
 
 
 async def _format_for_platforms(
-    valid_platforms: dict, title: str, content: str, blog_url: str
+    valid_platforms: dict, title: str, content: str, blog_url: str,
+    utm_urls: dict | None = None,
 ) -> dict:
     """Format content for each valid platform via LLM. Returns dict of platform → formatted text."""
+    utm_urls = utm_urls or {}
     formatted = {}
 
     if valid_platforms.get("linkedin"):
         logger.info("Formatting post for LinkedIn via LLM...")
         try:
-            formatted["linkedin"] = await format_for_linkedin(title, content, blog_url)
+            formatted["linkedin"] = await format_for_linkedin(title, content, utm_urls.get("linkedin", blog_url))
         except Exception as e:
             logger.error(f"LLM formatting for LinkedIn failed: {e}")
             print(f"Error formatting for LinkedIn: {e}")
@@ -233,7 +236,7 @@ async def _format_for_platforms(
     if valid_platforms.get("x"):
         logger.info("Formatting tweet for X via LLM...")
         try:
-            formatted["x"] = await format_for_x(title, content, blog_url)
+            formatted["x"] = await format_for_x(title, content, utm_urls.get("x", blog_url))
         except Exception as e:
             logger.error(f"LLM formatting for X failed: {e}")
             print(f"Error formatting for X: {e}")
@@ -241,7 +244,7 @@ async def _format_for_platforms(
     if valid_platforms.get("facebook"):
         logger.info("Formatting post for Facebook via LLM...")
         try:
-            formatted["facebook"] = await format_for_facebook(title, content, blog_url)
+            formatted["facebook"] = await format_for_facebook(title, content, utm_urls.get("facebook", blog_url))
         except Exception as e:
             logger.error(f"LLM formatting for Facebook failed: {e}")
             print(f"Error formatting for Facebook: {e}")
@@ -249,7 +252,7 @@ async def _format_for_platforms(
     if valid_platforms.get("devto"):
         logger.info("Formatting article for Dev.to via LLM...")
         try:
-            formatted["devto"] = await format_for_devto(title, content, blog_url)
+            formatted["devto"] = await format_for_devto(title, content, utm_urls.get("devto", blog_url))
         except Exception as e:
             logger.error(f"LLM formatting for Dev.to failed: {e}")
             print(f"Error formatting for Dev.to: {e}")
@@ -260,17 +263,19 @@ async def _format_for_platforms(
 async def _post_to_platforms(
     sessions: MCPSessions, formatted: dict, blog_url: str,
     blog_title: str = "", devto_org_id: int | None = None,
+    utm_urls: dict | None = None,
 ) -> dict:
     """Post formatted content to each platform. Returns dict of platform → result dict.
 
     Values in `formatted` may be LLMResult objects or plain strings.
     """
+    utm_urls = utm_urls or {}
     results = {}
 
     if "linkedin" in formatted:
         logger.info("Posting to LinkedIn...")
         text = formatted["linkedin"].text if isinstance(formatted["linkedin"], LLMResult) else formatted["linkedin"]
-        linkedin_result = await linkedin_post(sessions, text, blog_url)
+        linkedin_result = await linkedin_post(sessions, text, utm_urls.get("linkedin", blog_url))
         results["linkedin"] = linkedin_result
         if linkedin_result.get("status") == "success":
             post_id = linkedin_result.get("post_id", "")
@@ -283,7 +288,7 @@ async def _post_to_platforms(
     if "x" in formatted:
         logger.info("Posting to X...")
         text = formatted["x"].text if isinstance(formatted["x"], LLMResult) else formatted["x"]
-        x_result = await x_post(sessions, text, blog_url)
+        x_result = await x_post(sessions, text, utm_urls.get("x", blog_url))
         results["x"] = x_result
         if x_result.get("status") == "success":
             post_id = x_result.get("post_id", "")
@@ -296,7 +301,7 @@ async def _post_to_platforms(
     if "facebook" in formatted:
         logger.info("Posting to Facebook...")
         text = formatted["facebook"].text if isinstance(formatted["facebook"], LLMResult) else formatted["facebook"]
-        facebook_result = await facebook_post(sessions, text, blog_url)
+        facebook_result = await facebook_post(sessions, text, utm_urls.get("facebook", blog_url))
         results["facebook"] = facebook_result
         if facebook_result.get("status") == "success":
             post_id = facebook_result.get("post_id", "")
@@ -311,7 +316,7 @@ async def _post_to_platforms(
         llm_result = formatted["devto"]
         body = llm_result.text if isinstance(llm_result, LLMResult) else llm_result
         tags = llm_result.tags if isinstance(llm_result, LLMResult) and llm_result.tags else []
-        devto_result = await devto_post(sessions, blog_title, body, blog_url, tags, devto_org_id)
+        devto_result = await devto_post(sessions, blog_title, body, utm_urls.get("devto", blog_url), tags, devto_org_id)
         results["devto"] = devto_result
         if devto_result.get("status") == "success":
             post_id = devto_result.get("post_id", "")
@@ -406,8 +411,14 @@ async def run_manual_mode(
     # 4b. Check token expiry warnings
     await _check_token_expiry_warnings(sessions, valid_platforms)
 
+    # 5. Build UTM URLs if platform has utm_campaign configured
+    utm_campaign = platform.get("utm_campaign") if platform else None
+    utm_urls = build_utm_urls(url, utm_campaign) if utm_campaign else {}
+    if utm_urls:
+        logger.info(f"UTM tracking enabled for platform '{platform_id}' (campaign={utm_campaign})")
+
     # 5. Format via LLM for each valid platform
-    formatted = await _format_for_platforms(valid_platforms, title, content, url)
+    formatted = await _format_for_platforms(valid_platforms, title, content, url, utm_urls=utm_urls)
 
     if not formatted:
         logger.error("Failed to format content for any platform")
@@ -435,7 +446,7 @@ async def run_manual_mode(
         return True
 
     # 6. Post to each platform independently
-    post_results = await _post_to_platforms(sessions, formatted, url, blog_title=title, devto_org_id=devto_org_id)
+    post_results = await _post_to_platforms(sessions, formatted, url, blog_title=title, devto_org_id=devto_org_id, utm_urls=utm_urls)
 
     # Track posting results in metrics
     if metrics:
@@ -587,9 +598,15 @@ async def run_auto_mode(
     # 5b. Check token expiry warnings
     await _check_token_expiry_warnings(sessions, valid_platforms)
 
+    # 6. Build UTM URLs if platform has utm_campaign configured
+    utm_campaign = platform.get("utm_campaign")
+    utm_urls = build_utm_urls(post_url, utm_campaign) if utm_campaign else {}
+    if utm_urls:
+        logger.info(f"UTM tracking enabled for platform '{platform_id}' (campaign={utm_campaign})")
+
     # 6. Format via LLM for each valid platform (prefer fetched page content over RSS summary)
     content_for_llm = fetched_content if fetched_content else summary
-    formatted = await _format_for_platforms(valid_platforms, title, content_for_llm, post_url)
+    formatted = await _format_for_platforms(valid_platforms, title, content_for_llm, post_url, utm_urls=utm_urls)
 
     if not formatted:
         logger.error("Failed to format content for any platform")
@@ -617,7 +634,7 @@ async def run_auto_mode(
         return True
 
     # 7. Post to each platform independently
-    post_results = await _post_to_platforms(sessions, formatted, post_url, blog_title=title, devto_org_id=devto_org_id)
+    post_results = await _post_to_platforms(sessions, formatted, post_url, blog_title=title, devto_org_id=devto_org_id, utm_urls=utm_urls)
 
     # Track posting results in metrics
     if metrics:

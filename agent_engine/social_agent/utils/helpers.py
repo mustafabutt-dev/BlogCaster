@@ -142,3 +142,26 @@ def get_active_platforms(registry: dict) -> list:
         List of active platform dicts
     """
     return [p for p in registry.get("platforms", []) if p.get("active", False)]
+
+
+def build_utm_urls(url: str, campaign: str) -> dict:
+    """Build per-social-platform UTM-tagged URLs for a blog post URL.
+
+    Args:
+        url: The original blog post URL
+        campaign: UTM campaign name (e.g. "blogcaster")
+
+    Returns:
+        Dict mapping social platform name → UTM-tagged URL
+    """
+    separator = "&" if "?" in url else "?"
+    sources = {
+        "linkedin": "linkedin",
+        "x": "twitter",
+        "devto": "devto",
+        "facebook": "facebook",
+    }
+    return {
+        platform: f"{url}{separator}utm_source={source}&utm_medium=social&utm_campaign={campaign}"
+        for platform, source in sources.items()
+    }

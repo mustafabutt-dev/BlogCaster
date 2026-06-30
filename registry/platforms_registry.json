@@ -14,7 +14,8 @@
       "url": "https://blog.aspose.cloud",
       "rss_feed": "https://blog.aspose.cloud/index.xml",
       "active": true,
-      "devto_org_id": 13759
+      "devto_org_id": 13759,
+      "utm_campaign": "blogcaster"
     },
     {
       "id": "groupdocs",
@@ -30,7 +31,8 @@
       "url": "https://blog.groupdocs.cloud",
       "rss_feed": "https://blog.groupdocs.cloud/index.xml",
       "active": true,
-      "devto_org_id": 13769
+      "devto_org_id": 13769,
+      "utm_campaign": "blogcaster"
     },
     {
       "id": "conholdate",
