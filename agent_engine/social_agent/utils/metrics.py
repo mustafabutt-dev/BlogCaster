@@ -139,6 +139,10 @@ class MetricsRecorder:
         Skips silently if endpoints are not configured. Errors are logged
         but never raised — metrics should never break the main workflow.
         """
+        if self.status == "error":
+            logger.info("Metrics: skipping send — run ended with error status")
+            return
+
         async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
 
             # Team — Google Sheets via POST + token query param
