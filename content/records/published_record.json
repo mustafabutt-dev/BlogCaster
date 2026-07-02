@@ -1286,6 +1286,28 @@
           "shared_at": "2026-06-30 09:24:04"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/step-by-step-tutorial-docx-to-pdf-conversion-in-java",
+      "title": "Step-by-Step Tutorial - DOCX to PDF Conversion in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7478357200562839552",
+          "shared_at": "2026-07-02 08:01:48"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1529416548659942",
+          "shared_at": "2026-07-02 08:01:48"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4048573",
+          "shared_at": "2026-07-02 08:01:48"
+        }
+      }
     }
   ]
 }
