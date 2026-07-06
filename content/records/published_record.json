@@ -1330,6 +1330,28 @@
           "shared_at": "2026-07-03 08:12:29"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/html/how-to-perform-dwg-to-png-conversion-in-nodejs",
+      "title": "How to Perform DWG to PNG Conversion in Node.JS",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7479822183117152256",
+          "shared_at": "2026-07-06 09:03:02"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1335026715402202",
+          "shared_at": "2026-07-06 09:03:02"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4078273",
+          "shared_at": "2026-07-06 09:03:02"
+        }
+      }
     }
   ]
 }
