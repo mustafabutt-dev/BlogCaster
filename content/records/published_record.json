@@ -1352,6 +1352,28 @@
           "shared_at": "2026-07-06 09:03:02"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/html/dwg-to-pdf-conversion-in-java-backend-web-microservices",
+      "title": "DWG to PDF Conversion in Java: Backend Web Microservices",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7480170236282036224",
+          "shared_at": "2026-07-07 08:06:05"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1335848645320009",
+          "shared_at": "2026-07-07 08:06:05"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4086181",
+          "shared_at": "2026-07-07 08:06:05"
+        }
+      }
     }
   ]
 }
