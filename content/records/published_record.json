@@ -1391,6 +1391,23 @@
           "shared_at": "2026-07-07 08:16:29"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/comprehensive-json-to-html-conversion-tutorial-in-php",
+      "title": "Comprehensive JSON to HTML Conversion Tutorial in PHP",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7480898646922932226",
+          "shared_at": "2026-07-09 08:20:26"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4103344",
+          "shared_at": "2026-07-09 08:20:26"
+        }
+      }
     }
   ]
 }
