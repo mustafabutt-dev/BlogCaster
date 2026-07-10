@@ -141,12 +141,17 @@ async def check_token_expiry() -> dict:
 
 
 @mcp.tool()
-async def post_to_facebook(content: str, blog_url: str) -> dict:
+async def post_to_facebook(content: str, blog_url: str, image_url: str = "") -> dict:
     """Post formatted content to the configured Facebook Page.
 
+    With image_url set, publishes a photo post (image + caption) — used because
+    the blogs' broken og:image means Facebook's link-card scraper finds no
+    image. Without it, falls back to a link post and Facebook builds the card.
+
     Args:
-        content: The LLM-formatted Facebook post text
-        blog_url: The original blog URL (attached as a link)
+        content: The LLM-formatted Facebook post text (includes the blog URL)
+        blog_url: The original blog URL (attached as a link for link posts)
+        image_url: URL of the blog's featured image (enables photo-post mode)
 
     Returns:
         Dict with status ("success" or "failure"), post_id, and error fields.
@@ -164,23 +169,24 @@ async def post_to_facebook(content: str, blog_url: str) -> dict:
         logger.error(str(e))
         return {"status": "failure", "post_id": None, "error": str(e)}
 
+    if image_url:
+        endpoint = f"{GRAPH_API_BASE}/{page_id}/photos"
+        payload = {"url": image_url, "caption": content, "access_token": token}
+    else:
+        endpoint = f"{GRAPH_API_BASE}/{page_id}/feed"
+        payload = {"message": content, "link": blog_url, "access_token": token}
+
     try:
         async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
-            response = await client.post(
-                f"{GRAPH_API_BASE}/{page_id}/feed",
-                data={
-                    "message": content,
-                    "link": blog_url,
-                    "access_token": token,
-                },
-            )
+            response = await client.post(endpoint, data=payload)
 
             logger.debug(f"Facebook API response status: {response.status_code}")
             logger.debug(f"Facebook API response body: {response.text}")
 
             if response.status_code == 200:
                 data = response.json()
-                post_id = data.get("id", "")
+                # Photo posts return the photo id in "id" and the feed post id in "post_id"
+                post_id = data.get("post_id") or data.get("id", "")
                 logger.info(f"Facebook post successful: post_id={post_id}")
                 return {"status": "success", "post_id": post_id, "error": None}
 

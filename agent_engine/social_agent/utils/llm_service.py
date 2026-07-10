@@ -110,7 +110,15 @@ def _ensure_hashtags_and_url(text: str, blog_url: str) -> str:
     return text
 
 
-async def format_for_linkedin(title: str, summary: str, blog_url: str) -> LLMResult:
+def _remove_url_lines(text: str, blog_url: str) -> str:
+    """Drop lines containing the blog URL (used when a link card carries the URL)."""
+    lines = [line for line in text.splitlines() if blog_url not in line]
+    return "\n".join(lines).strip()
+
+
+async def format_for_linkedin(
+    title: str, summary: str, blog_url: str, include_url: bool = True
+) -> LLMResult:
     """Format blog post content into a professional LinkedIn post.
 
     Retries once if the model returns None content (common with reasoning
@@ -120,6 +128,8 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> LLMRes
         title: Blog post title
         summary: Blog post summary (HTML already stripped)
         blog_url: URL of the blog post
+        include_url: If False, strip the URL from the text — used when the
+            post carries an article card that already links to the blog
 
     Returns:
         LLMResult with formatted text and token usage
@@ -192,6 +202,9 @@ async def format_for_linkedin(title: str, summary: str, blog_url: str) -> LLMRes
 
     # Ensure hashtags and URL are always present
     result = _ensure_hashtags_and_url(result, blog_url)
+
+    if not include_url:
+        result = _remove_url_lines(result, blog_url)
 
     word_count = len(result.split())
     logger.info(f"LLM formatted post ({word_count} words)")

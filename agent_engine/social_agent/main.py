@@ -53,6 +53,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Run full pipeline (fetch + LLM format) but skip posting and record save",
     )
+    parser.add_argument(
+        "--no-metrics",
+        action="store_true",
+        help="Skip sending metrics to configured endpoints (for local testing)",
+    )
     return parser
 
 
@@ -116,7 +121,10 @@ def main() -> None:
             metrics.finish("error")
             raise
         finally:
-            await metrics.send()
+            if args.no_metrics:
+                logger.info("Metrics sending disabled by --no-metrics")
+            else:
+                await metrics.send()
             metrics.print_summary()
 
     async def _run_auto(platform: str, target: str, dry_run: bool = False) -> bool:
@@ -131,7 +139,10 @@ def main() -> None:
             metrics.finish("error")
             raise
         finally:
-            await metrics.send()
+            if args.no_metrics:
+                logger.info("Metrics sending disabled by --no-metrics")
+            else:
+                await metrics.send()
             metrics.print_summary()
 
     # Manual Mode

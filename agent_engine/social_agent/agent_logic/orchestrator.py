@@ -228,7 +228,8 @@ async def _format_for_platforms(
     if valid_platforms.get("linkedin"):
         logger.info("Formatting post for LinkedIn via LLM...")
         try:
-            formatted["linkedin"] = await format_for_linkedin(title, content, utm_urls.get("linkedin", blog_url))
+            # include_url=False: the LinkedIn post carries an article card that links to the blog
+            formatted["linkedin"] = await format_for_linkedin(title, content, utm_urls.get("linkedin", blog_url), include_url=False)
         except Exception as e:
             logger.error(f"LLM formatting for LinkedIn failed: {e}")
             print(f"Error formatting for LinkedIn: {e}")
@@ -264,10 +265,12 @@ async def _post_to_platforms(
     sessions: MCPSessions, formatted: dict, blog_url: str,
     blog_title: str = "", devto_org_id: int | None = None,
     utm_urls: dict | None = None,
+    blog_description: str = "", image_url: str = "",
 ) -> dict:
     """Post formatted content to each platform. Returns dict of platform → result dict.
 
     Values in `formatted` may be LLMResult objects or plain strings.
+    LinkedIn posts carry an article card (title/description/thumbnail) linking to the blog.
     """
     utm_urls = utm_urls or {}
     results = {}
@@ -275,7 +278,10 @@ async def _post_to_platforms(
     if "linkedin" in formatted:
         logger.info("Posting to LinkedIn...")
         text = formatted["linkedin"].text if isinstance(formatted["linkedin"], LLMResult) else formatted["linkedin"]
-        linkedin_result = await linkedin_post(sessions, text, utm_urls.get("linkedin", blog_url))
+        linkedin_result = await linkedin_post(
+            sessions, text, utm_urls.get("linkedin", blog_url),
+            article_title=blog_title, article_description=blog_description, image_url=image_url,
+        )
         results["linkedin"] = linkedin_result
         if linkedin_result.get("status") == "success":
             post_id = linkedin_result.get("post_id", "")
@@ -301,7 +307,7 @@ async def _post_to_platforms(
     if "facebook" in formatted:
         logger.info("Posting to Facebook...")
         text = formatted["facebook"].text if isinstance(formatted["facebook"], LLMResult) else formatted["facebook"]
-        facebook_result = await facebook_post(sessions, text, utm_urls.get("facebook", blog_url))
+        facebook_result = await facebook_post(sessions, text, utm_urls.get("facebook", blog_url), image_url=image_url)
         results["facebook"] = facebook_result
         if facebook_result.get("status") == "success":
             post_id = facebook_result.get("post_id", "")
@@ -316,7 +322,9 @@ async def _post_to_platforms(
         llm_result = formatted["devto"]
         body = llm_result.text if isinstance(llm_result, LLMResult) else llm_result
         tags = llm_result.tags if isinstance(llm_result, LLMResult) and llm_result.tags else []
-        devto_result = await devto_post(sessions, blog_title, body, utm_urls.get("devto", blog_url), tags, devto_org_id)
+        # canonical_url must be the clean blog URL — a UTM-tagged canonical would
+        # make search engines treat the tracking URL as the article's true location
+        devto_result = await devto_post(sessions, blog_title, body, blog_url, tags, devto_org_id, main_image=image_url)
         results["devto"] = devto_result
         if devto_result.get("status") == "success":
             post_id = devto_result.get("post_id", "")
@@ -395,7 +403,8 @@ async def run_manual_mode(
 
     title = post_data.get("title", "Unknown")
     content = post_data.get("content", "")
-    logger.info(f"Fetched post: \"{title}\" ({len(content)} chars)")
+    image_url = post_data.get("image_url", "")
+    logger.info(f"Fetched post: \"{title}\" ({len(content)} chars, image: {image_url or 'none'})")
 
     if metrics:
         metrics.items_discovered = 1
@@ -441,12 +450,19 @@ async def run_manual_mode(
         for plat, llm_result in formatted.items():
             text = llm_result.text if isinstance(llm_result, LLMResult) else llm_result
             print(f"\n[{plat.upper()}]\n{text}")
+            if plat == "linkedin":
+                print(f"[article card] {title} → {utm_urls.get('linkedin', url)} (thumbnail: {image_url or 'none'})")
+            if plat == "facebook":
+                print(f"[photo post] image: {image_url or 'none — will fall back to link post'}")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Manual Mode dry run complete for: {url}")
         return True
 
     # 6. Post to each platform independently
-    post_results = await _post_to_platforms(sessions, formatted, url, blog_title=title, devto_org_id=devto_org_id, utm_urls=utm_urls)
+    post_results = await _post_to_platforms(
+        sessions, formatted, url, blog_title=title, devto_org_id=devto_org_id, utm_urls=utm_urls,
+        blog_description=content[:200], image_url=image_url,
+    )
 
     # Track posting results in metrics
     if metrics:
@@ -570,6 +586,7 @@ async def run_auto_mode(
         unpublished_post = post
         unpublished_post["_fetched_content"] = fetched_content
         unpublished_post["_fetched_title"] = fetched_title
+        unpublished_post["_image_url"] = post_data.get("image_url", "")
         break
 
     if not unpublished_post:
@@ -581,6 +598,7 @@ async def run_auto_mode(
     title = unpublished_post.get("_fetched_title") or unpublished_post.get("title", "Unknown")
     summary = unpublished_post.get("summary", "")
     fetched_content = unpublished_post.get("_fetched_content", "")
+    image_url = unpublished_post.get("_image_url", "")
     logger.info(f"Skipped {skipped_published} already-published, {skipped_broken} broken URLs")
     logger.info(f"Selected unpublished post: \"{title}\" — {post_url}")
 
@@ -629,12 +647,19 @@ async def run_auto_mode(
         for plat, llm_result in formatted.items():
             text = llm_result.text if isinstance(llm_result, LLMResult) else llm_result
             print(f"\n[{plat.upper()}]\n{text}")
+            if plat == "linkedin":
+                print(f"[article card] {title} → {utm_urls.get('linkedin', post_url)} (thumbnail: {image_url or 'none'})")
+            if plat == "facebook":
+                print(f"[photo post] image: {image_url or 'none — will fall back to link post'}")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Auto Mode dry run complete for platform: {platform_id}")
         return True
 
     # 7. Post to each platform independently
-    post_results = await _post_to_platforms(sessions, formatted, post_url, blog_title=title, devto_org_id=devto_org_id, utm_urls=utm_urls)
+    post_results = await _post_to_platforms(
+        sessions, formatted, post_url, blog_title=title, devto_org_id=devto_org_id, utm_urls=utm_urls,
+        blog_description=content_for_llm[:200], image_url=image_url,
+    )
 
     # Track posting results in metrics
     if metrics:

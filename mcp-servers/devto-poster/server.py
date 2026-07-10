@@ -70,6 +70,7 @@ def post_to_devto(
     canonical_url: str,
     tags: list,
     org_id: int | None = None,
+    main_image: str = "",
 ) -> dict:
     """Publish a markdown article to Dev.to.
 
@@ -79,6 +80,7 @@ def post_to_devto(
         canonical_url: Original blog URL (set as canonical for SEO)
         tags: List of up to 4 tags (lowercase, no spaces)
         org_id: Dev.to organization ID to publish under (optional)
+        main_image: URL of the cover image shown in feeds and atop the article (optional)
 
     Returns:
         Dict with status ("success" or "failure"), post_id, url, and error fields.
@@ -102,8 +104,12 @@ def post_to_devto(
         "published": True,
         "tags": tags[:4],
     }
+    if canonical_url:
+        article_payload["canonical_url"] = canonical_url
     if org_id:
         article_payload["organization_id"] = org_id
+    if main_image:
+        article_payload["main_image"] = main_image
 
     try:
         resp = httpx.post(

@@ -221,11 +221,20 @@ async def linkedin_validate_token(sessions: MCPSessions) -> bool:
     return _parse_result(result) or False
 
 
-async def linkedin_post(sessions: MCPSessions, content: str, blog_url: str) -> dict:
-    """Post content to LinkedIn."""
+async def linkedin_post(
+    sessions: MCPSessions, content: str, blog_url: str,
+    article_title: str = "", article_description: str = "", image_url: str = "",
+) -> dict:
+    """Post content to LinkedIn. With article_title set, attaches a clickable article card."""
     result = await sessions.linkedin_poster.call_tool(
         "post_to_linkedin",
-        {"content": content, "blog_url": blog_url},
+        {
+            "content": content,
+            "blog_url": blog_url,
+            "article_title": article_title,
+            "article_description": article_description,
+            "image_url": image_url,
+        },
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "error": "Empty response"}
 
@@ -268,11 +277,11 @@ async def facebook_check_token_expiry(sessions: MCPSessions) -> dict:
     return _parse_result(result) or {"error": "Empty response", "expires_at": None, "days_remaining": None}
 
 
-async def facebook_post(sessions: MCPSessions, content: str, blog_url: str) -> dict:
-    """Post content to a Facebook Page."""
+async def facebook_post(sessions: MCPSessions, content: str, blog_url: str, image_url: str = "") -> dict:
+    """Post content to a Facebook Page. With image_url set, publishes a photo post."""
     result = await sessions.facebook_poster.call_tool(
         "post_to_facebook",
-        {"content": content, "blog_url": blog_url},
+        {"content": content, "blog_url": blog_url, "image_url": image_url},
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "error": "Empty response"}
 
@@ -294,6 +303,7 @@ async def devto_post(
     canonical_url: str,
     tags: list,
     org_id: int | None = None,
+    main_image: str = "",
 ) -> dict:
     """Publish an article to Dev.to."""
     result = await sessions.devto_poster.call_tool(
@@ -304,6 +314,7 @@ async def devto_post(
             "canonical_url": canonical_url,
             "tags": tags,
             "org_id": org_id,
+            "main_image": main_image,
         },
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}

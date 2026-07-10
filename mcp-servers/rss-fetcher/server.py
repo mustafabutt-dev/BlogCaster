@@ -14,6 +14,7 @@ import logging
 from datetime import datetime
 from time import mktime
 from typing import Any
+from urllib.parse import urljoin
 
 import feedparser
 import httpx
@@ -204,6 +205,7 @@ async def fetch_post_by_url(url: str) -> dict:
 
     # Extract content — try Hugo-standard selectors
     content = ""
+    content_element = None
     content_selectors = [
         ("article", {}),
         ("div", {"class": "content"}),
@@ -216,6 +218,7 @@ async def fetch_post_by_url(url: str) -> dict:
         element = soup.find(tag, attrs) if attrs else soup.find(tag)
         if element:
             content = element.get_text(separator=" ", strip=True)
+            content_element = element
             break
 
     # Fallback: use meta description
@@ -244,6 +247,37 @@ async def fetch_post_by_url(url: str) -> dict:
         if author_tag:
             author = author_tag.get_text(strip=True)
 
+    # Extract featured image: og:image / twitter:image, verified with a HEAD
+    # request — some Hugo themes emit og:image URLs that 404. Fall back to the
+    # first image inside the article body.
+    image_url = ""
+    candidates = []
+    og_image = soup.find("meta", attrs={"property": "og:image"})
+    if og_image and og_image.get("content"):
+        candidates.append(og_image["content"])
+    tw_image = soup.find("meta", attrs={"name": "twitter:image"})
+    if tw_image and tw_image.get("content"):
+        candidates.append(tw_image["content"])
+    if content_element:
+        body_img = content_element.find("img")
+        if body_img and body_img.get("src"):
+            candidates.append(urljoin(url, body_img["src"]))
+
+    async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
+        for candidate in candidates:
+            try:
+                head = await client.head(
+                    candidate,
+                    headers={"User-Agent": USER_AGENT},
+                    follow_redirects=True,
+                )
+                if head.status_code == 200 and head.headers.get("content-type", "").startswith("image/"):
+                    image_url = candidate
+                    break
+                logger.warning(f"Skipping broken featured image candidate: {candidate} (HTTP {head.status_code})")
+            except httpx.RequestError as e:
+                logger.warning(f"Error checking featured image candidate {candidate}: {e}")
+
     return {
         "status": "ok",
         "title": title,
@@ -251,6 +285,7 @@ async def fetch_post_by_url(url: str) -> dict:
         "published_date": published_date,
         "author": author,
         "url": url,
+        "image_url": image_url,
     }
 
 
