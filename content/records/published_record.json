@@ -1457,6 +1457,23 @@
           "shared_at": "2026-07-13 08:19:25"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/step-by-step-pdf-to-docx-document-conversion-tutorial-in-php",
+      "title": "Step-by-Step PDF to DOCX Document Conversion Tutorial in PHP",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7482691705335513089",
+          "shared_at": "2026-07-14 07:05:28"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4139379",
+          "shared_at": "2026-07-14 07:05:28"
+        }
+      }
     }
   ]
 }
