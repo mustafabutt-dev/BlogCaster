@@ -142,7 +142,7 @@ async def format_for_linkedin(
 
     logger.debug(f"LLM prompt: {user_prompt[:200]}...")
 
-    min_words = 80
+    min_words = 40
     max_attempts = 3
     result = None
     total_input_tokens = 0
@@ -197,7 +197,7 @@ async def format_for_linkedin(
     if not result:
         raise ValueError(
             f"LLM failed to produce a valid post after {max_attempts} attempts. "
-            "Output was None, empty, or under 80 words each time."
+            "Output was None, empty, or under 40 words each time."
         )
 
     # Ensure hashtags and URL are always present
@@ -241,7 +241,7 @@ async def format_for_facebook(title: str, summary: str, blog_url: str) -> LLMRes
 
     logger.debug(f"Facebook LLM prompt: {user_prompt[:200]}...")
 
-    min_words = 80
+    min_words = 20
     max_attempts = 3
     result = None
     total_input_tokens = 0
@@ -296,7 +296,7 @@ async def format_for_facebook(title: str, summary: str, blog_url: str) -> LLMRes
     if not result:
         raise ValueError(
             f"LLM failed to produce a valid Facebook post after {max_attempts} attempts. "
-            "Output was None, empty, or under 80 words each time."
+            "Output was None, empty, or under 20 words each time."
         )
 
     # Ensure hashtags and URL are always present

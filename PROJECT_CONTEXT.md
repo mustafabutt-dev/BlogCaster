@@ -111,6 +111,7 @@ Adding a new platform = new JSON entry only, no code change.
 | D-010 | LinkedIn posts carry an article card | Clickable link-preview card (title + description + thumbnail) drives more blog clicks than a raw URL line and guarantees the link is always visible. LinkedIn doesn't scrape URLs, so the thumbnail is uploaded via the Images API; og:image is HEAD-verified with fallback to the first in-article image (some Hugo themes emit broken og:image). The raw URL line is stripped from LinkedIn commentary since the card carries the (UTM-tagged) link |
 | D-011 | Facebook posts are photo posts when an image is available | The blogs' broken og:image means Facebook's link-card scraper finds no image, so link posts render without one. Photo posts (/photos with url+caption) show the verified featured image; the UTM blog URL stays in the caption as a clickable link. Falls back to a link post when no image is found. Proper long-term fix is repairing og:image in the Hugo theme (helps all platforms) |
 | D-012 | Dev.to articles carry main_image + clean canonical_url | Cover image (same verified featured image) shows in the Dev.to feed. Bug fix: canonical_url was accepted but never sent in the payload — all pre-2026-07-10 articles lack it (backfill possible via PUT /articles/{id}). Canonical uses the clean blog URL, never the UTM-tagged one, so search engines index the true article location; the teaser CTA link keeps UTM for analytics |
+| D-013 | Shorter social post targets: LinkedIn 60-100 words, Facebook 30-60 words | Since D-010/D-011 the article card/photo already carries title+image, so long commentary duplicated it. LinkedIn folds text after ~210 chars, Facebook after ~125 — hook must be front-loaded, and prompts now forbid restating the title. Validation floors in llm_service.py lowered to match (LinkedIn 40, Facebook 20; old 80-word floor would have rejected every valid Facebook post). Dev.to (400-600 words) and X unchanged |
 
 ## Current State
 - ALL STAGES COMPLETE
@@ -133,6 +134,7 @@ Adding a new platform = new JSON entry only, no code change.
 | Manual Mode duplicate check | N/A — correctly skipped | SUCCESS |
 
 ## Last Updated
+2026-07-16 — Shorter post lengths (D-013): LinkedIn 60-100 words, Facebook 30-60 words; prompts rewritten to front-load the hook and not restate the title; llm_service.py validation floors lowered (LinkedIn 40, Facebook 20). Dry-run verified on aspose for both platforms. NOT committed or pushed.
 2026-07-10 — LinkedIn article cards (D-010), Facebook photo posts (D-011), and Dev.to cover image + canonical fix (D-012) all live-tested OK. --no-metrics CLI flag added. All changes local only — NOT committed or pushed.
 X posting is ON HOLD: X API now demands paid credits, so X posts stopped (explains missing X entries in recent records). No X work planned until that changes.
 Open items: (1) optional per-platform default banner for imageless posts; (2) backfill canonical_url on ~40 old Dev.to articles
