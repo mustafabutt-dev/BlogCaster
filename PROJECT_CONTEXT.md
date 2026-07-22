@@ -41,6 +41,7 @@ Four FastMCP servers communicating via stdio, orchestrated by a central agent:
 3. **x-poster** — Posts formatted tweets to X (Twitter) via tweepy
 4. **devto-poster** — Publishes full markdown articles to Dev.to organization via Forem API
 5. **record-keeper** — Tracks published posts in JSON, prevents duplicates
+6. **gsc-fetcher** — Reads Google Search Console page performance (clicks/impressions/CTR/position) for the GSC-based selection strategy
 
 ## Directory Structure
 ```
@@ -95,6 +96,8 @@ Adding a new platform = new JSON entry only, no code change.
 | Stage 6 | Integration + Docs | COMPLETE |
 | Stage 7 | X (Twitter) Poster Integration | COMPLETE |
 | Stage 8 | Dev.to Poster Integration | COMPLETE |
+| Stage 9 | GSC Fetcher MCP Server | COMPLETE (live-tested against blog.aspose.cloud, 12,784 pages) |
+| Stage 10 | GSC Selection Strategy (orchestrator + CLI) | COMPLETE (live-tested; `--strategy latest` regression-checked) |
 
 ## Decision Log
 | ID | Decision | Rationale |
@@ -112,6 +115,8 @@ Adding a new platform = new JSON entry only, no code change.
 | D-011 | Facebook posts are photo posts when an image is available | The blogs' broken og:image means Facebook's link-card scraper finds no image, so link posts render without one. Photo posts (/photos with url+caption) show the verified featured image; the UTM blog URL stays in the caption as a clickable link. Falls back to a link post when no image is found. Proper long-term fix is repairing og:image in the Hugo theme (helps all platforms) |
 | D-012 | Dev.to articles carry main_image + clean canonical_url | Cover image (same verified featured image) shows in the Dev.to feed. Bug fix: canonical_url was accepted but never sent in the payload — all pre-2026-07-10 articles lack it (backfill possible via PUT /articles/{id}). Canonical uses the clean blog URL, never the UTM-tagged one, so search engines index the true article location; the teaser CTA link keeps UTM for analytics |
 | D-013 | Shorter social post targets: LinkedIn 60-100 words, Facebook 30-60 words | Since D-010/D-011 the article card/photo already carries title+image, so long commentary duplicated it. LinkedIn folds text after ~210 chars, Facebook after ~125 — hook must be front-loaded, and prompts now forbid restating the title. Validation floors in llm_service.py lowered to match (LinkedIn 40, Facebook 20; old 80-word floor would have rejected every valid Facebook post). Dev.to (400-600 words) and X unchanged |
+| D-014 | GSC Fetcher queries page-level stats via direct REST + google-auth (no google-api-python-client) | RSS only exposes ~10-20 latest posts, but a GSC-driven "pick underperforming content" strategy needs the site's entire indexed history, so RSS is bypassed entirely for this strategy — `fetch_post_by_url` (already used by Manual Mode) fetches content for whichever URL GSC surfaces, regardless of age. Querying with `dimensions: ["page"]` gets GSC's own per-page aggregation for free, avoiding manual query-level rollups. Reused the existing `sheet-reader` service account (already granted GSC property access) rather than provisioning a new one. Filtering (position/impressions/recency) and ranking are intentionally left to the orchestrator, not this server — mirrors the rss-fetcher/orchestrator split |
+| D-015 | GSC selection strategy excludes locale-prefixed paths (`/it/`, `/zh-tw/`, `/fa/`, etc.) | Live-testing surfaced an Italian-language post as the top GSC candidate — the blog indexes translated copies of posts under locale-prefixed paths, and GSC ranks them alongside the English original. The LLM correctly formatted the post in Italian, which is wrong for an English-audience LinkedIn/Facebook page. Fixed with a regex filter (`^[a-z]{2}(-[a-z]{2})?$` on the first path segment) validated against real `blog.aspose.cloud` data (~20 locale prefixes match, category paths like `pdf`/`cells`/`3d` don't) |
 
 ## Current State
 - ALL STAGES COMPLETE
@@ -134,6 +139,10 @@ Adding a new platform = new JSON entry only, no code change.
 | Manual Mode duplicate check | N/A — correctly skipped | SUCCESS |
 
 ## Last Updated
+2026-07-23 — Stage 10 complete: GSC selection strategy wired into the orchestrator (D-014, D-015). `--strategy gsc` on `--auto` ranks GSC pages by impressions/CTR/position, filters out already-published/too-new/non-English-locale pages, and feeds the same downstream pipeline as `--strategy latest` (which was regression-tested unchanged after the refactor). Live-tested end-to-end against blog.aspose.cloud, including catching and fixing the locale-path issue (D-015) mid-test.
+Adds new dependency `python-dateutil` (already present locally; not yet added to the CI workflows' pip install line — needed before `--strategy gsc` can run in GitHub Actions).
+Not yet built: workflow schedule change (2nd weekly run per active brand uses GSC strategy instead of latest) — everything currently must be triggered manually with `--strategy gsc`.
+All Stage 9/10 changes are uncommitted — user asked not to commit until explicitly told to.
 2026-07-16 — Shorter post lengths (D-013): LinkedIn 60-100 words, Facebook 30-60 words; prompts rewritten to front-load the hook and not restate the title; llm_service.py validation floors lowered (LinkedIn 40, Facebook 20). Dry-run verified on aspose for both platforms. NOT committed or pushed.
 2026-07-10 — LinkedIn article cards (D-010), Facebook photo posts (D-011), and Dev.to cover image + canonical fix (D-012) all live-tested OK. --no-metrics CLI flag added. All changes local only — NOT committed or pushed.
 X posting is ON HOLD: X API now demands paid credits, so X posts stopped (explains missing X entries in recent records). No X work planned until that changes.

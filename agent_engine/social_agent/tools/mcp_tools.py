@@ -59,6 +59,7 @@ class MCPSessions:
     x_poster: ClientSession
     facebook_poster: ClientSession
     devto_poster: ClientSession
+    gsc_fetcher: ClientSession
 
 
 @asynccontextmanager
@@ -121,6 +122,13 @@ async def open_mcp_sessions(platform: str = ""):
     devto_env["DEVTO_API_KEY"] = settings.DEVTO_API_KEY
     devto_params = StdioServerParameters(command=sys.executable, args=[devto_path], env=devto_env)
 
+    gsc_path = settings.resolve_path(settings.GSC_FETCHER_PATH)
+    gsc_env = os.environ.copy()
+    gsc_env["GSC_SERVICE_ACCOUNT_KEY_PATH"] = (
+        settings.resolve_path(settings.GSC_SERVICE_ACCOUNT_KEY_PATH) if settings.GSC_SERVICE_ACCOUNT_KEY_PATH else ""
+    )
+    gsc_params = StdioServerParameters(command=sys.executable, args=[gsc_path], env=gsc_env)
+
     logger.info(f"{_MAGENTA}{_BOLD}Starting RSS Fetcher MCP server...{_RESET}")
     async with stdio_client(rss_params) as (rss_read, rss_write):
         async with ClientSession(rss_read, rss_write) as rss_session:
@@ -151,15 +159,21 @@ async def open_mcp_sessions(platform: str = ""):
                                                 async with ClientSession(dt_read, dt_write) as devto_session:
                                                     await devto_session.initialize()
 
-                                                    logger.info("All MCP servers started")
-                                                    yield MCPSessions(
-                                                        rss_fetcher=rss_session,
-                                                        record_keeper=record_session,
-                                                        linkedin_poster=linkedin_session,
-                                                        x_poster=x_session,
-                                                        facebook_poster=facebook_session,
-                                                        devto_poster=devto_session,
-                                                    )
+                                                    logger.info(f"{_MAGENTA}{_BOLD}Starting GSC Fetcher MCP server...{_RESET}")
+                                                    async with stdio_client(gsc_params) as (gsc_read, gsc_write):
+                                                        async with ClientSession(gsc_read, gsc_write) as gsc_session:
+                                                            await gsc_session.initialize()
+
+                                                            logger.info("All MCP servers started")
+                                                            yield MCPSessions(
+                                                                rss_fetcher=rss_session,
+                                                                record_keeper=record_session,
+                                                                linkedin_poster=linkedin_session,
+                                                                x_poster=x_session,
+                                                                facebook_poster=facebook_session,
+                                                                devto_poster=devto_session,
+                                                                gsc_fetcher=gsc_session,
+                                                            )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -318,3 +332,16 @@ async def devto_post(
         },
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GSC Fetcher Tools
+# ─────────────────────────────────────────────────────────────────────────────
+
+async def gsc_get_page_stats(sessions: MCPSessions, site_url: str, days: int = 180, lag_days: int = 3) -> dict:
+    """Fetch per-page Search Console stats (clicks/impressions/CTR/position) for a site."""
+    result = await sessions.gsc_fetcher.call_tool(
+        "get_page_stats",
+        {"site_url": site_url, "days": days, "lag_days": lag_days},
+    )
+    return _parse_result(result) or {"error": "Empty response", "status": "failed"}
