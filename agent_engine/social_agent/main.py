@@ -49,6 +49,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Social media target: all, linkedin, x, facebook, or devto (default: all)",
     )
     parser.add_argument(
+        "--strategy",
+        type=str,
+        choices=["latest", "gsc"],
+        default="latest",
+        help="Auto Mode candidate selection: latest (newest unpublished post) or gsc (Search Console performance-based) (default: latest)",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Run full pipeline (fetch + LLM format) but skip posting and record save",
@@ -127,12 +134,12 @@ def main() -> None:
                 await metrics.send()
             metrics.print_summary()
 
-    async def _run_auto(platform: str, target: str, dry_run: bool = False) -> bool:
+    async def _run_auto(platform: str, target: str, dry_run: bool = False, strategy: str = "latest") -> bool:
         metrics = MetricsRecorder()
         metrics.start()
         try:
             async with open_mcp_sessions(platform) as sessions:
-                success = await run_auto_mode(sessions, platform, target=target, metrics=metrics, dry_run=dry_run)
+                success = await run_auto_mode(sessions, platform, target=target, metrics=metrics, dry_run=dry_run, strategy=strategy)
             metrics.finish("success" if success else "failure")
             return success
         except Exception:
@@ -162,9 +169,9 @@ def main() -> None:
 
     # Auto Mode
     if args.auto and args.platform:
-        logger.info(f"CLI: Auto Mode invoked for platform: {args.platform} (target: {args.target})")
+        logger.info(f"CLI: Auto Mode invoked for platform: {args.platform} (target: {args.target}, strategy: {args.strategy})")
         try:
-            success = asyncio.run(_run_auto(args.platform, args.target, dry_run=args.dry_run))
+            success = asyncio.run(_run_auto(args.platform, args.target, dry_run=args.dry_run, strategy=args.strategy))
             sys.exit(0 if success else 1)
         except KeyboardInterrupt:
             logger.info("Interrupted by user")

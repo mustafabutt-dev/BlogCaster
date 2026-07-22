@@ -10,8 +10,11 @@ same URL will only post to the platforms that haven't succeeded yet.
 
 import logging
 import os
-from datetime import date, datetime
+import re
+from datetime import date, datetime, timedelta
 from urllib.parse import urlparse, urlunparse
+
+from dateutil import parser as date_parser
 
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.tools.mcp_tools import (
@@ -21,6 +24,7 @@ from agent_engine.social_agent.tools.mcp_tools import (
     facebook_check_token_expiry,
     facebook_post,
     facebook_validate_token,
+    gsc_get_page_stats,
     linkedin_post,
     linkedin_validate_token,
     record_get_all,
@@ -338,6 +342,204 @@ async def _post_to_platforms(
     return results
 
 
+# GSC strategy tuning — see ADR-009/SPEC-007 and D-014/D-015 in PROJECT_CONTEXT.md
+GSC_LOOKBACK_DAYS = 180  # trailing 6-month window
+GSC_LAG_DAYS = 3  # GSC's most recent few days aren't fully finalized yet
+GSC_MAX_POSITION = 30  # below page ~3, a social nudge realistically can't help
+GSC_MIN_IMPRESSIONS = 20  # filters out one-off query noise
+GSC_CTR_CEILING = 0.03  # "underperforming" bucket: ranks fine, barely clicked
+GSC_MIN_AGE_DAYS = 28  # posts newer than this haven't accumulated reliable GSC data yet
+
+
+_LOCALE_PATH_RE = re.compile(r"^[a-z]{2}(-[a-z]{2})?$")
+
+
+def _is_non_primary_locale(url: str) -> bool:
+    """True if the URL's first path segment looks like a language code (e.g. /it/, /zh-tw/).
+
+    These blogs serve translated post copies under a locale-prefixed path
+    alongside the primary-language original. GSC indexes both, but the
+    social accounts only ever post in the primary language.
+    """
+    path = urlparse(url).path.strip("/")
+    if not path:
+        return False
+    first_segment = path.split("/")[0]
+    return bool(_LOCALE_PATH_RE.match(first_segment))
+
+
+def _rank_gsc_candidates(pages: list[dict]) -> list[dict]:
+    """Filter and rank GSC page rows.
+
+    Keeps only pages with a realistic shot at benefiting from promotion
+    (decent position, enough impressions to be signal not noise, primary
+    language), then prioritizes high-impression/low-CTR pages — visible in
+    search but underperforming on clicks — ahead of everything else.
+    """
+    filtered = [
+        p for p in pages
+        if p.get("position", 999) <= GSC_MAX_POSITION
+        and p.get("impressions", 0) >= GSC_MIN_IMPRESSIONS
+        and not _is_non_primary_locale(p["url"])
+    ]
+    underperforming = [p for p in filtered if p.get("ctr", 1.0) <= GSC_CTR_CEILING]
+    other = [p for p in filtered if p.get("ctr", 1.0) > GSC_CTR_CEILING]
+    underperforming.sort(key=lambda p: p.get("impressions", 0), reverse=True)
+    other.sort(key=lambda p: p.get("impressions", 0), reverse=True)
+    return underperforming + other
+
+
+def _parse_post_date(date_str: str) -> datetime | None:
+    """Parse a published_date string from fetch_post_by_url. Returns None if unparseable."""
+    if not date_str:
+        return None
+    try:
+        return date_parser.parse(date_str)
+    except (ValueError, OverflowError, TypeError):
+        return None
+
+
+async def _select_latest_candidate(sessions: MCPSessions, rss_url: str, platform_name: str) -> dict | None:
+    """Select the newest unpublished, reachable post from the RSS feed.
+
+    Returns dict with url, title, content, image_url — or None if nothing qualifies.
+    """
+    logger.info("Fetching all posts from RSS feed...")
+    posts = await rss_get_latest_posts(sessions, rss_url, limit=0)
+
+    if not posts:
+        logger.warning("No posts found in RSS feed")
+        print(f"No posts found in the RSS feed for {platform_name}.")
+        return None
+
+    logger.info(f"Fetched {len(posts)} posts from RSS feed")
+
+    logger.info("Loading published records...")
+    records = await record_get_all(sessions)
+    published_urls = {_normalize_url(r["blog_url"]) for r in records if r.get("blog_url")}
+    logger.info(f"Found {len(published_urls)} published records")
+
+    skipped_published = 0
+    skipped_broken = 0
+    for post in posts:
+        post_url = post.get("link", "")
+        if not post_url:
+            continue
+        if _normalize_url(post_url) in published_urls:
+            skipped_published += 1
+            continue
+
+        logger.info(f"Validating candidate URL: {post_url}")
+        post_data = await rss_fetch_post_by_url(sessions, post_url)
+
+        if post_data.get("status") == "failed":
+            logger.warning(f"Skipping unreachable URL: {post_url} — {post_data.get('error')}")
+            skipped_broken += 1
+            continue
+
+        fetched_title = post_data.get("title", "")
+        fetched_content = post_data.get("content", "")
+
+        if not fetched_title or fetched_title == "Unknown" or len(fetched_content) < 200:
+            logger.warning(
+                f"Skipping invalid page: {post_url} "
+                f"(title='{fetched_title[:50]}', content_len={len(fetched_content)})"
+            )
+            skipped_broken += 1
+            continue
+
+        logger.info(f"Skipped {skipped_published} already-published, {skipped_broken} broken URLs")
+        logger.info(f"Selected unpublished post: \"{fetched_title}\" — {post_url}")
+        return {
+            "url": post_url,
+            "title": fetched_title,
+            "content": fetched_content,
+            "image_url": post_data.get("image_url", ""),
+        }
+
+    logger.warning(f"No valid unpublished posts found (published: {skipped_published}, broken: {skipped_broken})")
+    print(f"No valid unpublished posts found from {platform_name}.")
+    return None
+
+
+async def _select_gsc_candidate(sessions: MCPSessions, platform: dict) -> dict | None:
+    """Select a candidate using Search Console performance data.
+
+    Ranks pages by impressions/CTR/position (see _rank_gsc_candidates), then
+    walks the ranked list looking for the first one that's reachable, has real
+    content, isn't already published, and isn't too new for GSC to have judged
+    fairly yet. Content is fetched directly by URL — this strategy intentionally
+    does not depend on the RSS feed, since RSS only covers the ~10-20 latest
+    posts and GSC can surface pages from anywhere in the site's history.
+
+    Returns dict with url, title, content, image_url — or None if nothing qualifies.
+    """
+    site_url = platform["url"].rstrip("/") + "/"
+    logger.info(f"Querying GSC for {site_url} (last {GSC_LOOKBACK_DAYS} days, {GSC_LAG_DAYS}-day lag)...")
+    stats = await gsc_get_page_stats(sessions, site_url, days=GSC_LOOKBACK_DAYS, lag_days=GSC_LAG_DAYS)
+
+    if stats.get("status") != "ok":
+        logger.error(f"GSC fetch failed for {site_url}: {stats.get('error')}")
+        print(f"Error fetching GSC data for {platform['name']}: {stats.get('error')}")
+        return None
+
+    logger.info(f"GSC returned {stats.get('row_count', 0)} pages")
+
+    logger.info("Loading published records...")
+    records = await record_get_all(sessions)
+    published_urls = {_normalize_url(r["blog_url"]) for r in records if r.get("blog_url")}
+
+    ranked = _rank_gsc_candidates(stats.get("pages", []))
+    logger.info(f"{len(ranked)} pages pass position/impression filters")
+
+    age_cutoff = datetime.now() - timedelta(days=GSC_MIN_AGE_DAYS)
+    skipped_published = 0
+    skipped_too_new = 0
+    skipped_broken = 0
+
+    for page in ranked:
+        page_url = page["url"]
+        if _normalize_url(page_url) in published_urls:
+            skipped_published += 1
+            continue
+
+        post_data = await rss_fetch_post_by_url(sessions, page_url)
+        if post_data.get("status") == "failed":
+            skipped_broken += 1
+            continue
+
+        title = post_data.get("title", "")
+        content = post_data.get("content", "")
+        if not title or title == "Unknown" or len(content) < 200:
+            skipped_broken += 1
+            continue
+
+        published_at = _parse_post_date(post_data.get("published_date", ""))
+        if published_at:
+            compare_at = published_at.replace(tzinfo=None) if published_at.tzinfo else published_at
+            if compare_at > age_cutoff:
+                skipped_too_new += 1
+                continue
+
+        logger.info(
+            f"GSC candidate selected: {page_url} "
+            f"(impressions={page['impressions']}, ctr={page['ctr']:.3f}, position={page['position']:.1f})"
+        )
+        return {
+            "url": page_url,
+            "title": title,
+            "content": content,
+            "image_url": post_data.get("image_url", ""),
+        }
+
+    logger.warning(
+        f"No valid GSC candidate found (published={skipped_published}, "
+        f"too_new={skipped_too_new}, broken={skipped_broken})"
+    )
+    print(f"No valid GSC candidate found for {platform['name']}.")
+    return None
+
+
 async def run_manual_mode(
     sessions: MCPSessions, url: str, target: str = "all", metrics: MetricsRecorder | None = None,
     dry_run: bool = False,
@@ -489,13 +691,13 @@ async def run_manual_mode(
 
 async def run_auto_mode(
     sessions: MCPSessions, platform_id: str, target: str = "all", metrics: MetricsRecorder | None = None,
-    dry_run: bool = False,
+    dry_run: bool = False, strategy: str = "latest",
 ) -> bool:
-    """Execute Auto Mode: find and post the latest unpublished blog for a platform.
+    """Execute Auto Mode: find and post an unpublished blog for a platform.
 
-    Fetches ALL posts from the RSS feed and ALL published records, then
-    does in-memory matching to find the first unpublished post. Any URL
-    with an existing record is skipped (use --url to retry failed platforms).
+    Two selection strategies:
+    - "latest" (default): newest unpublished post from the RSS feed
+    - "gsc": post ranked by Search Console performance (see _select_gsc_candidate)
 
     Args:
         sessions: Active MCP server sessions
@@ -503,11 +705,12 @@ async def run_auto_mode(
         target: Social media target — "all", "linkedin", or "x"
         metrics: Optional MetricsRecorder to track run metrics
         dry_run: If True, skip posting and record save — just show formatted text
+        strategy: Candidate selection strategy — "latest" or "gsc"
 
     Returns:
         True if at least one platform posted successfully, False otherwise
     """
-    logger.info(f"Starting Auto Mode for platform: {platform_id}")
+    logger.info(f"Starting Auto Mode for platform: {platform_id} (strategy: {strategy})")
 
     # 1. Load registry and validate platform
     registry_path = settings.resolve_path(settings.REGISTRY_PATH)
@@ -534,73 +737,19 @@ async def run_auto_mode(
         metrics.product = platform_id
         metrics.website = urlparse(platform.get("url", "")).netloc
 
-    # 2. Fetch ALL posts from RSS feed (limit=0 means no limit)
-    logger.info("Fetching all posts from RSS feed...")
-    posts = await rss_get_latest_posts(sessions, rss_url, limit=0)
+    # 2-4. Select a candidate post using the requested strategy
+    if strategy == "gsc":
+        candidate = await _select_gsc_candidate(sessions, platform)
+    else:
+        candidate = await _select_latest_candidate(sessions, rss_url, platform["name"])
 
-    if not posts:
-        logger.warning("No posts found in RSS feed")
-        print(f"No posts found in the RSS feed for {platform['name']}.")
+    if not candidate:
         return False
 
-    logger.info(f"Fetched {len(posts)} posts from RSS feed")
-
-    # 3. Load all published records and build a set of normalized URLs
-    logger.info("Loading published records...")
-    records = await record_get_all(sessions)
-    published_urls = {_normalize_url(r["blog_url"]) for r in records if r.get("blog_url")}
-    logger.info(f"Found {len(published_urls)} published records")
-
-    # 4. Find first unpublished post with a valid URL (newest first)
-    unpublished_post = None
-    skipped_published = 0
-    skipped_broken = 0
-    for post in posts:
-        post_url = post.get("link", "")
-        if not post_url:
-            continue
-        if _normalize_url(post_url) in published_urls:
-            skipped_published += 1
-            continue
-
-        # Validate URL points to a real blog post (not a listing/404 page)
-        logger.info(f"Validating candidate URL: {post_url}")
-        post_data = await rss_fetch_post_by_url(sessions, post_url)
-
-        if post_data.get("status") == "failed":
-            logger.warning(f"Skipping unreachable URL: {post_url} — {post_data.get('error')}")
-            skipped_broken += 1
-            continue
-
-        fetched_title = post_data.get("title", "")
-        fetched_content = post_data.get("content", "")
-
-        if not fetched_title or fetched_title == "Unknown" or len(fetched_content) < 200:
-            logger.warning(
-                f"Skipping invalid page: {post_url} "
-                f"(title='{fetched_title[:50]}', content_len={len(fetched_content)})"
-            )
-            skipped_broken += 1
-            continue
-
-        unpublished_post = post
-        unpublished_post["_fetched_content"] = fetched_content
-        unpublished_post["_fetched_title"] = fetched_title
-        unpublished_post["_image_url"] = post_data.get("image_url", "")
-        break
-
-    if not unpublished_post:
-        logger.warning(f"No valid unpublished posts found (published: {skipped_published}, broken: {skipped_broken})")
-        print(f"No valid unpublished posts found from {platform['name']}.")
-        return False
-
-    post_url = unpublished_post["link"]
-    title = unpublished_post.get("_fetched_title") or unpublished_post.get("title", "Unknown")
-    summary = unpublished_post.get("summary", "")
-    fetched_content = unpublished_post.get("_fetched_content", "")
-    image_url = unpublished_post.get("_image_url", "")
-    logger.info(f"Skipped {skipped_published} already-published, {skipped_broken} broken URLs")
-    logger.info(f"Selected unpublished post: \"{title}\" — {post_url}")
+    post_url = candidate["url"]
+    title = candidate["title"]
+    fetched_content = candidate["content"]
+    image_url = candidate["image_url"]
 
     if metrics:
         metrics.items_discovered = 1
@@ -622,8 +771,8 @@ async def run_auto_mode(
     if utm_urls:
         logger.info(f"UTM tracking enabled for platform '{platform_id}' (campaign={utm_campaign})")
 
-    # 6. Format via LLM for each valid platform (prefer fetched page content over RSS summary)
-    content_for_llm = fetched_content if fetched_content else summary
+    # 6. Format via LLM for each valid platform
+    content_for_llm = fetched_content
     formatted = await _format_for_platforms(valid_platforms, title, content_for_llm, post_url, utm_urls=utm_urls)
 
     if not formatted:
