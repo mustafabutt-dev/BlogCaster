@@ -98,6 +98,7 @@ Adding a new platform = new JSON entry only, no code change.
 | Stage 8 | Dev.to Poster Integration | COMPLETE |
 | Stage 9 | GSC Fetcher MCP Server | COMPLETE (live-tested against blog.aspose.cloud, 12,784 pages) |
 | Stage 10 | GSC Selection Strategy (orchestrator + CLI) | COMPLETE (live-tested; `--strategy latest` regression-checked) |
+| Stage 11 | Workflow scheduling — 2nd weekly run per brand uses GSC strategy | COMPLETE (logic simulated locally; not yet observed on a real scheduled trigger) |
 
 ## Decision Log
 | ID | Decision | Rationale |
@@ -143,6 +144,7 @@ Adding a new platform = new JSON entry only, no code change.
 Adds new dependency `python-dateutil` (already present locally; not yet added to the CI workflows' pip install line — needed before `--strategy gsc` can run in GitHub Actions).
 Not yet built: workflow schedule change (2nd weekly run per active brand uses GSC strategy instead of latest) — everything currently must be triggered manually with `--strategy gsc`.
 
+2026-07-23 (later still) — Stage 11 complete: blogcaster.yml and blogcaster-groupdocs-cloud.yml each split their single schedule cron into two entries (aspose-cloud: Mon=latest/Fri=gsc; groupdocs-cloud: Tue=latest/Thu=gsc), with a new "Resolve strategy" step that reads github.event.schedule to pick the strategy for scheduled runs, or a new `strategy` workflow_dispatch input for manual runs (default latest). Bash conditional logic simulated locally for all four trigger scenarios (both scheduled crons, manual dispatch with/without explicit strategy) — all resolved correctly. Not yet observed on an actual GitHub Actions trigger since the next real Friday/Thursday GSC-scheduled run hasn't happened yet.
 2026-07-23 (later) — INCIDENT: the scheduled groupdocs-cloud workflow failed in production (`ModuleNotFoundError: No module named 'dateutil'`) because the Stage 10 commit added a top-level `from dateutil import parser` in orchestrator.py without adding `python-dateutil` to the CI pip install line. Worse: since `open_mcp_sessions` always starts the gsc-fetcher subprocess regardless of strategy, and that server imports `google-auth` at module level, EVERY scheduled run (not just --strategy gsc ones) was broken, not just groupdocs-cloud's. Fixed by adding `google-auth python-dateutil` to the pip install line in both blogcaster.yml and blogcaster-groupdocs-cloud.yml. Verified by reproducing the exact failure in an isolated venv matching the old CI install line, then confirming both orchestrator.py and gsc-fetcher/server.py import cleanly with the fix. Not yet committed/pushed.
 2026-07-16 — Shorter post lengths (D-013): LinkedIn 60-100 words, Facebook 30-60 words; prompts rewritten to front-load the hook and not restate the title; llm_service.py validation floors lowered (LinkedIn 40, Facebook 20). Dry-run verified on aspose for both platforms. NOT committed or pushed.
 2026-07-10 — LinkedIn article cards (D-010), Facebook photo posts (D-011), and Dev.to cover image + canonical fix (D-012) all live-tested OK. --no-metrics CLI flag added. All changes local only — NOT committed or pushed.

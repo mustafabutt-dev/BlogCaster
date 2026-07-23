@@ -39,10 +39,19 @@ on:
         description: "Blog post URL (for manual mode)"
         required: false
         type: string
+      strategy:
+        description: "Auto Mode candidate selection strategy"
+        required: false
+        type: choice
+        options:
+          - latest
+          - gsc
+        default: latest
 
-  # Scheduled: Tuesday and Thursday at 10:00 AM PKT (5:00 AM UTC)
+  # Scheduled: Tuesday (latest strategy) and Thursday (GSC strategy) at 10:00 AM PKT (5:00 AM UTC)
   schedule:
-    - cron: "0 5 * * 2,4"
+    - cron: "0 5 * * 2"
+    - cron: "0 5 * * 4"
 
 jobs:
   post:
@@ -76,6 +85,17 @@ jobs:
           LOWER=$(echo "$RAW_TARGET" | tr '[:upper:]' '[:lower:]')
           echo "value=$(echo "$LOWER" | tr -d '.')" >> "$GITHUB_OUTPUT"
 
+      - name: Resolve strategy
+        id: strategy
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "value=${{ inputs.strategy || 'latest' }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" == "0 5 * * 4" ]; then
+            echo "value=gsc" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=latest" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run BlogCaster (Auto Mode)
         if: ${{ github.event_name == 'schedule' || inputs.mode == 'auto' }}
         env:
@@ -97,8 +117,9 @@ jobs:
         run: |
           PLATFORM="${{ inputs.platform || 'groupdocs-cloud' }}"
           TARGET="${{ steps.target.outputs.value }}"
-          echo "Running Auto Mode for platform: $PLATFORM (target: $TARGET)"
-          python -m agent_engine.social_agent.main --auto --platform "$PLATFORM" --target "$TARGET"
+          STRATEGY="${{ steps.strategy.outputs.value }}"
+          echo "Running Auto Mode for platform: $PLATFORM (target: $TARGET, strategy: $STRATEGY)"
+          python -m agent_engine.social_agent.main --auto --platform "$PLATFORM" --target "$TARGET" --strategy "$STRATEGY"
 
       - name: Run BlogCaster (Manual Mode)
         if: ${{ inputs.mode == 'manual' && inputs.url != '' }}
