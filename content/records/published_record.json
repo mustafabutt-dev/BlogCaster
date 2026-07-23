@@ -1576,6 +1576,23 @@
           "shared_at": "2026-07-23 12:05:22"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/parser/extract-text-from-html-using-csharp",
+      "title": "Extract Text from HTML in C# .NET | Best HTML Text Extraction API",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7485990370565316608",
+          "shared_at": "2026-07-23 09:33:08"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4213518",
+          "shared_at": "2026-07-23 09:33:08"
+        }
+      }
     }
   ]
 }
