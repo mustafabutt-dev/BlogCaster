@@ -48,12 +48,10 @@ on:
           - gsc
         default: latest
 
-  # Scheduled: Monday (latest strategy) at 10:00 AM PKT (5:00 AM UTC)
-  # Friday (GSC strategy) TEMPORARILY moved to 08:33 UTC 2026-07-24 to test the
-  # GSC service account key fix — revert to "0 5 * * 5" after this test run.
+  # Scheduled: Monday (latest strategy) and Friday (GSC strategy) at 10:00 AM PKT (5:00 AM UTC)
   schedule:
     - cron: "0 5 * * 1"
-    - cron: "33 8 * * 5"
+    - cron: "0 5 * * 5"
 
 jobs:
   post:
@@ -97,7 +95,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "value=${{ inputs.strategy || 'latest' }}" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event.schedule }}" == "33 8 * * 5" ]; then
+          elif [ "${{ github.event.schedule }}" == "0 5 * * 5" ]; then
             echo "value=gsc" >> "$GITHUB_OUTPUT"
           else
             echo "value=latest" >> "$GITHUB_OUTPUT"
