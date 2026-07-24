@@ -77,6 +77,11 @@ jobs:
       - name: Ensure records directory exists
         run: mkdir -p content/records
 
+      - name: Create Google service account key
+        run: |
+          mkdir -p keys
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > keys/gsc-service-account.json
+
       - name: Resolve target
         id: target
         run: |
@@ -99,6 +104,7 @@ jobs:
       - name: Run BlogCaster (Auto Mode)
         if: ${{ github.event_name == 'schedule' || inputs.mode == 'auto' }}
         env:
+          GSC_SERVICE_ACCOUNT_KEY_PATH: keys/gsc-service-account.json
           PROFESSIONALIZE_BASE_URL: ${{ secrets.PROFESSIONALIZE_BASE_URL }}
           PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
           PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}

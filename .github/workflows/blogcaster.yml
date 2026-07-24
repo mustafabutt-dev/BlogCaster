@@ -48,10 +48,12 @@ on:
           - gsc
         default: latest
 
-  # Scheduled: Monday (latest strategy) and Friday (GSC strategy) at 10:00 AM PKT (5:00 AM UTC)
+  # Scheduled: Monday (latest strategy) at 10:00 AM PKT (5:00 AM UTC)
+  # Friday (GSC strategy) TEMPORARILY moved to 08:33 UTC 2026-07-24 to test the
+  # GSC service account key fix — revert to "0 5 * * 5" after this test run.
   schedule:
     - cron: "0 5 * * 1"
-    - cron: "0 5 * * 5"
+    - cron: "33 8 * * 5"
 
 jobs:
   post:
@@ -77,6 +79,11 @@ jobs:
       - name: Ensure records directory exists
         run: mkdir -p content/records
 
+      - name: Create Google service account key
+        run: |
+          mkdir -p keys
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > keys/gsc-service-account.json
+
       - name: Resolve target
         id: target
         run: |
@@ -90,7 +97,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "value=${{ inputs.strategy || 'latest' }}" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event.schedule }}" == "0 5 * * 5" ]; then
+          elif [ "${{ github.event.schedule }}" == "33 8 * * 5" ]; then
             echo "value=gsc" >> "$GITHUB_OUTPUT"
           else
             echo "value=latest" >> "$GITHUB_OUTPUT"
@@ -99,6 +106,7 @@ jobs:
       - name: Run BlogCaster (Auto Mode)
         if: ${{ github.event_name == 'schedule' || inputs.mode == 'auto' }}
         env:
+          GSC_SERVICE_ACCOUNT_KEY_PATH: keys/gsc-service-account.json
           PROFESSIONALIZE_BASE_URL: ${{ secrets.PROFESSIONALIZE_BASE_URL }}
           PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
           PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}
