@@ -1593,6 +1593,28 @@
           "shared_at": "2026-07-23 09:33:08"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/imaging/grayscale-image-in-java",
+      "title": "Grayscale Image in Java. Convert Image into Black and White",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7486343011673477120",
+          "shared_at": "2026-07-24 08:54:37"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1349278740643666",
+          "shared_at": "2026-07-24 08:54:37"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4222026",
+          "shared_at": "2026-07-24 08:54:37"
+        }
+      }
     }
   ]
 }
