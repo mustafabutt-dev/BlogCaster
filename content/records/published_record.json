@@ -1615,6 +1615,23 @@
           "shared_at": "2026-07-24 08:54:37"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/step-by-step-html-to-docx-conversion-tutorial-in-nodejs",
+      "title": "Step-by-Step HTML to DOCX Conversion Tutorial in Node.JS",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7487793274741538816",
+          "shared_at": "2026-07-28 08:57:14"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4252142",
+          "shared_at": "2026-07-28 08:57:14"
+        }
+      }
     }
   ]
 }
