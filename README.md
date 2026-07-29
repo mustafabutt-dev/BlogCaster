@@ -140,6 +140,34 @@ LINKEDIN_TOKEN_EXPIRES_AT=2026-07-19
 
 The agent prints a console warning when the token is within 7 days of expiring, so you can renew proactively.
 
+## Facebook Token Auto-Renewal
+
+Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for both the Aspose.Cloud and GroupDocs.Cloud pages.
+
+### How it works
+
+1. `scripts/renew_facebook_tokens.py` exchanges the stored long-lived user token for a fresh one (`fb_exchange_token` grant) for each brand.
+2. It re-derives that brand's Page Access Token from the refreshed user token.
+3. The workflow pushes both refreshed values back into the repo's GitHub Actions secrets via `gh secret set`, using a dedicated PAT.
+
+### One-time setup
+
+Each brand (Aspose.Cloud, GroupDocs.Cloud) has its **own** Facebook App, so credentials are not shared between them.
+
+| Variable | Where to get it |
+|---|---|
+| `FACEBOOK_APP_ID` / `FACEBOOK_APP_SECRET` | [Facebook Developer Apps](https://developers.facebook.com/apps) → select the app tied to the Aspose.Cloud page → Settings → Basic |
+| `FACEBOOK_USER_ACCESS_TOKEN` | [Graph API Explorer](https://developers.facebook.com/tools/explorer/) → select that same app → Generate Access Token → grant `pages_read_engagement`, `pages_manage_posts` (this seeds the automation; only needs to be pasted in once) |
+| `FACEBOOK_GROUPDOCS_APP_ID` / `FACEBOOK_GROUPDOCS_APP_SECRET` | Same steps, but select the app tied to the GroupDocs.Cloud page |
+| `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN` | Same steps, with the GroupDocs app selected in Graph API Explorer |
+| `FACEBOOK_TOKEN_RENEWAL_PAT` | A **fine-grained GitHub PAT**, scoped to this repo only, with the "Secrets" repository permission set to Read and write. Lets the workflow call `gh secret set`. |
+
+Add all of the above to GitHub repo **Settings → Secrets and variables → Actions** (the first six also belong in your local `.env` if you want to test the script locally).
+
+After that, renewal is fully automatic — the workflow keeps overwriting `FACEBOOK_USER_ACCESS_TOKEN`, `FACEBOOK_PAGE_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN`, and `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN` with fresh values each month, so you should never need to manually regenerate a Facebook token again unless the automation itself fails (e.g. an app credential is revoked).
+
+To test manually: **Actions → Facebook Token Renewal → Run workflow**.
+
 ## Facebook Page Setup
 
 Facebook requires a **Page Access Token** (not a User Access Token) to post to a Page. Follow these steps:

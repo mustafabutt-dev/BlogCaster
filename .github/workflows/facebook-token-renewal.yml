@@ -1,0 +1,51 @@
+name: Facebook Token Renewal
+
+on:
+  workflow_dispatch: {}
+
+  # Runs well inside the ~60-day expiry window so a missed/failed run
+  # still leaves time to fix things before pages actually go stale.
+  schedule:
+    - cron: "0 6 1 * *" # 1st of every month, 6:00 AM UTC
+
+jobs:
+  renew:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install httpx
+
+      - name: Renew Facebook tokens
+        id: renew
+        env:
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
+          FACEBOOK_USER_ACCESS_TOKEN: ${{ secrets.FACEBOOK_USER_ACCESS_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_GROUPDOCS_APP_ID: ${{ secrets.FACEBOOK_GROUPDOCS_APP_ID }}
+          FACEBOOK_GROUPDOCS_APP_SECRET: ${{ secrets.FACEBOOK_GROUPDOCS_APP_SECRET }}
+          FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN: ${{ secrets.FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN }}
+          FACEBOOK_GROUPDOCS_PAGE_ID: ${{ secrets.FACEBOOK_GROUPDOCS_PAGE_ID }}
+        run: python scripts/renew_facebook_tokens.py
+
+      - name: Write refreshed tokens to repo secrets
+        env:
+          GH_TOKEN: ${{ secrets.FACEBOOK_TOKEN_RENEWAL_PAT }}
+          ASPOSE_USER_TOKEN: ${{ steps.renew.outputs.aspose_user_token }}
+          ASPOSE_PAGE_TOKEN: ${{ steps.renew.outputs.aspose_page_token }}
+          GROUPDOCS_USER_TOKEN: ${{ steps.renew.outputs.groupdocs_user_token }}
+          GROUPDOCS_PAGE_TOKEN: ${{ steps.renew.outputs.groupdocs_page_token }}
+        run: |
+          gh secret set FACEBOOK_USER_ACCESS_TOKEN --body "$ASPOSE_USER_TOKEN"
+          gh secret set FACEBOOK_PAGE_ACCESS_TOKEN --body "$ASPOSE_PAGE_TOKEN"
+          gh secret set FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN --body "$GROUPDOCS_USER_TOKEN"
+          gh secret set FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN --body "$GROUPDOCS_PAGE_TOKEN"
