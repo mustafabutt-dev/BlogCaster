@@ -1,0 +1,66 @@
+name: LinkedIn Token Expiry Alert
+
+on:
+  workflow_dispatch: {}
+
+  # Daily — cheap check, no external API calls, just date math.
+  schedule:
+    - cron: "0 8 * * *" # 8:00 AM UTC daily
+
+permissions:
+  issues: write
+
+jobs:
+  check-expiry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check LinkedIn token expiry and manage alert issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPIRES_AT: ${{ vars.LINKEDIN_TOKEN_EXPIRES_AT }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+
+          if [ -z "$EXPIRES_AT" ]; then
+            echo "LINKEDIN_TOKEN_EXPIRES_AT repo variable is not set — skipping check."
+            exit 0
+          fi
+
+          TODAY_EPOCH=$(date -u -d "today" +%s)
+          EXPIRES_EPOCH=$(date -u -d "$EXPIRES_AT" +%s)
+          DAYS_REMAINING=$(( (EXPIRES_EPOCH - TODAY_EPOCH) / 86400 ))
+
+          echo "LinkedIn token expires $EXPIRES_AT ($DAYS_REMAINING days remaining)"
+
+          ISSUE_TITLE="LinkedIn token expiring soon"
+          EXISTING_ISSUE=$(gh issue list --repo "$REPO" --search "in:title \"$ISSUE_TITLE\"" --state open --json number --jq '.[0].number')
+
+          if [ "$DAYS_REMAINING" -le 7 ]; then
+            if [ -z "$EXISTING_ISSUE" ]; then
+              gh issue create --repo "$REPO" \
+                --title "$ISSUE_TITLE" \
+                --label "linkedin-token" \
+                --body "The LinkedIn OAuth access token expires on **$EXPIRES_AT** ($DAYS_REMAINING days remaining).
+
+          Renewal is manual (LinkedIn does not support automated refresh for this token type). Steps:
+
+          1. Go to [LinkedIn Developer Apps](https://www.linkedin.com/developers/apps) → your app → Auth tab → OAuth 2.0 tools → Generate token
+          2. Scopes: \`w_member_social\`, \`openid\`, \`profile\` (works on Safari; may fail on Chrome)
+          3. Update \`LINKEDIN_ACCESS_TOKEN\` in \`.env\` (local) and in GitHub repo Secrets
+          4. Update the \`LINKEDIN_TOKEN_EXPIRES_AT\` repo **variable** to the new expiry (today + 60 days)
+          5. Close this issue
+
+          See README \"LinkedIn Token Renewal\" section for full details."
+              echo "Opened alert issue."
+            else
+              echo "Alert issue #$EXISTING_ISSUE already open — leaving as is."
+            fi
+          else
+            if [ -n "$EXISTING_ISSUE" ]; then
+              gh issue close "$EXISTING_ISSUE" --repo "$REPO" --comment "Token renewed — expiry is now $EXPIRES_AT ($DAYS_REMAINING days remaining). Closing."
+              echo "Closed alert issue #$EXISTING_ISSUE (token was renewed)."
+            else
+              echo "Token healthy, no action needed."
+            fi
+          fi
