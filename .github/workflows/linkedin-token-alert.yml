@@ -3,9 +3,9 @@ name: LinkedIn Token Expiry Alert
 on:
   workflow_dispatch: {}
 
-  # Daily — cheap check, no external API calls, just date math.
+  # Every 2 weeks (1st and 15th) — cheap check, no external API calls, just date math.
   schedule:
-    - cron: "0 8 * * *" # 8:00 AM UTC daily
+    - cron: "0 8 1,15 * *" # 8:00 AM UTC on the 1st and 15th
 
 permissions:
   issues: write
@@ -36,7 +36,7 @@ jobs:
           ISSUE_TITLE="LinkedIn token expiring soon"
           EXISTING_ISSUE=$(gh issue list --repo "$REPO" --search "in:title \"$ISSUE_TITLE\"" --state open --json number --jq '.[0].number')
 
-          if [ "$DAYS_REMAINING" -le 7 ]; then
+          if [ "$DAYS_REMAINING" -le 14 ]; then
             if [ -z "$EXISTING_ISSUE" ]; then
               gh issue create --repo "$REPO" \
                 --title "$ISSUE_TITLE" \
