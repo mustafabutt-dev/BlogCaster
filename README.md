@@ -140,6 +140,12 @@ LINKEDIN_TOKEN_EXPIRES_AT=2026-07-19
 
 The agent prints a console warning when the token is within 7 days of expiring, so you can renew proactively.
 
+### Expiry Alert (GitHub Issue)
+
+Since LinkedIn doesn't support automated token renewal (unlike Facebook — see below), a daily scheduled workflow (`.github/workflows/linkedin-token-alert.yml`) checks the `LINKEDIN_TOKEN_EXPIRES_AT` repo **variable** (Settings → Secrets and variables → Actions → **Variables** tab, not Secrets — it's just a date) and automatically opens a GitHub issue titled "LinkedIn token expiring soon" once 7 days or fewer remain. The issue includes the renewal steps above and auto-closes itself once you update the variable to a date more than 7 days out.
+
+Remember: after renewing the token, update **both** `LINKEDIN_ACCESS_TOKEN` (secret) and `LINKEDIN_TOKEN_EXPIRES_AT` (variable) — the alert only clears once the variable reflects the new expiry.
+
 ## Facebook Token Auto-Renewal
 
 Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for both the Aspose.Cloud and GroupDocs.Cloud pages.
