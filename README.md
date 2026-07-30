@@ -59,7 +59,7 @@ cd socialAgent
 ### 2. Install dependencies
 
 ```bash
-pip install mcp feedparser httpx beautifulsoup4 aiofiles pydantic-settings openai tweepy
+pip install "mcp<2.0.0" feedparser httpx beautifulsoup4 aiofiles pydantic-settings openai tweepy
 ```
 
 ### 3. Configure environment variables
