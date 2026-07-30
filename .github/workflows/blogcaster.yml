@@ -72,7 +72,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install mcp feedparser httpx beautifulsoup4 aiofiles openai pydantic-settings tweepy google-auth python-dateutil
+          pip install "mcp<2.0.0" feedparser httpx beautifulsoup4 aiofiles openai pydantic-settings tweepy google-auth python-dateutil
 
       - name: Ensure records directory exists
         run: mkdir -p content/records
