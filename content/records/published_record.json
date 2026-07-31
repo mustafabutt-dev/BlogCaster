@@ -1671,6 +1671,28 @@
           "shared_at": "2026-07-30 08:31:08"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/words/perform-mail-merge-in-a-word-document",
+      "title": "Perform Mail Merge in a Word Document",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7488864195921281024",
+          "shared_at": "2026-07-31 07:52:46"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1354991976739009",
+          "shared_at": "2026-07-31 07:52:46"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4278620",
+          "shared_at": "2026-07-31 07:52:46"
+        }
+      }
     }
   ]
 }
