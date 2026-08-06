@@ -1737,6 +1737,28 @@
           "shared_at": "2026-08-04 07:41:37"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/comparison/accept-or-reject-tracked-changes-of-word-document-using-python",
+      "title": "Accept or Reject Tracked Changes of Word Document using Python",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7491033957141196800",
+          "shared_at": "2026-08-06 07:34:39"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1558834885718108",
+          "shared_at": "2026-08-06 07:34:39"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4329640",
+          "shared_at": "2026-08-06 07:34:39"
+        }
+      }
     }
   ]
 }
