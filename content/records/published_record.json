@@ -1759,6 +1759,28 @@
           "shared_at": "2026-08-06 07:34:39"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/words/export-wordpress-posts-to-msword-documents",
+      "title": "Export WordPress posts to MS Word documents",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7491375294340317185",
+          "shared_at": "2026-08-07 06:10:59"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1360906666147540",
+          "shared_at": "2026-08-07 06:10:59"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4337451",
+          "shared_at": "2026-08-07 06:10:59"
+        }
+      }
     }
   ]
 }
