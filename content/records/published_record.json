@@ -1847,6 +1847,116 @@
           "shared_at": "2026-07-30 08:31:08"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/words/perform-mail-merge-in-a-word-document",
+      "title": "Perform Mail Merge in a Word Document",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7488864195921281024",
+          "shared_at": "2026-07-31 07:52:46"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1354991976739009",
+          "shared_at": "2026-07-31 07:52:46"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4278620",
+          "shared_at": "2026-07-31 07:52:46"
+        }
+      }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/html/complete-html-to-jpg-conversion-tutorial-in-python",
+      "title": "Complete HTML to JPG Conversion Tutorial in Python",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7489958000619724800",
+          "shared_at": "2026-08-03 08:19:10"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1357564773148396",
+          "shared_at": "2026-08-03 08:19:10"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4300173",
+          "shared_at": "2026-08-03 08:19:10"
+        }
+      }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/html-to-xlsx-conversion-in-java",
+      "title": "HTML to XLSX Conversion in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7490310942518579201",
+          "shared_at": "2026-08-04 07:41:37"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1557078852560378",
+          "shared_at": "2026-08-04 07:41:37"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4310234",
+          "shared_at": "2026-08-04 07:41:37"
+        }
+      }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/comparison/accept-or-reject-tracked-changes-of-word-document-using-python",
+      "title": "Accept or Reject Tracked Changes of Word Document using Python",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7491033957141196800",
+          "shared_at": "2026-08-06 07:34:39"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1558834885718108",
+          "shared_at": "2026-08-06 07:34:39"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4329640",
+          "shared_at": "2026-08-06 07:34:39"
+        }
+      }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/words/export-wordpress-posts-to-msword-documents",
+      "title": "Export WordPress posts to MS Word documents",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7491375294340317185",
+          "shared_at": "2026-08-07 06:10:59"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1360906666147540",
+          "shared_at": "2026-08-07 06:10:59"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4337451",
+          "shared_at": "2026-08-07 06:10:59"
+        }
+      }
     }
   ]
 }
