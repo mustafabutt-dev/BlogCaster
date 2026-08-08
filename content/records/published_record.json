@@ -1856,11 +1856,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7488864195921281024",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7488864195921281024/",
           "shared_at": "2026-07-31 07:52:46"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1354991976739009",
+          "post_url": "https://www.facebook.com/118018898863167_1354991976739009",
           "shared_at": "2026-07-31 07:52:46"
         },
         "devto": {
@@ -1878,11 +1880,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7489958000619724800",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7489958000619724800/",
           "shared_at": "2026-08-03 08:19:10"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1357564773148396",
+          "post_url": "https://www.facebook.com/118018898863167_1357564773148396",
           "shared_at": "2026-08-03 08:19:10"
         },
         "devto": {
@@ -1900,11 +1904,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7490310942518579201",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7490310942518579201/",
           "shared_at": "2026-08-04 07:41:37"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1557078852560378",
+          "post_url": "https://www.facebook.com/397134737390236_1557078852560378",
           "shared_at": "2026-08-04 07:41:37"
         },
         "devto": {
@@ -1922,11 +1928,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7491033957141196800",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7491033957141196800/",
           "shared_at": "2026-08-06 07:34:39"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1558834885718108",
+          "post_url": "https://www.facebook.com/397134737390236_1558834885718108",
           "shared_at": "2026-08-06 07:34:39"
         },
         "devto": {
@@ -1944,11 +1952,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7491375294340317185",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7491375294340317185/",
           "shared_at": "2026-08-07 06:10:59"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1360906666147540",
+          "post_url": "https://www.facebook.com/118018898863167_1360906666147540",
           "shared_at": "2026-08-07 06:10:59"
         },
         "devto": {
