@@ -8,6 +8,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7439437595735961600",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7439437595735961600/",
           "shared_at": "2026-03-17 03:29:01"
         }
       }
@@ -20,6 +21,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7439437757216882688",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7439437757216882688/",
           "shared_at": "2026-03-17 03:29:39"
         }
       }
@@ -32,6 +34,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7439437862250405888",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7439437862250405888/",
           "shared_at": "2026-03-17 03:30:04"
         }
       }
@@ -44,6 +47,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7439487036958466049",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7439487036958466049/",
           "shared_at": "2026-03-17 06:45:28"
         }
       }
@@ -56,6 +60,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7442478862933889024",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7442478862933889024/",
           "shared_at": "2026-03-25 12:53:55"
         }
       }
@@ -68,6 +73,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7442661725524353024",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7442661725524353024/",
           "shared_at": "2026-03-26 01:00:33"
         }
       }
@@ -80,6 +86,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7442682368978530304",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7442682368978530304/",
           "shared_at": "2026-03-26 02:22:35"
         }
       }
@@ -92,6 +99,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7442682555805474817",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7442682555805474817/",
           "shared_at": "2026-03-26 02:23:20"
         }
       }
@@ -104,6 +112,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7442834134504255488",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7442834134504255488/",
           "shared_at": "2026-03-26 07:25:39"
         }
       }
@@ -116,6 +125,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7443177818303377408",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7443177818303377408/",
           "shared_at": "2026-03-27 06:11:19"
         }
       }
@@ -128,6 +138,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7444276153957212160",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7444276153957212160/",
           "shared_at": "2026-03-30 06:55:43"
         }
       }
@@ -140,6 +151,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7444629192513830912",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7444629192513830912/",
           "shared_at": "2026-03-31 06:18:34"
         }
       }
@@ -152,6 +164,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7444994064518819840",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7444994064518819840/",
           "shared_at": "2026-04-01 06:28:26"
         }
       }
@@ -164,6 +177,7 @@
         "x": {
           "status": "success",
           "post_id": "2039601232692859033",
+          "post_url": "https://x.com/i/web/status/2039601232692859033",
           "shared_at": "2026-04-02 12:10:02"
         }
       }
@@ -176,11 +190,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7445352962098593792",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7445352962098593792/",
           "shared_at": "2026-04-02 06:14:34"
         },
         "x": {
           "status": "success",
           "post_id": "2039650517983576395",
+          "post_url": "https://x.com/i/web/status/2039650517983576395",
           "shared_at": "2026-04-02 15:25:53"
         }
       }
@@ -193,11 +209,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7445715373011935233",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7445715373011935233/",
           "shared_at": "2026-04-03 06:14:39"
         },
         "x": {
           "status": "success",
           "post_id": "2039651015784599916",
+          "post_url": "https://x.com/i/web/status/2039651015784599916",
           "shared_at": "2026-04-02 15:27:51"
         }
       }
@@ -210,11 +228,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7445736355017424896",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7445736355017424896/",
           "shared_at": "2026-04-03 07:38:02"
         },
         "x": {
           "status": "success",
           "post_id": "2039970667165012066",
+          "post_url": "https://x.com/i/web/status/2039970667165012066",
           "shared_at": "2026-04-03 07:38:02"
         }
       }
@@ -227,6 +247,7 @@
         "x": {
           "status": "success",
           "post_id": "2039975245088518357",
+          "post_url": "https://x.com/i/web/status/2039975245088518357",
           "shared_at": "2026-04-03 07:56:14"
         }
       }
@@ -239,11 +260,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7446805630323023872",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7446805630323023872/",
           "shared_at": "2026-04-06 06:26:57"
         },
         "x": {
           "status": "success",
           "post_id": "2041039942101688601",
+          "post_url": "https://x.com/i/web/status/2041039942101688601",
           "shared_at": "2026-04-06 06:26:57"
         }
       }
@@ -256,11 +279,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7448255713094594560",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7448255713094594560/",
           "shared_at": "2026-04-10 06:29:04"
         },
         "x": {
           "status": "success",
           "post_id": "2042490025409974283",
+          "post_url": "https://x.com/i/web/status/2042490025409974283",
           "shared_at": "2026-04-10 06:29:04"
         }
       }
@@ -273,11 +298,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7449353541074264064",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7449353541074264064/",
           "shared_at": "2026-04-13 07:11:26"
         },
         "x": {
           "status": "success",
           "post_id": "2043587852697485600",
+          "post_url": "https://x.com/i/web/status/2043587852697485600",
           "shared_at": "2026-04-13 07:11:26"
         }
       }
@@ -290,11 +317,13 @@
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1261364472768427",
+          "post_url": "https://www.facebook.com/118018898863167_1261364472768427",
           "shared_at": "2026-04-06 15:31:34"
         },
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7447191225868279808",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7447191225868279808/",
           "shared_at": "2026-04-07 12:59:10"
         }
       }
@@ -307,11 +336,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7450118476150579200",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7450118476150579200/",
           "shared_at": "2026-04-15 09:51:01"
         },
         "x": {
           "status": "success",
           "post_id": "2044352788683972690",
+          "post_url": "https://x.com/i/web/status/2044352788683972690",
           "shared_at": "2026-04-15 09:51:01"
         }
       }
@@ -324,11 +355,13 @@
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1267969762107898",
+          "post_url": "https://www.facebook.com/118018898863167_1267969762107898",
           "shared_at": "2026-04-15 10:56:42"
         },
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7481253365230972928",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7481253365230972928/",
           "shared_at": "2026-07-10 12:49:57"
         }
       }
@@ -341,11 +374,13 @@
         "x": {
           "status": "success",
           "post_id": "2045034716760252444",
+          "post_url": "https://x.com/i/web/status/2045034716760252444",
           "shared_at": "2026-04-17 07:00:58"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1269393485298859",
+          "post_url": "https://www.facebook.com/118018898863167_1269393485298859",
           "shared_at": "2026-04-17 07:00:58"
         }
       }
@@ -358,16 +393,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7451892031594840065",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7451892031594840065/",
           "shared_at": "2026-04-20 07:18:43"
         },
         "x": {
           "status": "success",
           "post_id": "2046126343428178252",
+          "post_url": "https://x.com/i/web/status/2046126343428178252",
           "shared_at": "2026-04-20 07:18:43"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1271645855073622",
+          "post_url": "https://www.facebook.com/118018898863167_1271645855073622",
           "shared_at": "2026-04-20 07:18:43"
         }
       }
@@ -380,16 +418,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7453338419683844096",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7453338419683844096/",
           "shared_at": "2026-04-24 07:06:04"
         },
         "x": {
           "status": "success",
           "post_id": "2047572731663675695",
+          "post_url": "https://x.com/i/web/status/2047572731663675695",
           "shared_at": "2026-04-24 07:06:04"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1274712764766931",
+          "post_url": "https://www.facebook.com/118018898863167_1274712764766931",
           "shared_at": "2026-04-24 07:06:04"
         }
       }
@@ -402,16 +443,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7454433172949393409",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7454433172949393409/",
           "shared_at": "2026-04-27 07:36:15"
         },
         "x": {
           "status": "success",
           "post_id": "2048667484803268759",
+          "post_url": "https://x.com/i/web/status/2048667484803268759",
           "shared_at": "2026-04-27 07:36:15"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1277208161184058",
+          "post_url": "https://www.facebook.com/118018898863167_1277208161184058",
           "shared_at": "2026-04-27 07:36:15"
         }
       }
@@ -424,6 +468,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7455166165334589440",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7455166165334589440/",
           "shared_at": "2026-04-29 13:08:44"
         }
       }
@@ -436,6 +481,7 @@
         "x": {
           "status": "success",
           "post_id": "2049427670451314760",
+          "post_url": "https://x.com/i/web/status/2049427670451314760",
           "shared_at": "2026-04-29 14:56:48"
         }
       }
@@ -448,16 +494,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7455219227948449792",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7455219227948449792/",
           "shared_at": "2026-04-29 11:39:40"
         },
         "x": {
           "status": "success",
           "post_id": "2049453539844649067",
+          "post_url": "https://x.com/i/web/status/2049453539844649067",
           "shared_at": "2026-04-29 11:39:40"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1278963597675181",
+          "post_url": "https://www.facebook.com/118018898863167_1278963597675181",
           "shared_at": "2026-04-29 11:39:40"
         }
       }
@@ -470,16 +519,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7455222351773753344",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7455222351773753344/",
           "shared_at": "2026-04-29 16:52:05"
         },
         "x": {
           "status": "success",
           "post_id": "2049456666551173411",
+          "post_url": "https://x.com/i/web/status/2049456666551173411",
           "shared_at": "2026-04-29 16:52:05"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1278971594341048",
+          "post_url": "https://www.facebook.com/118018898863167_1278971594341048",
           "shared_at": "2026-04-29 16:52:05"
         }
       }
@@ -492,6 +544,7 @@
         "x": {
           "status": "success",
           "post_id": "2049457563758907630",
+          "post_url": "https://x.com/i/web/status/2049457563758907630",
           "shared_at": "2026-04-29 11:55:35"
         }
       }
@@ -504,16 +557,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7455880686181171200",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7455880686181171200/",
           "shared_at": "2026-05-01 07:28:09"
         },
         "x": {
           "status": "success",
           "post_id": "2050114998350066127",
+          "post_url": "https://x.com/i/web/status/2050114998350066127",
           "shared_at": "2026-05-01 07:28:09"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1280470737524467",
+          "post_url": "https://www.facebook.com/118018898863167_1280470737524467",
           "shared_at": "2026-05-01 07:28:09"
         }
       }
@@ -526,11 +582,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7456054401221361664",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7456054401221361664/",
           "shared_at": "2026-05-01 18:58:16"
         },
         "x": {
           "status": "success",
           "post_id": "2050288714329321892",
+          "post_url": "https://x.com/i/web/status/2050288714329321892",
           "shared_at": "2026-05-01 18:58:16"
         }
       }
@@ -543,16 +601,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7456973245066620928",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7456973245066620928/",
           "shared_at": "2026-05-04 07:49:41"
         },
         "x": {
           "status": "success",
           "post_id": "2051207556630974681",
+          "post_url": "https://x.com/i/web/status/2051207556630974681",
           "shared_at": "2026-05-04 07:49:41"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1282861370618737",
+          "post_url": "https://www.facebook.com/118018898863167_1282861370618737",
           "shared_at": "2026-05-04 07:49:41"
         }
       }
@@ -565,11 +626,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7457329879760465920",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7457329879760465920/",
           "shared_at": "2026-05-05 07:13:53"
         },
         "x": {
           "status": "success",
           "post_id": "2051564282232258728",
+          "post_url": "https://x.com/i/web/status/2051564282232258728",
           "shared_at": "2026-05-05 07:13:53"
         }
       }
@@ -582,16 +645,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7457401703844167680",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7457401703844167680/",
           "shared_at": "2026-05-05 12:12:03"
         },
         "x": {
           "status": "success",
           "post_id": "2051636015517843936",
+          "post_url": "https://x.com/i/web/status/2051636015517843936",
           "shared_at": "2026-05-05 12:12:03"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1480145770253687",
+          "post_url": "https://www.facebook.com/397134737390236_1480145770253687",
           "shared_at": "2026-05-05 12:12:03"
         }
       }
@@ -604,16 +670,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7458057836841934850",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7458057836841934850/",
           "shared_at": "2026-05-07 07:39:19"
         },
         "x": {
           "status": "success",
           "post_id": "2052292148989734991",
+          "post_url": "https://x.com/i/web/status/2052292148989734991",
           "shared_at": "2026-05-07 07:39:19"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1481555793446018",
+          "post_url": "https://www.facebook.com/397134737390236_1481555793446018",
           "shared_at": "2026-05-07 07:39:19"
         }
       }
@@ -626,16 +695,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7458408746541834240",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7458408746541834240/",
           "shared_at": "2026-05-08 06:53:42"
         },
         "x": {
           "status": "success",
           "post_id": "2052643060442669330",
+          "post_url": "https://x.com/i/web/status/2052643060442669330",
           "shared_at": "2026-05-08 06:53:42"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1285921336979407",
+          "post_url": "https://www.facebook.com/118018898863167_1285921336979407",
           "shared_at": "2026-05-08 06:53:42"
         }
       }
@@ -648,16 +720,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7459519225897078784",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7459519225897078784/",
           "shared_at": "2026-05-11 08:26:22"
         },
         "x": {
           "status": "success",
           "post_id": "2053753538027672063",
+          "post_url": "https://x.com/i/web/status/2053753538027672063",
           "shared_at": "2026-05-11 08:26:22"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1288378430067031",
+          "post_url": "https://www.facebook.com/118018898863167_1288378430067031",
           "shared_at": "2026-05-11 08:26:22"
         }
       }
@@ -670,16 +745,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7459869817638952960",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7459869817638952960/",
           "shared_at": "2026-05-12 07:39:28"
         },
         "x": {
           "status": "success",
           "post_id": "2054104129539285469",
+          "post_url": "https://x.com/i/web/status/2054104129539285469",
           "shared_at": "2026-05-12 07:39:28"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1485710409697223",
+          "post_url": "https://www.facebook.com/397134737390236_1485710409697223",
           "shared_at": "2026-05-12 07:39:28"
         }
       }
@@ -692,16 +770,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7460594434758336512",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7460594434758336512/",
           "shared_at": "2026-05-14 07:38:50"
         },
         "x": {
           "status": "success",
           "post_id": "2054828746524197059",
+          "post_url": "https://x.com/i/web/status/2054828746524197059",
           "shared_at": "2026-05-14 07:38:50"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1487612992840298",
+          "post_url": "https://www.facebook.com/397134737390236_1487612992840298",
           "shared_at": "2026-05-14 07:38:50"
         }
       }
@@ -714,16 +795,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7460960763269062656",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7460960763269062656/",
           "shared_at": "2026-05-15 07:54:30"
         },
         "x": {
           "status": "success",
           "post_id": "2055195075236565196",
+          "post_url": "https://x.com/i/web/status/2055195075236565196",
           "shared_at": "2026-05-15 07:54:30"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1291693409735533",
+          "post_url": "https://www.facebook.com/118018898863167_1291693409735533",
           "shared_at": "2026-05-15 07:54:30"
         }
       }
@@ -736,16 +820,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7461148455269277697",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7461148455269277697/",
           "shared_at": "2026-05-15 20:20:18"
         },
         "x": {
           "status": "success",
           "post_id": "2055382767723335960",
+          "post_url": "https://x.com/i/web/status/2055382767723335960",
           "shared_at": "2026-05-15 20:20:18"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1292156489689225",
+          "post_url": "https://www.facebook.com/118018898863167_1292156489689225",
           "shared_at": "2026-05-15 20:20:18"
         }
       }
@@ -758,11 +845,13 @@
         "x": {
           "status": "success",
           "post_id": "2055932452971905210",
+          "post_url": "https://x.com/i/web/status/2055932452971905210",
           "shared_at": "2026-05-17 08:44:34"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1490170515917879",
+          "post_url": "https://www.facebook.com/397134737390236_1490170515917879",
           "shared_at": "2026-05-17 08:44:34"
         }
       }
@@ -775,11 +864,13 @@
         "x": {
           "status": "success",
           "post_id": "2056295408935309724",
+          "post_url": "https://x.com/i/web/status/2056295408935309724",
           "shared_at": "2026-05-18 08:46:51"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1294165892821618",
+          "post_url": "https://www.facebook.com/118018898863167_1294165892821618",
           "shared_at": "2026-05-18 08:46:51"
         }
       }
@@ -792,11 +883,13 @@
         "x": {
           "status": "success",
           "post_id": "2056651522155442240",
+          "post_url": "https://x.com/i/web/status/2056651522155442240",
           "shared_at": "2026-05-19 08:21:55"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1491825555752375",
+          "post_url": "https://www.facebook.com/397134737390236_1491825555752375",
           "shared_at": "2026-05-19 08:21:55"
         }
       }
@@ -809,16 +902,19 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7463143813801373696",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7463143813801373696/",
           "shared_at": "2026-05-21 08:29:18"
         },
         "x": {
           "status": "success",
           "post_id": "2057378126020345908",
+          "post_url": "https://x.com/i/web/status/2057378126020345908",
           "shared_at": "2026-05-21 08:29:18"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1493524912249106",
+          "post_url": "https://www.facebook.com/397134737390236_1493524912249106",
           "shared_at": "2026-05-21 08:29:18"
         }
       }
@@ -831,11 +927,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7463504970475196417",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7463504970475196417/",
           "shared_at": "2026-05-22 08:24:16"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1297404812497726",
+          "post_url": "https://www.facebook.com/118018898863167_1297404812497726",
           "shared_at": "2026-05-22 08:24:16"
         }
       }
@@ -848,11 +946,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7464600937555390464",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7464600937555390464/",
           "shared_at": "2026-05-25 08:59:20"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1299821182256089",
+          "post_url": "https://www.facebook.com/118018898863167_1299821182256089",
           "shared_at": "2026-05-25 08:59:20"
         }
       }
@@ -865,11 +965,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7464955478356414464",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7464955478356414464/",
           "shared_at": "2026-05-26 08:28:04"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1497579681843629",
+          "post_url": "https://www.facebook.com/397134737390236_1497579681843629",
           "shared_at": "2026-05-26 08:28:04"
         }
       }
@@ -882,11 +984,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7465683073846706176",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7465683073846706176/",
           "shared_at": "2026-05-28 08:39:17"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1499315841670013",
+          "post_url": "https://www.facebook.com/397134737390236_1499315841670013",
           "shared_at": "2026-05-28 08:39:17"
         }
       }
@@ -899,11 +1003,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7466046499748065282",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7466046499748065282/",
           "shared_at": "2026-05-29 08:43:29"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1303085321929675",
+          "post_url": "https://www.facebook.com/118018898863167_1303085321929675",
           "shared_at": "2026-05-29 08:43:29"
         }
       }
@@ -916,11 +1022,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7467158718019883008",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7467158718019883008/",
           "shared_at": "2026-06-01 10:23:02"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1305731211665086",
+          "post_url": "https://www.facebook.com/118018898863167_1305731211665086",
           "shared_at": "2026-06-01 10:23:02"
         }
       }
@@ -933,11 +1041,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7467500974035644416",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7467500974035644416/",
           "shared_at": "2026-06-02 09:02:59"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1503719481229649",
+          "post_url": "https://www.facebook.com/397134737390236_1503719481229649",
           "shared_at": "2026-06-02 09:02:59"
         }
       }
@@ -950,11 +1060,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7468221090411225088",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7468221090411225088/",
           "shared_at": "2026-06-04 08:44:28"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1505512124383718",
+          "post_url": "https://www.facebook.com/397134737390236_1505512124383718",
           "shared_at": "2026-06-04 08:44:28"
         }
       }
@@ -967,11 +1079,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7468583608266514432",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7468583608266514432/",
           "shared_at": "2026-06-05 08:45:03"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1309202237984650",
+          "post_url": "https://www.facebook.com/118018898863167_1309202237984650",
           "shared_at": "2026-06-05 08:45:03"
         }
       }
@@ -984,11 +1098,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7469680940697436160",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7469680940697436160/",
           "shared_at": "2026-06-08 09:25:25"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1311799247724949",
+          "post_url": "https://www.facebook.com/118018898863167_1311799247724949",
           "shared_at": "2026-06-08 09:25:25"
         }
       }
@@ -1001,11 +1117,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7470028786667999233",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7470028786667999233/",
           "shared_at": "2026-06-09 08:27:39"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1509897013945229",
+          "post_url": "https://www.facebook.com/397134737390236_1509897013945229",
           "shared_at": "2026-06-09 08:27:39"
         }
       }
@@ -1018,11 +1136,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7470763935630102528",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7470763935630102528/",
           "shared_at": "2026-06-11 09:08:48"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1511659510435646",
+          "post_url": "https://www.facebook.com/397134737390236_1511659510435646",
           "shared_at": "2026-06-11 09:08:48"
         }
       }
@@ -1035,11 +1155,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7471124322598916096",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7471124322598916096/",
           "shared_at": "2026-06-12 09:00:51"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1315137874057753",
+          "post_url": "https://www.facebook.com/118018898863167_1315137874057753",
           "shared_at": "2026-06-12 09:00:51"
         }
       }
@@ -1052,11 +1174,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7472240585618358272",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7472240585618358272/",
           "shared_at": "2026-06-15 10:56:35"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1317658050472402",
+          "post_url": "https://www.facebook.com/118018898863167_1317658050472402",
           "shared_at": "2026-06-15 10:56:35"
         }
       }
@@ -1069,11 +1193,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7472589435667226625",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7472589435667226625/",
           "shared_at": "2026-06-16 10:02:46"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1515939006674363",
+          "post_url": "https://www.facebook.com/397134737390236_1515939006674363",
           "shared_at": "2026-06-16 10:02:46"
         }
       }
@@ -1086,11 +1212,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7473301324399398912",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7473301324399398912/",
           "shared_at": "2026-06-18 09:11:30"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1517616709839926",
+          "post_url": "https://www.facebook.com/397134737390236_1517616709839926",
           "shared_at": "2026-06-18 09:11:30"
         }
       }
@@ -1103,11 +1231,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7473672610732490752",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7473672610732490752/",
           "shared_at": "2026-06-19 09:46:52"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1320854553486085",
+          "post_url": "https://www.facebook.com/118018898863167_1320854553486085",
           "shared_at": "2026-06-19 09:46:52"
         }
       }
@@ -1120,11 +1250,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7474773560369004544",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7474773560369004544/",
           "shared_at": "2026-06-22 10:41:42"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1323354389902768",
+          "post_url": "https://www.facebook.com/118018898863167_1323354389902768",
           "shared_at": "2026-06-22 10:41:42"
         }
       }
@@ -1137,11 +1269,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7475101496251101184",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7475101496251101184/",
           "shared_at": "2026-06-23 08:24:44"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1521777299423867",
+          "post_url": "https://www.facebook.com/397134737390236_1521777299423867",
           "shared_at": "2026-06-23 08:24:44"
         }
       }
@@ -1154,11 +1288,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7475456929587171328",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7475456929587171328/",
           "shared_at": "2026-06-24 07:57:11"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1324893873082153",
+          "post_url": "https://www.facebook.com/118018898863167_1324893873082153",
           "shared_at": "2026-06-24 07:57:11"
         }
       }
@@ -1171,11 +1307,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7475463383480352769",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7475463383480352769/",
           "shared_at": "2026-06-24 08:22:44"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1522601526008111",
+          "post_url": "https://www.facebook.com/397134737390236_1522601526008111",
           "shared_at": "2026-06-24 08:22:44"
         },
         "devto": {
@@ -1217,11 +1355,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7475824716935503873",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7475824716935503873/",
           "shared_at": "2026-06-25 08:18:34"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1523447112590219",
+          "post_url": "https://www.facebook.com/397134737390236_1523447112590219",
           "shared_at": "2026-06-25 08:18:34"
         },
         "devto": {
@@ -1239,11 +1379,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7476190351817388032",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7476190351817388032/",
           "shared_at": "2026-06-26 08:31:31"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1326544396250434",
+          "post_url": "https://www.facebook.com/118018898863167_1326544396250434",
           "shared_at": "2026-06-26 08:31:31"
         },
         "devto": {
@@ -1261,11 +1403,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7477292096832323585",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7477292096832323585/",
           "shared_at": "2026-06-29 09:29:28"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1329032772668263",
+          "post_url": "https://www.facebook.com/118018898863167_1329032772668263",
           "shared_at": "2026-06-29 09:29:28"
         },
         "devto": {
@@ -1283,6 +1427,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7477653042864144384",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7477653042864144384/",
           "shared_at": "2026-06-30 09:24:04"
         },
         "devto": {
@@ -1300,11 +1445,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7478357200562839552",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7478357200562839552/",
           "shared_at": "2026-07-02 08:01:48"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1529416548659942",
+          "post_url": "https://www.facebook.com/397134737390236_1529416548659942",
           "shared_at": "2026-07-02 08:01:48"
         },
         "devto": {
@@ -1322,11 +1469,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7478722287421104128",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7478722287421104128/",
           "shared_at": "2026-07-03 08:12:29"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1332437208994486",
+          "post_url": "https://www.facebook.com/118018898863167_1332437208994486",
           "shared_at": "2026-07-03 08:12:29"
         },
         "devto": {
@@ -1344,11 +1493,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7479822183117152256",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7479822183117152256/",
           "shared_at": "2026-07-06 09:03:02"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1335026715402202",
+          "post_url": "https://www.facebook.com/118018898863167_1335026715402202",
           "shared_at": "2026-07-06 09:03:02"
         },
         "devto": {
@@ -1366,11 +1517,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7480170236282036224",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7480170236282036224/",
           "shared_at": "2026-07-07 08:06:05"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1335848645320009",
+          "post_url": "https://www.facebook.com/118018898863167_1335848645320009",
           "shared_at": "2026-07-07 08:06:05"
         },
         "devto": {
@@ -1388,6 +1541,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7480172877573636098",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7480172877573636098/",
           "shared_at": "2026-07-07 08:16:29"
         },
         "devto": {
@@ -1405,6 +1559,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7480898646922932226",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7480898646922932226/",
           "shared_at": "2026-07-09 08:20:26"
         },
         "devto": {
@@ -1422,11 +1577,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7481262346636562432",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7481262346636562432/",
           "shared_at": "2026-07-10 08:25:43"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1338294238408783",
+          "post_url": "https://www.facebook.com/118018898863167_1338294238408783",
           "shared_at": "2026-07-10 08:25:43"
         },
         "devto": {
@@ -1444,11 +1601,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7482347922659893248",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7482347922659893248/",
           "shared_at": "2026-07-13 08:19:25"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1340605881510952",
+          "post_url": "https://www.facebook.com/118018898863167_1340605881510952",
           "shared_at": "2026-07-13 08:19:25"
         },
         "devto": {
@@ -1466,6 +1625,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7482691705335513089",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7482691705335513089/",
           "shared_at": "2026-07-14 07:05:28"
         },
         "devto": {
@@ -1483,6 +1643,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7483419391838150656",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7483419391838150656/",
           "shared_at": "2026-07-16 07:16:58"
         }
       }
@@ -1495,11 +1656,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7483445131631718400",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7483445131631718400/",
           "shared_at": "2026-07-16 08:59:21"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1343018641269676",
+          "post_url": "https://www.facebook.com/118018898863167_1343018641269676",
           "shared_at": "2026-07-16 08:59:21"
         }
       }
@@ -1512,11 +1675,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7483782391388356608",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7483782391388356608/",
           "shared_at": "2026-07-17 07:19:28"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1343802427857964",
+          "post_url": "https://www.facebook.com/118018898863167_1343802427857964",
           "shared_at": "2026-07-17 07:19:28"
         },
         "devto": {
@@ -1534,6 +1699,7 @@
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1346119230959617",
+          "post_url": "https://www.facebook.com/118018898863167_1346119230959617",
           "shared_at": "2026-07-20 08:07:40"
         },
         "devto": {
@@ -1563,11 +1729,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7485953149028147200",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7485953149028147200/",
           "shared_at": "2026-07-23 12:05:22"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1348434650728075",
+          "post_url": "https://www.facebook.com/118018898863167_1348434650728075",
           "shared_at": "2026-07-23 12:05:22"
         },
         "devto": {
@@ -1585,6 +1753,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7485990370565316608",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7485990370565316608/",
           "shared_at": "2026-07-23 09:33:08"
         },
         "devto": {
@@ -1602,11 +1771,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7486343011673477120",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7486343011673477120/",
           "shared_at": "2026-07-24 08:54:37"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1349278740643666",
+          "post_url": "https://www.facebook.com/118018898863167_1349278740643666",
           "shared_at": "2026-07-24 08:54:37"
         },
         "devto": {
@@ -1624,6 +1795,7 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7487793274741538816",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7487793274741538816/",
           "shared_at": "2026-07-28 08:57:14"
         },
         "devto": {
@@ -1641,11 +1813,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7487802711912992770",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7487802711912992770/",
           "shared_at": "2026-07-28 09:34:48"
         },
         "facebook": {
           "status": "success",
           "post_id": "118018898863167_1352486653656208",
+          "post_url": "https://www.facebook.com/118018898863167_1352486653656208",
           "shared_at": "2026-07-28 09:34:48"
         }
       }
@@ -1658,11 +1832,13 @@
         "linkedin": {
           "status": "success",
           "post_id": "urn:li:share:7488511465985974272",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7488511465985974272/",
           "shared_at": "2026-07-30 08:31:08"
         },
         "facebook": {
           "status": "success",
           "post_id": "397134737390236_1552752852992978",
+          "post_url": "https://www.facebook.com/397134737390236_1552752852992978",
           "shared_at": "2026-07-30 08:31:08"
         },
         "devto": {
