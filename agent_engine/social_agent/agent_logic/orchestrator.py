@@ -35,6 +35,7 @@ from agent_engine.social_agent.tools.mcp_tools import (
     x_validate_credentials,
 )
 from agent_engine.social_agent.utils.helpers import (
+    build_post_url,
     build_utm_urls,
     detect_platform_from_url,
     find_platform_by_id,
@@ -852,11 +853,16 @@ async def _save_record(
     results = {}
 
     for platform_name, result in post_results.items():
-        results[platform_name] = {
+        post_id = result.get("post_id", "")
+        post_url = result.get("url") or build_post_url(platform_name, post_id)
+        entry = {
             "status": result.get("status", "failure"),
-            "post_id": result.get("post_id", ""),
-            "shared_at": timestamp,
+            "post_id": post_id,
         }
+        if post_url:
+            entry["post_url"] = post_url
+        entry["shared_at"] = timestamp
+        results[platform_name] = entry
 
     saved = await record_save(sessions, blog_url, title, platform_id, results)
     if saved:

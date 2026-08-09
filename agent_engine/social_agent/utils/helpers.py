@@ -165,3 +165,20 @@ def build_utm_urls(url: str, campaign: str) -> dict:
         platform: f"{url}{separator}utm_source={source}&utm_medium=social&utm_campaign={campaign}"
         for platform, source in sources.items()
     }
+
+
+def build_post_url(platform_name: str, post_id: str) -> str:
+    """Build the direct link to a published social post from its platform post_id.
+
+    Dev.to isn't included here — its poster result already returns a direct
+    "url" from the API, which the caller should prefer over this builder.
+    """
+    if not post_id:
+        return ""
+    if platform_name == "linkedin":
+        return f"https://www.linkedin.com/feed/update/{post_id}/"
+    if platform_name == "facebook":
+        return f"https://www.facebook.com/{post_id}"
+    if platform_name == "x":
+        return f"https://x.com/i/web/status/{post_id}"
+    return ""
