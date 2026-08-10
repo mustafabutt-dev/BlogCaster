@@ -1967,6 +1967,31 @@
           "shared_at": "2026-08-07 06:10:59"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/html/step-by-step-guide-for-html-to-ppt-conversion-in-nodejs",
+      "title": "Step-by-Step Guide for HTML to PPT Conversion in Node.JS",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7492461172269453314",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7492461172269453314/",
+          "shared_at": "2026-08-10 06:05:53"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1363324789239061",
+          "post_url": "https://www.facebook.com/118018898863167_1363324789239061",
+          "shared_at": "2026-08-10 06:05:53"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4357504",
+          "post_url": "https://dev.to/asposecloud/step-by-step-guide-for-html-to-ppt-conversion-in-nodejs-48af",
+          "shared_at": "2026-08-10 06:05:53"
+        }
+      }
     }
   ]
 }
