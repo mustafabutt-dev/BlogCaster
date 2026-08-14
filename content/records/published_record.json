@@ -2042,6 +2042,31 @@
           "shared_at": "2026-08-13 06:11:24"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/tags",
+      "title": "Tags",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7493913485337083904",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7493913485337083904/",
+          "shared_at": "2026-08-14 06:16:50"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1366607788910761",
+          "post_url": "https://www.facebook.com/118018898863167_1366607788910761",
+          "shared_at": "2026-08-14 06:16:50"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4393603",
+          "post_url": "https://dev.to/asposecloud/tags-4b0",
+          "shared_at": "2026-08-14 06:16:50"
+        }
+      }
     }
   ]
 }
