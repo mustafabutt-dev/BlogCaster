@@ -2067,6 +2067,31 @@
           "shared_at": "2026-08-14 06:16:50"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/html/csv-to-excel-xlsx-conversion-in-nodejs",
+      "title": "CSV to Excel XLSX Conversion in Node.JS",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7494987830150991872",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7494987830150991872/",
+          "shared_at": "2026-08-17 05:25:53"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1369129278658612",
+          "post_url": "https://www.facebook.com/118018898863167_1369129278658612",
+          "shared_at": "2026-08-17 05:25:53"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4414405",
+          "post_url": "https://dev.to/asposecloud/csv-to-excel-xlsx-conversion-in-nodejs-19fm",
+          "shared_at": "2026-08-17 05:25:53"
+        }
+      }
     }
   ]
 }
