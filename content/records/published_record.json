@@ -2117,6 +2117,31 @@
           "shared_at": "2026-08-18 05:31:11"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/merger/change-page-orientation-in-word-documents-using-python",
+      "title": "Change Page Orientation in Word Documents using Python",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7496074449037955073",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7496074449037955073/",
+          "shared_at": "2026-08-20 05:23:44"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1570838887851041",
+          "post_url": "https://www.facebook.com/397134737390236_1570838887851041",
+          "shared_at": "2026-08-20 05:23:44"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4440453",
+          "post_url": "https://dev.to/groupdocs-cloud/change-page-orientation-in-word-documents-using-python-5e7m",
+          "shared_at": "2026-08-20 05:23:44"
+        }
+      }
     }
   ]
 }
