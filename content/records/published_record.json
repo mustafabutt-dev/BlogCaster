@@ -2142,6 +2142,31 @@
           "shared_at": "2026-08-20 05:23:44"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/words/convert-word-to-html-using-csharp",
+      "title": "Convert Word to HTML Online with C# .NET REST API | DOCX\u2192HTML Guide",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7496439929636528129",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7496439929636528129/",
+          "shared_at": "2026-08-21 05:36:01"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1372427004995506",
+          "post_url": "https://www.facebook.com/118018898863167_1372427004995506",
+          "shared_at": "2026-08-21 05:36:01"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4449987",
+          "post_url": "https://dev.to/asposecloud/convert-word-to-html-online-with-c-net-rest-api-docx-html-guide-1h03",
+          "shared_at": "2026-08-21 05:36:01"
+        }
+      }
     }
   ]
 }
