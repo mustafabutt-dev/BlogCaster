@@ -2167,6 +2167,31 @@
           "shared_at": "2026-08-21 05:36:01"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/html/doc-to-pdf-conversion-in-java",
+      "title": "DOC to PDF Conversion in Java",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7497525402911879168",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7497525402911879168/",
+          "shared_at": "2026-08-24 05:29:18"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1374870654751141",
+          "post_url": "https://www.facebook.com/118018898863167_1374870654751141",
+          "shared_at": "2026-08-24 05:29:18"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4471710",
+          "post_url": "https://dev.to/asposecloud/doc-to-pdf-conversion-in-java-28jo",
+          "shared_at": "2026-08-24 05:29:18"
+        }
+      }
     }
   ]
 }
