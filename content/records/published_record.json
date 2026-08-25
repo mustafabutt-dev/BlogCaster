@@ -2192,6 +2192,31 @@
           "shared_at": "2026-08-24 05:29:18"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/csv-to-jpg-conversion-in-python-quick-guide-for-developers",
+      "title": "CSV to JPG Conversion in Python: Quick Guide for Developers",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7497889217226846209",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7497889217226846209/",
+          "shared_at": "2026-08-25 05:34:58"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1575104934091103",
+          "post_url": "https://www.facebook.com/397134737390236_1575104934091103",
+          "shared_at": "2026-08-25 05:34:58"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4481079",
+          "post_url": "https://dev.to/groupdocs-cloud/csv-to-jpg-conversion-in-python-quick-guide-for-developers-2pjo",
+          "shared_at": "2026-08-25 05:34:58"
+        }
+      }
     }
   ]
 }
