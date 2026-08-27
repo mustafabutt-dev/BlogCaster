@@ -2217,6 +2217,31 @@
           "shared_at": "2026-08-25 05:34:58"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/merger/split-powerpoint-ppt-or-pptx-into-multiple-files-in-node.js",
+      "title": "Split PowerPoint PPT or PPTX into Multiple Files in Node.js",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7498772401716035584",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7498772401716035584/",
+          "shared_at": "2026-08-27 16:04:27"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1577196263881970",
+          "post_url": "https://www.facebook.com/397134737390236_1577196263881970",
+          "shared_at": "2026-08-27 16:04:27"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4506283",
+          "post_url": "https://dev.to/groupdocs-cloud/split-powerpoint-ppt-or-pptx-into-multiple-files-in-nodejs-4lcn",
+          "shared_at": "2026-08-27 16:04:27"
+        }
+      }
     }
   ]
 }
