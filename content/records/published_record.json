@@ -2242,6 +2242,31 @@
           "shared_at": "2026-08-27 16:04:27"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/imaging/resize-image-in-java",
+      "title": "Resize Image in Java. Resize GIF, Resize JPG, Resize PNG",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7499152105832853504",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7499152105832853504/",
+          "shared_at": "2026-08-28 17:13:15"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1378631744375032",
+          "post_url": "https://www.facebook.com/118018898863167_1378631744375032",
+          "shared_at": "2026-08-28 17:13:15"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4514978",
+          "post_url": "https://dev.to/asposecloud/resize-image-in-java-resize-gif-resize-jpg-resize-png-53n6",
+          "shared_at": "2026-08-28 17:13:15"
+        }
+      }
     }
   ]
 }
