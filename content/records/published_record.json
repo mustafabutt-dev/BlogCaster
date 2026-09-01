@@ -2286,6 +2286,31 @@
           "shared_at": "2026-08-31 11:53:01"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/watermark/add-image-watermark-to-pdf-documents-in-java",
+      "title": "Add Image Watermark to PDF Documents in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7500492468233068544",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7500492468233068544/",
+          "shared_at": "2026-09-01 09:59:23"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1581165563485040",
+          "post_url": "https://www.facebook.com/397134737390236_1581165563485040",
+          "shared_at": "2026-09-01 09:59:23"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4545310",
+          "post_url": "https://dev.to/groupdocs-cloud/add-image-watermark-to-pdf-documents-in-java-2op",
+          "shared_at": "2026-09-01 09:59:23"
+        }
+      }
     }
   ]
 }
