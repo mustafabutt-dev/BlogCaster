@@ -2361,6 +2361,31 @@
           "shared_at": "2026-09-04 09:23:51"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/barcode/html-to-jpg-conversion-tutorial-in-python-quick-guide",
+      "title": "HTML to JPG Conversion Tutorial in Python: Quick Guide",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7502664136242196480",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7502664136242196480/",
+          "shared_at": "2026-09-07 09:48:49"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1386708470234026",
+          "post_url": "https://www.facebook.com/118018898863167_1386708470234026",
+          "shared_at": "2026-09-07 09:48:49"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4594526",
+          "post_url": "https://dev.to/asposecloud/html-to-jpg-conversion-tutorial-in-python-quick-guide-4m9p",
+          "shared_at": "2026-09-07 09:48:49"
+        }
+      }
     }
   ]
 }
