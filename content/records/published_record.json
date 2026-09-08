@@ -2386,6 +2386,31 @@
           "shared_at": "2026-09-07 09:48:49"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/watermark/remove-image-watermark-from-pdf-in-java",
+      "title": "Remove Image Watermark from PDF in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7503020552723345408",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7503020552723345408/",
+          "shared_at": "2026-09-08 09:25:04"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1587124756222454",
+          "post_url": "https://www.facebook.com/397134737390236_1587124756222454",
+          "shared_at": "2026-09-08 09:25:04"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4605042",
+          "post_url": "https://dev.to/groupdocs-cloud/remove-image-watermark-from-pdf-in-java-opc",
+          "shared_at": "2026-09-08 09:25:04"
+        }
+      }
     }
   ]
 }
