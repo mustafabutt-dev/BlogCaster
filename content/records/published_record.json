@@ -2411,6 +2411,31 @@
           "shared_at": "2026-09-08 09:25:04"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/convert-zip-or-rar-to-pdf-using-a-file-converter",
+      "title": "Convert ZIP or RAR to PDF using a File Converter",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7503743715128225792",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7503743715128225792/",
+          "shared_at": "2026-09-10 09:18:39"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1588823606052569",
+          "post_url": "https://www.facebook.com/397134737390236_1588823606052569",
+          "shared_at": "2026-09-10 09:18:39"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4621687",
+          "post_url": "https://dev.to/groupdocs-cloud/convert-zip-or-rar-to-pdf-using-a-file-converter-138a",
+          "shared_at": "2026-09-10 09:18:39"
+        }
+      }
     }
   ]
 }
