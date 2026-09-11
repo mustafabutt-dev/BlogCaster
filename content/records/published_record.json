@@ -2436,6 +2436,31 @@
           "shared_at": "2026-09-10 09:18:39"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/pdf/redact-pdf-using-python",
+      "title": "Redact PDF using Python | PDF Blackout Text using Python",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7504107825040830465",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7504107825040830465/",
+          "shared_at": "2026-09-11 09:25:29"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1389991756572364",
+          "post_url": "https://www.facebook.com/118018898863167_1389991756572364",
+          "shared_at": "2026-09-11 09:25:29"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4630670",
+          "post_url": "https://dev.to/asposecloud/redact-pdf-using-python-pdf-blackout-text-using-python-20ge",
+          "shared_at": "2026-09-11 09:25:29"
+        }
+      }
     }
   ]
 }
