@@ -2461,6 +2461,31 @@
           "shared_at": "2026-09-11 09:25:29"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/3d/3d-to-pdf-conversion-in-csharp-a-complete-tutorial",
+      "title": "3D to PDF Conversion in C#: a Complete Tutorial",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7505206509555998720",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7505206509555998720/",
+          "shared_at": "2026-09-14 10:11:17"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1392516266319913",
+          "post_url": "https://www.facebook.com/118018898863167_1392516266319913",
+          "shared_at": "2026-09-14 10:11:17"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4649501",
+          "post_url": "https://dev.to/asposecloud/3d-to-pdf-conversion-in-c-a-complete-tutorial-1ad8",
+          "shared_at": "2026-09-14 10:11:17"
+        }
+      }
     }
   ]
 }
