@@ -148,7 +148,7 @@ Remember: after renewing the token, update **both** `LINKEDIN_ACCESS_TOKEN` (sec
 
 ## Facebook Token Auto-Renewal
 
-Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for the Aspose.Cloud, GroupDocs.Cloud, and Conholdate.Cloud pages.
+Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for the Aspose.Cloud, GroupDocs.Cloud, and Conholdate pages.
 
 ### How it works
 
@@ -158,7 +158,7 @@ Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a b
 
 ### One-time setup
 
-Each brand (Aspose.Cloud, GroupDocs.Cloud, Conholdate.Cloud) has its **own** Facebook App, so credentials are not shared between them.
+Each brand (Aspose.Cloud, GroupDocs.Cloud, Conholdate) has its **own** Facebook App, so credentials are not shared between them.
 
 | Variable | Where to get it |
 |---|---|
@@ -166,7 +166,7 @@ Each brand (Aspose.Cloud, GroupDocs.Cloud, Conholdate.Cloud) has its **own** Fac
 | `FACEBOOK_USER_ACCESS_TOKEN` | [Graph API Explorer](https://developers.facebook.com/tools/explorer/) → select that same app → Generate Access Token → grant `pages_read_engagement`, `pages_manage_posts` (this seeds the automation; only needs to be pasted in once) |
 | `FACEBOOK_GROUPDOCS_APP_ID` / `FACEBOOK_GROUPDOCS_APP_SECRET` | Same steps, but select the app tied to the GroupDocs.Cloud page |
 | `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN` | Same steps, with the GroupDocs app selected in Graph API Explorer |
-| `FACEBOOK_CONHOLDATE_APP_ID` / `FACEBOOK_CONHOLDATE_APP_SECRET` | Same steps, but select the app tied to the Conholdate.Cloud page |
+| `FACEBOOK_CONHOLDATE_APP_ID` / `FACEBOOK_CONHOLDATE_APP_SECRET` | Same steps, but select the app tied to the Conholdate page |
 | `FACEBOOK_CONHOLDATE_USER_ACCESS_TOKEN` | Same steps, with the Conholdate app selected in Graph API Explorer |
 | `FACEBOOK_TOKEN_RENEWAL_PAT` | A **fine-grained GitHub PAT**, scoped to this repo only, with the "Secrets" repository permission set to Read and write. Lets the workflow call `gh secret set`. |
 
@@ -383,7 +383,7 @@ Where `{BRAND}` is the first part of the platform ID (before `-`), uppercased.
 |---|---|
 | `aspose-cloud` | `FACEBOOK_PAGE_ID` + `FACEBOOK_PAGE_ACCESS_TOKEN` (default) |
 | `groupdocs-cloud` | `FACEBOOK_GROUPDOCS_PAGE_ID` + `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN` |
-| `conholdate-cloud` | `FACEBOOK_CONHOLDATE_PAGE_ID` + `FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN` |
+| `conholdate` | `FACEBOOK_CONHOLDATE_PAGE_ID` + `FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN` |
 
 Add these to your `.env` file locally and as GitHub Actions secrets.
 
@@ -397,7 +397,7 @@ Copy an existing workflow file (e.g. `.github/workflows/blogcaster-groupdocs-clo
 
 - `name`: `BlogCaster — Your Brand`
 - `schedule`: Pick days that don't overlap with existing workflows
-- `platform default`: Your platform ID (e.g. `conholdate-cloud`)
+- `platform default`: Your platform ID (e.g. `conholdate`)
 - Facebook env vars: Use your brand-specific secret names
 
 Current schedule:
@@ -406,11 +406,12 @@ Current schedule:
 |---|---|---|
 | BlogCaster — Aspose Cloud | Mon & Fri | `0 5 * * 1,5` |
 | BlogCaster — GroupDocs Cloud | Tue & Thu | `0 5 * * 2,4` |
+| BlogCaster — Conholdate | Wed & Sat | `0 5 * * 3,6` |
 
 ### 4. Test locally
 
 ```bash
-python -m agent_engine.social_agent.main --auto --platform conholdate-cloud --target facebook
+python -m agent_engine.social_agent.main --auto --platform conholdate --target facebook
 ```
 
 ### 5. Test on GitHub Actions
