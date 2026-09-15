@@ -3,7 +3,7 @@ Facebook Token Renewal Script
 
 Refreshes long-lived Facebook Page Access Tokens before they expire.
 
-Flow per brand (aspose-cloud, groupdocs, conholdate):
+Flow per brand (aspose-cloud, groupdocs, conholdate, aspose):
   1. Exchange the stored user access token for a fresh long-lived one
      (~60 day validity) via the fb_exchange_token grant.
   2. Use that long-lived user token to re-derive the Page Access Token
@@ -26,7 +26,7 @@ HTTP_TIMEOUT = 30.0
 
 BRANDS = [
     {
-        "label": "aspose",
+        "label": "aspose_cloud",
         "app_id_env": "FACEBOOK_APP_ID",
         "app_secret_env": "FACEBOOK_APP_SECRET",
         "user_token_env": "FACEBOOK_USER_ACCESS_TOKEN",
@@ -45,6 +45,13 @@ BRANDS = [
         "app_secret_env": "FACEBOOK_CONHOLDATE_APP_SECRET",
         "user_token_env": "FACEBOOK_CONHOLDATE_USER_ACCESS_TOKEN",
         "page_id_env": "FACEBOOK_CONHOLDATE_PAGE_ID",
+    },
+    {
+        "label": "aspose",
+        "app_id_env": "FACEBOOK_ASPOSE_APP_ID",
+        "app_secret_env": "FACEBOOK_ASPOSE_APP_SECRET",
+        "user_token_env": "FACEBOOK_ASPOSE_USER_ACCESS_TOKEN",
+        "page_id_env": "FACEBOOK_ASPOSE_PAGE_ID",
     },
 ]
 

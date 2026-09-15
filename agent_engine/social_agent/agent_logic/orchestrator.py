@@ -133,7 +133,10 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None,
     # Facebook — check default and platform-specific credentials
     fb_page_id = settings.FACEBOOK_PAGE_ID
     fb_token = settings.FACEBOOK_PAGE_ACCESS_TOKEN
-    if platform:
+    # "aspose-cloud" always uses the default FACEBOOK_PAGE_ID/TOKEN above — it's
+    # excluded here because its brand prefix ("aspose") collides with the
+    # separate bare "aspose" platform's own FACEBOOK_ASPOSE_* credentials.
+    if platform and platform != "aspose-cloud":
         brand = platform.split("-")[0].upper()
         brand_page_id = os.environ.get(f"FACEBOOK_{brand}_PAGE_ID", "")
         brand_token = os.environ.get(f"FACEBOOK_{brand}_PAGE_ACCESS_TOKEN", "")
