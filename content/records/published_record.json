@@ -2486,6 +2486,31 @@
           "shared_at": "2026-09-14 10:11:17"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/merger/how-to-combine-multiple-word-documents-in-java",
+      "title": "How to Combine Multiple Word Documents in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7505563364060930049",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7505563364060930049/",
+          "shared_at": "2026-09-15 09:49:18"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1593078148960448",
+          "post_url": "https://www.facebook.com/397134737390236_1593078148960448",
+          "shared_at": "2026-09-15 09:49:18"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4658004",
+          "post_url": "https://dev.to/groupdocs-cloud/how-to-combine-multiple-word-documents-in-java-19hk",
+          "shared_at": "2026-09-15 09:49:18"
+        }
+      }
     }
   ]
 }
