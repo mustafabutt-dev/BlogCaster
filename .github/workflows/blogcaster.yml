@@ -22,7 +22,6 @@ on:
           - groupdocs
           - groupdocs-cloud
           - conholdate
-          - conholdate-cloud
         default: aspose-cloud
       target:
         description: "Social media target"

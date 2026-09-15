@@ -22,7 +22,6 @@ on:
           - groupdocs
           - groupdocs-cloud
           - conholdate
-          - conholdate-cloud
         default: groupdocs-cloud
       target:
         description: "Social media target"
