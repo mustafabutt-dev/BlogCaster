@@ -1,4 +1,4 @@
-name: BlogCaster — Conholdate Cloud
+name: BlogCaster — Conholdate
 
 on:
   # Manual trigger with inputs
@@ -23,7 +23,7 @@ on:
           - groupdocs-cloud
           - conholdate
           - conholdate-cloud
-        default: conholdate-cloud
+        default: conholdate
       target:
         description: "Social media target"
         required: false
@@ -122,7 +122,7 @@ jobs:
           METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
           METRICS_API_KEY: ${{ secrets.METRICS_API_KEY }}
         run: |
-          PLATFORM="${{ inputs.platform || 'conholdate-cloud' }}"
+          PLATFORM="${{ inputs.platform || 'conholdate' }}"
           TARGET="${{ steps.target.outputs.value }}"
           STRATEGY="${{ steps.strategy.outputs.value }}"
           echo "Running Auto Mode for platform: $PLATFORM (target: $TARGET, strategy: $STRATEGY)"
@@ -148,7 +148,7 @@ jobs:
           METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
           METRICS_API_KEY: ${{ secrets.METRICS_API_KEY }}
         run: |
-          PLATFORM="${{ inputs.platform || 'conholdate-cloud' }}"
+          PLATFORM="${{ inputs.platform || 'conholdate' }}"
           TARGET="${{ steps.target.outputs.value }}"
           echo "Running Manual Mode for URL: ${{ inputs.url }} (platform: $PLATFORM, target: $TARGET)"
           python -m agent_engine.social_agent.main --url "${{ inputs.url }}" --platform "$PLATFORM" --target "$TARGET"
