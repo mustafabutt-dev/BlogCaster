@@ -148,7 +148,7 @@ Remember: after renewing the token, update **both** `LINKEDIN_ACCESS_TOKEN` (sec
 
 ## Facebook Token Auto-Renewal
 
-Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for both the Aspose.Cloud and GroupDocs.Cloud pages.
+Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for the Aspose.Cloud, GroupDocs.Cloud, and Conholdate.Cloud pages.
 
 ### How it works
 
@@ -158,7 +158,7 @@ Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a b
 
 ### One-time setup
 
-Each brand (Aspose.Cloud, GroupDocs.Cloud) has its **own** Facebook App, so credentials are not shared between them.
+Each brand (Aspose.Cloud, GroupDocs.Cloud, Conholdate.Cloud) has its **own** Facebook App, so credentials are not shared between them.
 
 | Variable | Where to get it |
 |---|---|
@@ -166,11 +166,13 @@ Each brand (Aspose.Cloud, GroupDocs.Cloud) has its **own** Facebook App, so cred
 | `FACEBOOK_USER_ACCESS_TOKEN` | [Graph API Explorer](https://developers.facebook.com/tools/explorer/) → select that same app → Generate Access Token → grant `pages_read_engagement`, `pages_manage_posts` (this seeds the automation; only needs to be pasted in once) |
 | `FACEBOOK_GROUPDOCS_APP_ID` / `FACEBOOK_GROUPDOCS_APP_SECRET` | Same steps, but select the app tied to the GroupDocs.Cloud page |
 | `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN` | Same steps, with the GroupDocs app selected in Graph API Explorer |
+| `FACEBOOK_CONHOLDATE_APP_ID` / `FACEBOOK_CONHOLDATE_APP_SECRET` | Same steps, but select the app tied to the Conholdate.Cloud page |
+| `FACEBOOK_CONHOLDATE_USER_ACCESS_TOKEN` | Same steps, with the Conholdate app selected in Graph API Explorer |
 | `FACEBOOK_TOKEN_RENEWAL_PAT` | A **fine-grained GitHub PAT**, scoped to this repo only, with the "Secrets" repository permission set to Read and write. Lets the workflow call `gh secret set`. |
 
-Add all of the above to GitHub repo **Settings → Secrets and variables → Actions** (the first six also belong in your local `.env` if you want to test the script locally).
+Add all of the above to GitHub repo **Settings → Secrets and variables → Actions** (the app/user-token ones also belong in your local `.env` if you want to test the script locally).
 
-After that, renewal is fully automatic — the workflow keeps overwriting `FACEBOOK_USER_ACCESS_TOKEN`, `FACEBOOK_PAGE_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN`, and `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN` with fresh values each month, so you should never need to manually regenerate a Facebook token again unless the automation itself fails (e.g. an app credential is revoked).
+After that, renewal is fully automatic — the workflow keeps overwriting `FACEBOOK_USER_ACCESS_TOKEN`, `FACEBOOK_PAGE_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN`, `FACEBOOK_CONHOLDATE_USER_ACCESS_TOKEN`, and `FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN` with fresh values each month, so you should never need to manually regenerate a Facebook token again unless the automation itself fails (e.g. an app credential is revoked).
 
 To test manually: **Actions → Facebook Token Renewal → Run workflow**.
 
