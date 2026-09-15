@@ -1,0 +1,163 @@
+name: BlogCaster — Conholdate Cloud
+
+on:
+  # Manual trigger with inputs
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode"
+        required: true
+        type: choice
+        options:
+          - auto
+          - manual
+        default: auto
+      platform:
+        description: "Blog platform ID (for auto mode)"
+        required: false
+        type: choice
+        options:
+          - aspose
+          - aspose-cloud
+          - groupdocs
+          - groupdocs-cloud
+          - conholdate
+          - conholdate-cloud
+        default: conholdate-cloud
+      target:
+        description: "Social media target"
+        required: false
+        type: choice
+        options:
+          - All
+          - LinkedIn
+          - X
+          - Facebook
+          - Dev.to
+        default: All
+      url:
+        description: "Blog post URL (for manual mode)"
+        required: false
+        type: string
+      strategy:
+        description: "Auto Mode candidate selection strategy"
+        required: false
+        type: choice
+        options:
+          - latest
+          - gsc
+        default: latest
+
+  # Scheduled: Wednesday (latest strategy) and Saturday (GSC strategy) at 10:00 AM PKT (5:00 AM UTC)
+  schedule:
+    - cron: "0 5 * * 3"
+    - cron: "0 5 * * 6"
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+
+    # Allow the job to push the updated records file back to the repo
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install "mcp<2.0.0" feedparser httpx beautifulsoup4 aiofiles openai pydantic-settings tweepy google-auth python-dateutil
+
+      - name: Ensure records directory exists
+        run: mkdir -p content/records
+
+      - name: Create Google service account key
+        run: |
+          mkdir -p keys
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > keys/gsc-service-account.json
+
+      - name: Resolve target
+        id: target
+        run: |
+          RAW_TARGET="${{ inputs.target || 'All' }}"
+          # Convert to lowercase and normalise "dev.to" → "devto"
+          LOWER=$(echo "$RAW_TARGET" | tr '[:upper:]' '[:lower:]')
+          echo "value=$(echo "$LOWER" | tr -d '.')" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve strategy
+        id: strategy
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "value=${{ inputs.strategy || 'latest' }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" == "0 5 * * 6" ]; then
+            echo "value=gsc" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run BlogCaster (Auto Mode)
+        if: ${{ github.event_name == 'schedule' || inputs.mode == 'auto' }}
+        env:
+          GSC_SERVICE_ACCOUNT_KEY_PATH: keys/gsc-service-account.json
+          PROFESSIONALIZE_BASE_URL: ${{ secrets.PROFESSIONALIZE_BASE_URL }}
+          PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
+          PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_TOKEN_EXPIRES_AT: ${{ vars.LINKEDIN_TOKEN_EXPIRES_AT }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          FACEBOOK_CONHOLDATE_PAGE_ID: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ID }}
+          FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
+          METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
+          METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
+          METRICS_API_KEY: ${{ secrets.METRICS_API_KEY }}
+        run: |
+          PLATFORM="${{ inputs.platform || 'conholdate-cloud' }}"
+          TARGET="${{ steps.target.outputs.value }}"
+          STRATEGY="${{ steps.strategy.outputs.value }}"
+          echo "Running Auto Mode for platform: $PLATFORM (target: $TARGET, strategy: $STRATEGY)"
+          python -m agent_engine.social_agent.main --auto --platform "$PLATFORM" --target "$TARGET" --strategy "$STRATEGY"
+
+      - name: Run BlogCaster (Manual Mode)
+        if: ${{ inputs.mode == 'manual' && inputs.url != '' }}
+        env:
+          PROFESSIONALIZE_BASE_URL: ${{ secrets.PROFESSIONALIZE_BASE_URL }}
+          PROFESSIONALIZE_API_KEY_2: ${{ secrets.PROFESSIONALIZE_API_KEY_2 }}
+          PROFESSIONALIZE_LLM_MODEL: ${{ secrets.PROFESSIONALIZE_LLM_MODEL }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_TOKEN_EXPIRES_AT: ${{ vars.LINKEDIN_TOKEN_EXPIRES_AT }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          FACEBOOK_CONHOLDATE_PAGE_ID: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ID }}
+          FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
+          METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
+          METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
+          METRICS_API_KEY: ${{ secrets.METRICS_API_KEY }}
+        run: |
+          PLATFORM="${{ inputs.platform || 'conholdate-cloud' }}"
+          TARGET="${{ steps.target.outputs.value }}"
+          echo "Running Manual Mode for URL: ${{ inputs.url }} (platform: $PLATFORM, target: $TARGET)"
+          python -m agent_engine.social_agent.main --url "${{ inputs.url }}" --platform "$PLATFORM" --target "$TARGET"
+
+      - name: Commit updated records
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/records/published_record.json
+          git diff --cached --quiet || git commit -m "Update published records [skip ci]"
+          git pull --rebase
+          git push
