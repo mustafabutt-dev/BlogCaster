@@ -414,7 +414,7 @@ Current schedule:
 | BlogCaster — Aspose Cloud | Mon & Fri | `0 5 * * 1,5` |
 | BlogCaster — GroupDocs Cloud | Tue & Thu | `0 5 * * 2,4` |
 | BlogCaster — Conholdate | Wed & Sat | `0 5 * * 3,6` |
-| BlogCaster — Aspose | Sun | `0 5 * * 0` |
+| BlogCaster — Aspose | Sun (latest) & Mon (gsc) | `0 5 * * 0,1` |
 
 ### 4. Test locally
 

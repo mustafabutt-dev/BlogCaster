@@ -47,9 +47,10 @@ on:
           - gsc
         default: latest
 
-  # Scheduled: Sunday (latest strategy) at 10:00 AM PKT (5:00 AM UTC)
+  # Scheduled: Sunday (latest strategy) and Monday (GSC strategy) at 10:00 AM PKT (5:00 AM UTC)
   schedule:
     - cron: "0 5 * * 0"
+    - cron: "0 5 * * 1"
 
 jobs:
   post:
@@ -93,6 +94,8 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "value=${{ inputs.strategy || 'latest' }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" == "0 5 * * 1" ]; then
+            echo "value=gsc" >> "$GITHUB_OUTPUT"
           else
             echo "value=latest" >> "$GITHUB_OUTPUT"
           fi
