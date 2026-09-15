@@ -96,7 +96,11 @@ FACEBOOK_GROUPDOCS_PAGE_ID=your-groupdocs-facebook-page-id
 FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN=your-groupdocs-facebook-page-access-token
 FACEBOOK_CONHOLDATE_PAGE_ID=your-conholdate-facebook-page-id
 FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN=your-conholdate-facebook-page-access-token
+FACEBOOK_ASPOSE_PAGE_ID=your-aspose-facebook-page-id
+FACEBOOK_ASPOSE_PAGE_ACCESS_TOKEN=your-aspose-facebook-page-access-token
 ```
+
+> **Note:** `FACEBOOK_ASPOSE_*` is for the plain **`aspose`** platform (blog.aspose.com), a separate blog and Facebook Page from `aspose-cloud` (blog.aspose.cloud), which keeps using the default `FACEBOOK_PAGE_ID`/`FACEBOOK_PAGE_ACCESS_TOKEN` above.
 
 | Variable | Description |
 |---|---|
@@ -148,7 +152,7 @@ Remember: after renewing the token, update **both** `LINKEDIN_ACCESS_TOKEN` (sec
 
 ## Facebook Token Auto-Renewal
 
-Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for the Aspose.Cloud, GroupDocs.Cloud, and Conholdate pages.
+Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a browser login, because Meta allows re-exchanging a still-valid long-lived user token for a fresh one via API. A scheduled workflow (`.github/workflows/facebook-token-renewal.yml`) does this on the **1st of every month**, well inside the ~60-day expiry window, for the Aspose.Cloud, GroupDocs.Cloud, Conholdate, and Aspose pages.
 
 ### How it works
 
@@ -158,7 +162,7 @@ Unlike LinkedIn, Facebook Page tokens *can* be renewed automatically without a b
 
 ### One-time setup
 
-Each brand (Aspose.Cloud, GroupDocs.Cloud, Conholdate) has its **own** Facebook App, so credentials are not shared between them.
+Each brand (Aspose.Cloud, GroupDocs.Cloud, Conholdate, Aspose) has its **own** Facebook App, so credentials are not shared between them.
 
 | Variable | Where to get it |
 |---|---|
@@ -168,11 +172,13 @@ Each brand (Aspose.Cloud, GroupDocs.Cloud, Conholdate) has its **own** Facebook 
 | `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN` | Same steps, with the GroupDocs app selected in Graph API Explorer |
 | `FACEBOOK_CONHOLDATE_APP_ID` / `FACEBOOK_CONHOLDATE_APP_SECRET` | Same steps, but select the app tied to the Conholdate page |
 | `FACEBOOK_CONHOLDATE_USER_ACCESS_TOKEN` | Same steps, with the Conholdate app selected in Graph API Explorer |
+| `FACEBOOK_ASPOSE_APP_ID` / `FACEBOOK_ASPOSE_APP_SECRET` | Same steps, but select the app tied to the plain Aspose (blog.aspose.com) page |
+| `FACEBOOK_ASPOSE_USER_ACCESS_TOKEN` | Same steps, with the Aspose app selected in Graph API Explorer — **must** grant `pages_manage_posts`, not just `pages_read_engagement`, or posting will fail with `(#200) Insufficient permissions to post` |
 | `FACEBOOK_TOKEN_RENEWAL_PAT` | A **fine-grained GitHub PAT**, scoped to this repo only, with the "Secrets" repository permission set to Read and write. Lets the workflow call `gh secret set`. |
 
 Add all of the above to GitHub repo **Settings → Secrets and variables → Actions** (the app/user-token ones also belong in your local `.env` if you want to test the script locally).
 
-After that, renewal is fully automatic — the workflow keeps overwriting `FACEBOOK_USER_ACCESS_TOKEN`, `FACEBOOK_PAGE_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN`, `FACEBOOK_CONHOLDATE_USER_ACCESS_TOKEN`, and `FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN` with fresh values each month, so you should never need to manually regenerate a Facebook token again unless the automation itself fails (e.g. an app credential is revoked).
+After that, renewal is fully automatic — the workflow keeps overwriting `FACEBOOK_USER_ACCESS_TOKEN`, `FACEBOOK_PAGE_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_USER_ACCESS_TOKEN`, `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN`, `FACEBOOK_CONHOLDATE_USER_ACCESS_TOKEN`, `FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN`, `FACEBOOK_ASPOSE_USER_ACCESS_TOKEN`, and `FACEBOOK_ASPOSE_PAGE_ACCESS_TOKEN` with fresh values each month, so you should never need to manually regenerate a Facebook token again unless the automation itself fails (e.g. an app credential is revoked).
 
 To test manually: **Actions → Facebook Token Renewal → Run workflow**.
 
@@ -377,13 +383,14 @@ FACEBOOK_{BRAND}_PAGE_ID
 FACEBOOK_{BRAND}_PAGE_ACCESS_TOKEN
 ```
 
-Where `{BRAND}` is the first part of the platform ID (before `-`), uppercased.
+Where `{BRAND}` is the first part of the platform ID (before `-`), uppercased. **Exception:** `aspose-cloud` is hardcoded to always use the default `FACEBOOK_PAGE_ID`/`FACEBOOK_PAGE_ACCESS_TOKEN` and never does a brand lookup — this is because its brand prefix (`aspose`) would otherwise collide with the separate, plain `aspose` platform below. If you add a new hyphenated platform whose prefix collides with an existing bare platform ID, apply the same exclusion in `mcp_tools.py` and `orchestrator.py`.
 
 | Platform ID | Facebook env vars |
 |---|---|
-| `aspose-cloud` | `FACEBOOK_PAGE_ID` + `FACEBOOK_PAGE_ACCESS_TOKEN` (default) |
+| `aspose-cloud` | `FACEBOOK_PAGE_ID` + `FACEBOOK_PAGE_ACCESS_TOKEN` (default, hardcoded — see exception above) |
 | `groupdocs-cloud` | `FACEBOOK_GROUPDOCS_PAGE_ID` + `FACEBOOK_GROUPDOCS_PAGE_ACCESS_TOKEN` |
 | `conholdate` | `FACEBOOK_CONHOLDATE_PAGE_ID` + `FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN` |
+| `aspose` | `FACEBOOK_ASPOSE_PAGE_ID` + `FACEBOOK_ASPOSE_PAGE_ACCESS_TOKEN` |
 
 Add these to your `.env` file locally and as GitHub Actions secrets.
 
@@ -407,6 +414,7 @@ Current schedule:
 | BlogCaster — Aspose Cloud | Mon & Fri | `0 5 * * 1,5` |
 | BlogCaster — GroupDocs Cloud | Tue & Thu | `0 5 * * 2,4` |
 | BlogCaster — Conholdate | Wed & Sat | `0 5 * * 3,6` |
+| BlogCaster — Aspose | Sun | `0 5 * * 0` |
 
 ### 4. Test locally
 
