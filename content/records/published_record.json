@@ -2549,6 +2549,25 @@
           "shared_at": "2026-09-16 13:27:26"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/excel-to-json-conversion-in-java",
+      "title": "Excel to JSON Conversion in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7505923112853458944",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7505923112853458944/",
+          "shared_at": "2026-09-16 09:38:47"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1588133946660253",
+          "post_url": "https://www.facebook.com/207189803258967_1588133946660253",
+          "shared_at": "2026-09-16 09:38:47"
+        }
+      }
     }
   ]
 }
