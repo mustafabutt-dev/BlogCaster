@@ -2522,6 +2522,12 @@
           "post_id": "207189803258967_1587585493381765",
           "post_url": "https://www.facebook.com/207189803258967_1587585493381765",
           "shared_at": "2026-09-16 00:10:56"
+        },
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7505903575278157824",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7505903575278157824/",
+          "shared_at": "2026-09-16 13:21:05"
         }
       }
     },
