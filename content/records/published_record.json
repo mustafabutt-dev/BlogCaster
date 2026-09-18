@@ -2593,6 +2593,31 @@
           "shared_at": "2026-09-17 09:45:37"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/3d/fbx-to-obj-in-csharp",
+      "title": "FBX to OBJ Conversion Using .NET REST API \u2013 Efficient 3D File Transformation",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7506645456958107648",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7506645456958107648/",
+          "shared_at": "2026-09-18 09:29:09"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1395843042653902",
+          "post_url": "https://www.facebook.com/118018898863167_1395843042653902",
+          "shared_at": "2026-09-18 09:29:09"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4683718",
+          "post_url": "https://dev.to/asposecloud/fbx-to-obj-conversion-using-net-rest-api-efficient-3d-file-transformation-4g10",
+          "shared_at": "2026-09-18 09:29:09"
+        }
+      }
     }
   ]
 }
