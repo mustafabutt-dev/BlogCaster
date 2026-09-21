@@ -2656,6 +2656,25 @@
           "shared_at": "2026-09-20 09:38:37"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/ocr/convert-html-to-jpg-in-java",
+      "title": "Convert HTML to JPG in Java",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1398340985737441",
+          "post_url": "https://www.facebook.com/118018898863167_1398340985737441",
+          "shared_at": "2026-09-21 10:16:33"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4706370",
+          "post_url": "https://dev.to/asposecloud/convert-html-to-jpg-in-java-bj6",
+          "shared_at": "2026-09-21 10:16:33"
+        }
+      }
     }
   ]
 }
