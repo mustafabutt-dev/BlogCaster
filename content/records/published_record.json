@@ -2688,6 +2688,25 @@
           "shared_at": "2026-09-21 10:23:41"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/parser/extract-text-from-pdf-in-nodejs",
+      "title": "Extract Text from PDF in Node.JS",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1598992598369003",
+          "post_url": "https://www.facebook.com/397134737390236_1598992598369003",
+          "shared_at": "2026-09-22 09:40:05"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4714633",
+          "post_url": "https://dev.to/groupdocs-cloud/extract-text-from-pdf-in-nodejs-4ef4",
+          "shared_at": "2026-09-22 09:40:05"
+        }
+      }
     }
   ]
 }
