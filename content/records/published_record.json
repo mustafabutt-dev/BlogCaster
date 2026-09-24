@@ -2720,6 +2720,25 @@
           "shared_at": "2026-09-23 09:41:03"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/zh-hant/conversion/convert-html-to-powerpoint-online",
+      "title": "\u5c07 HTML \u8f49\u63db\u70ba PowerPoint \u7684 Java \u7a0b\u5f0f - \u5c07\u7db2\u9801\u5d4c\u5165 PPT",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1600725534862376",
+          "post_url": "https://www.facebook.com/397134737390236_1600725534862376",
+          "shared_at": "2026-09-24 09:38:51"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4732298",
+          "post_url": "https://dev.to/groupdocs-cloud/jiang-html-zhuan-huan-wei-powerpoint-de-java-cheng-shi-jiang-wang-ye-qian-ru-ppt-4c99",
+          "shared_at": "2026-09-24 09:38:51"
+        }
+      }
     }
   ]
 }
