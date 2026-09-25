@@ -2739,6 +2739,31 @@
           "shared_at": "2026-09-24 09:38:51"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/slides/develop-powerpoint-viewer-using-dotnet-cloud-sdk",
+      "title": "Develop PowerPoint Viewer using .NET Cloud SDK",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7509191009608552448",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7509191009608552448/",
+          "shared_at": "2026-09-25 10:04:16"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1401807745390765",
+          "post_url": "https://www.facebook.com/118018898863167_1401807745390765",
+          "shared_at": "2026-09-25 10:04:16"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4741173",
+          "post_url": "https://dev.to/asposecloud/develop-powerpoint-viewer-using-net-cloud-sdk-k86",
+          "shared_at": "2026-09-25 10:04:16"
+        }
+      }
     }
   ]
 }
