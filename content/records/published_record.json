@@ -2802,6 +2802,31 @@
           "shared_at": "2026-09-27 10:24:17"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/slides/ods-to-xlsx-conversion-tutorial-in-python",
+      "title": "ODS to XLSX Conversion Tutorial in Python",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7510296850978144256",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7510296850978144256/",
+          "shared_at": "2026-09-28 11:18:29"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1404729695098570",
+          "post_url": "https://www.facebook.com/118018898863167_1404729695098570",
+          "shared_at": "2026-09-28 11:18:29"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4763307",
+          "post_url": "https://dev.to/asposecloud/ods-to-xlsx-conversion-tutorial-in-python-2cpa",
+          "shared_at": "2026-09-28 11:18:29"
+        }
+      }
     }
   ]
 }
