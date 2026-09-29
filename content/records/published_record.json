@@ -2846,6 +2846,31 @@
           "shared_at": "2026-09-28 11:25:54"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/editor/edit-word-documents-in-java",
+      "title": "Edit Word Documents in Java",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7510657359971815425",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7510657359971815425/",
+          "shared_at": "2026-09-29 11:11:04"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1605596417708621",
+          "post_url": "https://www.facebook.com/397134737390236_1605596417708621",
+          "shared_at": "2026-09-29 11:11:04"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4770931",
+          "post_url": "https://dev.to/groupdocs-cloud/edit-word-documents-in-java-17lm",
+          "shared_at": "2026-09-29 11:11:04"
+        }
+      }
     }
   ]
 }
