@@ -2871,6 +2871,25 @@
           "shared_at": "2026-09-29 11:11:04"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/mpp-to-pdf-conversion-in-java",
+      "title": "MPP to PDF Conversion in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7511014913566343169",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7511014913566343169/",
+          "shared_at": "2026-09-30 10:51:48"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1602568268550154",
+          "post_url": "https://www.facebook.com/207189803258967_1602568268550154",
+          "shared_at": "2026-09-30 10:51:48"
+        }
+      }
     }
   ]
 }
