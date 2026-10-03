@@ -2928,6 +2928,25 @@
           "shared_at": "2026-10-02 10:56:59"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/online-visio-viewer",
+      "title": "Visio Viewer Online",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7512091949823070209",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7512091949823070209/",
+          "shared_at": "2026-10-03 10:11:33"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1605894678217513",
+          "post_url": "https://www.facebook.com/207189803258967_1605894678217513",
+          "shared_at": "2026-10-03 10:11:33"
+        }
+      }
     }
   ]
 }
