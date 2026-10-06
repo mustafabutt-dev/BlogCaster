@@ -3004,6 +3004,25 @@
           "shared_at": "2026-10-05 12:01:55"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/annotation/create-sticky-notes-on-word-pages-in-nodejs",
+      "title": "Create Sticky Notes on Word Pages in Node.JS",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7513204081679753216",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7513204081679753216/",
+          "shared_at": "2026-10-06 11:50:46"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1612303623704567",
+          "post_url": "https://www.facebook.com/397134737390236_1612303623704567",
+          "shared_at": "2026-10-06 11:50:46"
+        }
+      }
     }
   ]
 }
