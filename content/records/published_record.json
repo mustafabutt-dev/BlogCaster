@@ -3023,6 +3023,25 @@
           "shared_at": "2026-10-06 11:50:46"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/psd-to-jpg-conversion-in-java",
+      "title": "PSD to JPG Conversion in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7513560876340199424",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7513560876340199424/",
+          "shared_at": "2026-10-07 11:28:32"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1609971344476513",
+          "post_url": "https://www.facebook.com/207189803258967_1609971344476513",
+          "shared_at": "2026-10-07 11:28:32"
+        }
+      }
     }
   ]
 }
