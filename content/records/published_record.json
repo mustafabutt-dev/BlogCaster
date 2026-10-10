@@ -3080,6 +3080,25 @@
           "shared_at": "2026-10-09 11:43:13"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/compress-csv-online",
+      "title": "Compress CSV Online",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7514639908624568321",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7514639908624568321/",
+          "shared_at": "2026-10-10 10:56:15"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1613019904171657",
+          "post_url": "https://www.facebook.com/207189803258967_1613019904171657",
+          "shared_at": "2026-10-10 10:56:15"
+        }
+      }
     }
   ]
 }
