@@ -3099,6 +3099,25 @@
           "shared_at": "2026-10-10 10:56:15"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.com/email/detect-rfc-message-files-dotnet",
+      "title": "How to Detect RFC Message Files in C#",
+      "platform_id": "aspose",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7515007657720807424",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7515007657720807424/",
+          "shared_at": "2026-10-11 11:17:32"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "21217093093_2062608198013305",
+          "post_url": "https://www.facebook.com/21217093093_2062608198013305",
+          "shared_at": "2026-10-11 11:17:32"
+        }
+      }
     }
   ]
 }
