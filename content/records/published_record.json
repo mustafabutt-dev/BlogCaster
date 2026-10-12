@@ -3118,6 +3118,25 @@
           "shared_at": "2026-10-11 11:17:32"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/cells/create-manage-maintain-workbooks",
+      "title": "Create, Manage, Maintain Workbooks",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7515388611694055424",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7515388611694055424/",
+          "shared_at": "2026-10-12 12:31:18"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1417639313807608",
+          "post_url": "https://www.facebook.com/118018898863167_1417639313807608",
+          "shared_at": "2026-10-12 12:31:18"
+        }
+      }
     }
   ]
 }
