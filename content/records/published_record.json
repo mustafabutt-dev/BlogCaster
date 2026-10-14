@@ -3175,6 +3175,25 @@
           "shared_at": "2026-10-13 12:30:52"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/convert-stl-to-svg-in-java",
+      "title": "Convert STL to SVG in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7516073611586170880",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7516073611586170880/",
+          "shared_at": "2026-10-14 09:53:16"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1617334993740148",
+          "post_url": "https://www.facebook.com/207189803258967_1617334993740148",
+          "shared_at": "2026-10-14 09:53:16"
+        }
+      }
     }
   ]
 }
