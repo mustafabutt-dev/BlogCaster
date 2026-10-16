@@ -3213,6 +3213,25 @@
           "shared_at": "2026-10-15 09:32:29"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/pdf/annotate-pdf-documents-in-csharp",
+      "title": "Add PDF Document Annotations using .NET REST API",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7516793522033913857",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7516793522033913857/",
+          "shared_at": "2026-10-16 09:33:55"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1421276740110532",
+          "post_url": "https://www.facebook.com/118018898863167_1421276740110532",
+          "shared_at": "2026-10-16 09:33:55"
+        }
+      }
     }
   ]
 }
