@@ -3270,6 +3270,25 @@
           "shared_at": "2026-10-18 09:22:41"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/cells/advanced-workbook-management-patterns",
+      "title": "Advanced Workbook Management Patterns",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7517892842346967040",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7517892842346967040/",
+          "shared_at": "2026-10-19 10:22:13"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1424092906495582",
+          "post_url": "https://www.facebook.com/118018898863167_1424092906495582",
+          "shared_at": "2026-10-19 10:22:13"
+        }
+      }
     }
   ]
 }
