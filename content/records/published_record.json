@@ -3308,6 +3308,25 @@
           "shared_at": "2026-10-19 10:29:57"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/merger/merge-pdf-in-nodejs",
+      "title": "Merge PDF in Node.JS",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7518247296212439040",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7518247296212439040/",
+          "shared_at": "2026-10-20 09:50:43"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1625363175731945",
+          "post_url": "https://www.facebook.com/397134737390236_1625363175731945",
+          "shared_at": "2026-10-20 09:50:43"
+        }
+      }
     }
   ]
 }
