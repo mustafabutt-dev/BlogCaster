@@ -3327,6 +3327,25 @@
           "shared_at": "2026-10-20 09:50:43"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/convert-text-to-qr-code-in-java",
+      "title": "Convert Text to QR Code in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7518608811620798466",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7518608811620798466/",
+          "shared_at": "2026-10-21 09:47:14"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1624527193020928",
+          "post_url": "https://www.facebook.com/207189803258967_1624527193020928",
+          "shared_at": "2026-10-21 09:47:14"
+        }
+      }
     }
   ]
 }
