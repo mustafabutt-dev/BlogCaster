@@ -3346,6 +3346,25 @@
           "shared_at": "2026-10-21 09:47:14"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/conversion/convert-xml-to-pdf-file-in-java-using-rest-api",
+      "title": "How to Convert XML to PDF File in Java using REST API",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7518970820652855298",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7518970820652855298/",
+          "shared_at": "2026-10-22 09:45:58"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1627262928875303",
+          "post_url": "https://www.facebook.com/397134737390236_1627262928875303",
+          "shared_at": "2026-10-22 09:45:58"
+        }
+      }
     }
   ]
 }
