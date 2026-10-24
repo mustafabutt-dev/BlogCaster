@@ -3384,6 +3384,25 @@
           "shared_at": "2026-10-23 09:47:19"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/online-latex-viewer",
+      "title": "Online LaTeX Viewer",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7519688359728947200",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7519688359728947200/",
+          "shared_at": "2026-10-24 09:17:01"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1627599699380344",
+          "post_url": "https://www.facebook.com/207189803258967_1627599699380344",
+          "shared_at": "2026-10-24 09:17:01"
+        }
+      }
     }
   ]
 }
