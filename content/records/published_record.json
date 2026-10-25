@@ -3403,6 +3403,25 @@
           "shared_at": "2026-10-24 09:17:01"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.com/medical/generate-dicomweb-content-in-csharp",
+      "title": "Generate DICOMweb Content in C# with Aspose.Medical",
+      "platform_id": "aspose",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7520055932127432704",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7520055932127432704/",
+          "shared_at": "2026-10-25 09:37:37"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "21217093093_2076995676574557",
+          "post_url": "https://www.facebook.com/21217093093_2076995676574557",
+          "shared_at": "2026-10-25 09:37:37"
+        }
+      }
     }
   ]
 }
