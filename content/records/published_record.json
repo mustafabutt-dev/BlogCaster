@@ -3460,6 +3460,25 @@
           "shared_at": "2026-10-26 10:45:02"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/annotation/remove-annotation-objects-from-pdf-with-rest-in-nodejs",
+      "title": "Remove Annotation Objects from PDF with REST in Node.JS",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7520790097500327936",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7520790097500327936/",
+          "shared_at": "2026-10-27 10:14:54"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1631966091738320",
+          "post_url": "https://www.facebook.com/397134737390236_1631966091738320",
+          "shared_at": "2026-10-27 10:14:54"
+        }
+      }
     }
   ]
 }
