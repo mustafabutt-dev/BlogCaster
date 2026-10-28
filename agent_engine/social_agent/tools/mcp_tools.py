@@ -16,6 +16,7 @@ from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from agent_engine.social_agent.config import settings
+from agent_engine.social_agent.utils.helpers import get_bluesky_credentials
 
 logger = logging.getLogger("social_agent")
 
@@ -59,6 +60,7 @@ class MCPSessions:
     x_poster: ClientSession
     facebook_poster: ClientSession
     devto_poster: ClientSession
+    bluesky_poster: ClientSession
     gsc_fetcher: ClientSession
 
 
@@ -125,6 +127,11 @@ async def open_mcp_sessions(platform: str = ""):
     devto_env["DEVTO_API_KEY"] = settings.DEVTO_API_KEY
     devto_params = StdioServerParameters(command=sys.executable, args=[devto_path], env=devto_env)
 
+    bluesky_path = settings.resolve_path(settings.BLUESKY_POSTER_PATH)
+    bluesky_env = os.environ.copy()
+    bluesky_env["BLUESKY_HANDLE"], bluesky_env["BLUESKY_APP_PASSWORD"] = get_bluesky_credentials(platform)
+    bluesky_params = StdioServerParameters(command=sys.executable, args=[bluesky_path], env=bluesky_env)
+
     gsc_path = settings.resolve_path(settings.GSC_FETCHER_PATH)
     gsc_env = os.environ.copy()
     gsc_env["GSC_SERVICE_ACCOUNT_KEY_PATH"] = (
@@ -162,21 +169,27 @@ async def open_mcp_sessions(platform: str = ""):
                                                 async with ClientSession(dt_read, dt_write) as devto_session:
                                                     await devto_session.initialize()
 
-                                                    logger.info(f"{_MAGENTA}{_BOLD}Starting GSC Fetcher MCP server...{_RESET}")
-                                                    async with stdio_client(gsc_params) as (gsc_read, gsc_write):
-                                                        async with ClientSession(gsc_read, gsc_write) as gsc_session:
-                                                            await gsc_session.initialize()
+                                                    logger.info(f"{_MAGENTA}{_BOLD}Starting Bluesky Poster MCP server...{_RESET}")
+                                                    async with stdio_client(bluesky_params) as (bs_read, bs_write):
+                                                        async with ClientSession(bs_read, bs_write) as bluesky_session:
+                                                            await bluesky_session.initialize()
 
-                                                            logger.info("All MCP servers started")
-                                                            yield MCPSessions(
-                                                                rss_fetcher=rss_session,
-                                                                record_keeper=record_session,
-                                                                linkedin_poster=linkedin_session,
-                                                                x_poster=x_session,
-                                                                facebook_poster=facebook_session,
-                                                                devto_poster=devto_session,
-                                                                gsc_fetcher=gsc_session,
-                                                            )
+                                                            logger.info(f"{_MAGENTA}{_BOLD}Starting GSC Fetcher MCP server...{_RESET}")
+                                                            async with stdio_client(gsc_params) as (gsc_read, gsc_write):
+                                                                async with ClientSession(gsc_read, gsc_write) as gsc_session:
+                                                                    await gsc_session.initialize()
+
+                                                                    logger.info("All MCP servers started")
+                                                                    yield MCPSessions(
+                                                                        rss_fetcher=rss_session,
+                                                                        record_keeper=record_session,
+                                                                        linkedin_poster=linkedin_session,
+                                                                        x_poster=x_session,
+                                                                        facebook_poster=facebook_session,
+                                                                        devto_poster=devto_session,
+                                                                        bluesky_poster=bluesky_session,
+                                                                        gsc_fetcher=gsc_session,
+                                                                    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -332,6 +345,34 @@ async def devto_post(
             "tags": tags,
             "org_id": org_id,
             "main_image": main_image,
+        },
+    )
+    return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Bluesky Poster Tools
+# ─────────────────────────────────────────────────────────────────────────────
+
+async def bluesky_validate_credentials(sessions: MCPSessions) -> bool:
+    """Validate the Bluesky handle + app password."""
+    result = await sessions.bluesky_poster.call_tool("validate_credentials", {})
+    return _parse_result(result) or False
+
+
+async def bluesky_post(
+    sessions: MCPSessions, content: str, blog_url: str,
+    article_title: str = "", article_description: str = "", image_url: str = "",
+) -> dict:
+    """Post content to Bluesky with a link card pointing at blog_url."""
+    result = await sessions.bluesky_poster.call_tool(
+        "post_to_bluesky",
+        {
+            "content": content,
+            "blog_url": blog_url,
+            "article_title": article_title,
+            "article_description": article_description,
+            "image_url": image_url,
         },
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}

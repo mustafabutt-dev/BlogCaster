@@ -13,10 +13,12 @@ from openai import AsyncOpenAI
 
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.utils.prompts import (
+    BLUESKY_SYSTEM_PROMPT,
     DEVTO_SYSTEM_PROMPT,
     FACEBOOK_SYSTEM_PROMPT,
     LINKEDIN_SYSTEM_PROMPT,
     X_SYSTEM_PROMPT,
+    build_bluesky_prompt,
     build_devto_prompt,
     build_facebook_prompt,
     build_linkedin_prompt,
@@ -422,6 +424,115 @@ async def format_for_x(title: str, summary: str, blog_url: str) -> LLMResult:
 
     logger.info(f"X formatted tweet ({len(result)} chars)")
     logger.debug(f"X LLM output: {result}")
+
+    return LLMResult(
+        text=result,
+        input_tokens=total_input_tokens,
+        output_tokens=total_output_tokens,
+        total_tokens=total_tokens,
+        api_call_count=api_call_count,
+    )
+
+
+MAX_BLUESKY_LENGTH = 300
+
+
+async def format_for_bluesky(title: str, summary: str, blog_url: str) -> LLMResult:
+    """Format blog post content into a Bluesky post (max 300 characters).
+
+    The post carries a link card, so the text has no URL. Retries if the
+    model returns None/empty content or text over the 300-character limit;
+    as a last resort the longest attempt is truncated to fit.
+
+    Args:
+        title: Blog post title
+        summary: Blog post summary (HTML already stripped)
+        blog_url: URL of the blog post (stripped from the output if the LLM adds it)
+
+    Returns:
+        LLMResult with formatted text and token usage
+
+    Raises:
+        ValueError: If LLM returns empty response after retries
+    """
+    client = _get_client()
+    user_prompt = build_bluesky_prompt(title, summary)
+
+    logger.debug(f"Bluesky LLM prompt: {user_prompt[:200]}...")
+
+    max_attempts = 3
+    result = None
+    too_long = None
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_tokens = 0
+    api_call_count = 0
+
+    for attempt in range(1, max_attempts + 1):
+        response = await client.chat.completions.create(
+            model=settings.PROFESSIONALIZE_LLM_MODEL,
+            messages=[
+                {"role": "system", "content": BLUESKY_SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=4000,
+        )
+        api_call_count += 1
+
+        if response.usage:
+            total_input_tokens += response.usage.prompt_tokens
+            total_output_tokens += response.usage.completion_tokens
+            total_tokens += response.usage.total_tokens
+
+        if not response or not response.choices:
+            raise ValueError("LLM returned empty response")
+
+        content = response.choices[0].message.content
+
+        if not content or not content.strip():
+            logger.warning(
+                f"LLM returned None/empty content for Bluesky (attempt {attempt}/{max_attempts}). "
+                "Reasoning model likely spent all tokens on chain-of-thought."
+            )
+            continue
+
+        cleaned = _strip_thinking_tags(content)
+        cleaned = _strip_markdown(cleaned)
+        # The link card carries the URL — drop it if the LLM included it anyway
+        cleaned = _remove_url_lines(cleaned, blog_url).replace(blog_url, "").strip()
+        cleaned = "\n".join(line.rstrip() for line in cleaned.splitlines())
+
+        if not cleaned:
+            logger.warning(f"Bluesky LLM output empty after cleaning (attempt {attempt}/{max_attempts}). Retrying...")
+            continue
+
+        if not _has_hashtags(cleaned):
+            cleaned = cleaned.rstrip() + "\n\n#Developer #Programming"
+
+        if len(cleaned) <= MAX_BLUESKY_LENGTH:
+            result = cleaned
+            logger.info(f"LLM returned valid Bluesky post on attempt {attempt} ({len(cleaned)} chars)")
+            break
+
+        logger.warning(
+            f"Bluesky LLM output too long (attempt {attempt}/{max_attempts}): "
+            f"{len(cleaned)} chars, max {MAX_BLUESKY_LENGTH}. Retrying..."
+        )
+        too_long = cleaned
+
+    if not result and too_long:
+        logger.warning("Truncating over-length Bluesky output to fit the 300-character limit")
+        result = _truncate_to_char_limit(too_long, MAX_BLUESKY_LENGTH)
+
+    if not result:
+        raise ValueError(
+            f"LLM failed to produce a valid Bluesky post after {max_attempts} attempts. "
+            "Output was None or empty each time."
+        )
+
+    logger.info(f"Bluesky formatted post ({len(result)} chars)")
+    logger.debug(f"Bluesky LLM output: {result}")
 
     return LLMResult(
         text=result,

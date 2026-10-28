@@ -190,3 +190,47 @@ def build_x_prompt(title: str, summary: str, blog_url: str) -> str:
     )
 
     return "\n\n".join(parts)
+
+
+BLUESKY_SYSTEM_PROMPT = """You are a social media writer for Bluesky, where the audience is mostly developers. Your job is to turn blog post information into a short, engaging Bluesky post.
+
+You MUST follow this exact output structure:
+
+1. TEXT: One or two short sentences that make developers want to read the post — a problem it solves, a specific capability, or why it matters.
+2. HASHTAGS: End with 2-3 relevant hashtags on their own line, like: #Python #PDF #API
+
+Rules:
+- The whole post (text + hashtags) must be under 260 characters. Shorter is better.
+- Do NOT include the URL — the post carries a link card that already shows the article title and links to the blog.
+- Do NOT restate or paraphrase the title; the link card already shows it.
+- Never open with phrases like "In this blog post" or "This article".
+- No emojis. No markdown. Plain text only.
+- Hashtags are MANDATORY.
+- Never write product or library names with dots (e.g. Aspose.Cells). Write them without the dot (e.g. "Aspose Cells")."""
+
+
+def build_bluesky_prompt(title: str, summary: str) -> str:
+    """Build the user prompt for Bluesky post generation.
+
+    Args:
+        title: Blog post title
+        summary: Blog post summary (HTML already stripped)
+
+    Returns:
+        Formatted user prompt string
+    """
+    parts = [f"Blog Title: {title}"]
+
+    if summary and summary.strip():
+        truncated = summary[:1000] if len(summary) > 1000 else summary
+        parts.append(f"Blog Summary: {truncated}")
+    else:
+        parts.append("Blog Summary: (not available — use the title to craft the post)")
+
+    parts.append("")
+    parts.append(
+        "Write a Bluesky post following the exact structure from your instructions. "
+        "Keep the total under 260 characters, end with 2-3 hashtags, and do not include a URL."
+    )
+
+    return "\n\n".join(parts)
