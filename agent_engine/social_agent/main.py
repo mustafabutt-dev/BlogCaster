@@ -14,6 +14,7 @@ import sys
 
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.utils.helpers import (
+    detect_platform_from_url,
     get_active_platforms,
     load_registry,
     setup_logger,
@@ -44,9 +45,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--target",
         type=str,
-        choices=["all", "linkedin", "x", "facebook", "devto"],
+        choices=["all", "linkedin", "x", "facebook", "devto", "bluesky"],
         default="all",
-        help="Social media target: all, linkedin, x, facebook, or devto (default: all)",
+        help="Social media target: all, linkedin, x, facebook, devto, or bluesky (default: all)",
     )
     parser.add_argument(
         "--strategy",
@@ -117,6 +118,11 @@ def main() -> None:
         sys.exit(1)
 
     async def _run_manual(url: str, target: str, platform: str = "", dry_run: bool = False) -> bool:
+        if not platform:
+            # Without --platform, per-brand credentials (Facebook, Bluesky) would
+            # resolve to the defaults — detect the brand from the URL instead
+            detected = detect_platform_from_url(load_registry(settings.resolve_path(settings.REGISTRY_PATH)), url)
+            platform = detected["id"] if detected else ""
         metrics = MetricsRecorder()
         metrics.start()
         try:

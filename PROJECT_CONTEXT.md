@@ -16,6 +16,7 @@ A CLI-based agent that fetches blog posts from Hugo-based blog platforms via RSS
 | LinkedIn API | LinkedIn Personal Profile API (OAuth 2.0 pre-generated token) |
 | X (Twitter) API | X API v2 via tweepy (OAuth 1.0a) |
 | Dev.to API | Forem REST API v1 (API key auth) |
+| Bluesky API | AT Protocol XRPC on bsky.social (handle + app password) |
 | Config | Pydantic BaseSettings + .env file |
 | Data Source | Hugo RSS feeds |
 | State Storage | JSON files (published_record.json) |
@@ -33,6 +34,7 @@ A CLI-based agent that fetches blog posts from Hugo-based blog platforms via RSS
 | X_ACCESS_TOKEN | X (Twitter) OAuth 1.0a access token |
 | X_ACCESS_TOKEN_SECRET | X (Twitter) OAuth 1.0a access token secret |
 | DEVTO_API_KEY | Dev.to personal API key |
+| BLUESKY_{PLATFORM_ID}_HANDLE / _APP_PASSWORD | Per-brand Bluesky account, e.g. BLUESKY_ASPOSE_CLOUD_HANDLE |
 
 ## Architecture
 Four FastMCP servers communicating via stdio, orchestrated by a central agent:
@@ -40,6 +42,7 @@ Four FastMCP servers communicating via stdio, orchestrated by a central agent:
 2. **linkedin-poster** — Posts formatted content to LinkedIn personal profile
 3. **x-poster** — Posts formatted tweets to X (Twitter) via tweepy
 4. **devto-poster** — Publishes full markdown articles to Dev.to organization via Forem API
+4b. **bluesky-poster** — Posts short text + link card (title/description/thumbnail) to a per-brand Bluesky account
 5. **record-keeper** — Tracks published posts in JSON, prevents duplicates
 6. **gsc-fetcher** — Reads Google Search Console page performance (clicks/impressions/CTR/position) for the GSC-based selection strategy
 
@@ -99,6 +102,7 @@ Adding a new platform = new JSON entry only, no code change.
 | Stage 9 | GSC Fetcher MCP Server | COMPLETE (live-tested against blog.aspose.cloud, 12,784 pages) |
 | Stage 10 | GSC Selection Strategy (orchestrator + CLI) | COMPLETE (live-tested; `--strategy latest` regression-checked) |
 | Stage 11 | Workflow scheduling — 2nd weekly run per brand uses GSC strategy | COMPLETE (logic simulated locally; not yet observed on a real scheduled trigger) |
+| Stage 12 | Bluesky Poster Integration | COMPLETE (live-tested for aspose-cloud via manual mode) |
 
 ## Decision Log
 | ID | Decision | Rationale |
@@ -117,6 +121,7 @@ Adding a new platform = new JSON entry only, no code change.
 | D-012 | Dev.to articles carry main_image + clean canonical_url | Cover image (same verified featured image) shows in the Dev.to feed. Bug fix: canonical_url was accepted but never sent in the payload — all pre-2026-07-10 articles lack it (backfill possible via PUT /articles/{id}). Canonical uses the clean blog URL, never the UTM-tagged one, so search engines index the true article location; the teaser CTA link keeps UTM for analytics |
 | D-013 | Shorter social post targets: LinkedIn 60-100 words, Facebook 30-60 words | Since D-010/D-011 the article card/photo already carries title+image, so long commentary duplicated it. LinkedIn folds text after ~210 chars, Facebook after ~125 — hook must be front-loaded, and prompts now forbid restating the title. Validation floors in llm_service.py lowered to match (LinkedIn 40, Facebook 20; old 80-word floor would have rejected every valid Facebook post). Dev.to (400-600 words) and X unchanged |
 | D-014 | GSC Fetcher queries page-level stats via direct REST + google-auth (no google-api-python-client) | RSS only exposes ~10-20 latest posts, but a GSC-driven "pick underperforming content" strategy needs the site's entire indexed history, so RSS is bypassed entirely for this strategy — `fetch_post_by_url` (already used by Manual Mode) fetches content for whichever URL GSC surfaces, regardless of age. Querying with `dimensions: ["page"]` gets GSC's own per-page aggregation for free, avoiding manual query-level rollups. Reused the existing `sheet-reader` service account (already granted GSC property access) rather than provisioning a new one. Filtering (position/impressions/recency) and ranking are intentionally left to the orchestrator, not this server — mirrors the rss-fetcher/orchestrator split |
+| D-016 | Bluesky: one account per blog platform, link-card posts, credentials keyed by full platform ID | Bluesky has no org/page concept, so each brand gets its own account (social.media@<brand domain>). Credentials are BLUESKY_{PLATFORM_ID}_HANDLE/_APP_PASSWORD using the full ID (aspose-cloud → ASPOSE_CLOUD), avoiding the aspose/aspose-cloud prefix collision Facebook needs a special case for. Posts are ≤300 chars with 2-3 hashtags and no URL in the text — an app.bsky.embed.external card carries the UTM-tagged link, title, description and uploaded thumbnail. Hashtags/links need explicit facets (byte offsets); Bluesky doesn't auto-detect them. Free API, live-tested 2026-10-28 before building |
 | D-015 | GSC selection strategy excludes locale-prefixed paths (`/it/`, `/zh-tw/`, `/fa/`, etc.) | Live-testing surfaced an Italian-language post as the top GSC candidate — the blog indexes translated copies of posts under locale-prefixed paths, and GSC ranks them alongside the English original. The LLM correctly formatted the post in Italian, which is wrong for an English-audience LinkedIn/Facebook page. Fixed with a regex filter (`^[a-z]{2}(-[a-z]{2})?$` on the first path segment) validated against real `blog.aspose.cloud` data (~20 locale prefixes match, category paths like `pdf`/`cells`/`3d` don't) |
 
 ## Current State
@@ -140,6 +145,7 @@ Adding a new platform = new JSON entry only, no code change.
 | Manual Mode duplicate check | N/A — correctly skipped | SUCCESS |
 
 ## Last Updated
+2026-10-28 — Stage 12 (Bluesky) built: bluesky-poster MCP server, format_for_bluesky + prompt, orchestrator/CLI wiring (`--target bluesky`), `bluesky` UTM source, aspose-cloud secrets + Bluesky option in blogcaster.yml (D-016). First post (JSON→XLSX) made by a one-off script and recorded. Dry run of auto mode verified (168-char post, link card, UTM, thumbnail). Manual mode now detects the platform from the URL when --platform is omitted, so per-brand credentials resolve correctly. Full-pipeline live post OK (manual mode, combine-tiff-images-in-java), GitHub secrets added, account email verified. Pending: Bluesky accounts for the other brands.
 2026-07-23 — Stage 10 complete: GSC selection strategy wired into the orchestrator (D-014, D-015). `--strategy gsc` on `--auto` ranks GSC pages by impressions/CTR/position, filters out already-published/too-new/non-English-locale pages, and feeds the same downstream pipeline as `--strategy latest` (which was regression-tested unchanged after the refactor). Live-tested end-to-end against blog.aspose.cloud, including catching and fixing the locale-path issue (D-015) mid-test.
 Adds new dependency `python-dateutil` (already present locally; not yet added to the CI workflows' pip install line — needed before `--strategy gsc` can run in GitHub Actions).
 Not yet built: workflow schedule change (2nd weekly run per active brand uses GSC strategy instead of latest) — everything currently must be triggered manually with `--strategy gsc`.

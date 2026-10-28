@@ -19,6 +19,8 @@ from dateutil import parser as date_parser
 from agent_engine.social_agent.config import settings
 from agent_engine.social_agent.tools.mcp_tools import (
     MCPSessions,
+    bluesky_post,
+    bluesky_validate_credentials,
     devto_post,
     devto_validate_credentials,
     facebook_check_token_expiry,
@@ -40,9 +42,10 @@ from agent_engine.social_agent.utils.helpers import (
     detect_platform_from_url,
     find_platform_by_id,
     get_active_platforms,
+    get_bluesky_credentials,
     load_registry,
 )
-from agent_engine.social_agent.utils.llm_service import LLMResult, format_for_devto, format_for_facebook, format_for_linkedin, format_for_x
+from agent_engine.social_agent.utils.llm_service import LLMResult, format_for_bluesky, format_for_devto, format_for_facebook, format_for_linkedin, format_for_x
 from agent_engine.social_agent.utils.metrics import MetricsRecorder
 
 logger = logging.getLogger("social_agent")
@@ -53,6 +56,8 @@ def _get_expected_platforms(platform_config: dict | None) -> frozenset:
     platforms = {"linkedin", "x", "facebook"}
     if platform_config and platform_config.get("devto_org_id"):
         platforms.add("devto")
+    if platform_config and all(get_bluesky_credentials(platform_config["id"])):
+        platforms.add("bluesky")
     return frozenset(platforms)
 
 
@@ -179,6 +184,24 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None,
         logger.info("Dev.to not configured for this platform — skipping")
         results["devto"] = False
 
+    # Bluesky — each blog platform has its own account (BLUESKY_{PLATFORM_ID}_*)
+    if target not in ("all", "bluesky"):
+        logger.info(f"Bluesky excluded by --target {target}")
+        results["bluesky"] = False
+    elif "bluesky" in skip_platforms:
+        logger.info("Bluesky already succeeded for this URL — skipping")
+        results["bluesky"] = False
+    elif all(get_bluesky_credentials(platform)):
+        logger.info("Validating Bluesky credentials...")
+        results["bluesky"] = await bluesky_validate_credentials(sessions)
+        if results["bluesky"]:
+            logger.info("Bluesky credentials are valid")
+        else:
+            logger.warning("Bluesky credentials are invalid")
+    else:
+        logger.info("Bluesky not configured for this platform — skipping")
+        results["bluesky"] = False
+
     return results
 
 
@@ -266,6 +289,14 @@ async def _format_for_platforms(
             logger.error(f"LLM formatting for Dev.to failed: {e}")
             print(f"Error formatting for Dev.to: {e}")
 
+    if valid_platforms.get("bluesky"):
+        logger.info("Formatting post for Bluesky via LLM...")
+        try:
+            formatted["bluesky"] = await format_for_bluesky(title, content, utm_urls.get("bluesky", blog_url))
+        except Exception as e:
+            logger.error(f"LLM formatting for Bluesky failed: {e}")
+            print(f"Error formatting for Bluesky: {e}")
+
     return formatted
 
 
@@ -342,6 +373,22 @@ async def _post_to_platforms(
         else:
             logger.error(f"Dev.to posting failed: {devto_result.get('error')}")
             print(f"Error posting to Dev.to: {devto_result.get('error')}")
+
+    if "bluesky" in formatted:
+        logger.info("Posting to Bluesky...")
+        text = formatted["bluesky"].text if isinstance(formatted["bluesky"], LLMResult) else formatted["bluesky"]
+        bluesky_result = await bluesky_post(
+            sessions, text, utm_urls.get("bluesky", blog_url),
+            article_title=blog_title, article_description=blog_description, image_url=image_url,
+        )
+        results["bluesky"] = bluesky_result
+        if bluesky_result.get("status") == "success":
+            url = bluesky_result.get("url", "")
+            logger.info(f"Bluesky post successful: url={url}")
+            print(f"Successfully posted to Bluesky! URL: {url}")
+        else:
+            logger.error(f"Bluesky posting failed: {bluesky_result.get('error')}")
+            print(f"Error posting to Bluesky: {bluesky_result.get('error')}")
 
     return results
 
@@ -660,6 +707,8 @@ async def run_manual_mode(
                 print(f"[article card] {title} → {utm_urls.get('linkedin', url)} (thumbnail: {image_url or 'none'})")
             if plat == "facebook":
                 print(f"[photo post] image: {image_url or 'none — will fall back to link post'}")
+            if plat == "bluesky":
+                print(f"[link card] {title} → {utm_urls.get('bluesky', url)} (thumbnail: {image_url or 'none'}, {len(text)} chars)")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Manual Mode dry run complete for: {url}")
         return True
@@ -804,6 +853,8 @@ async def run_auto_mode(
                 print(f"[article card] {title} → {utm_urls.get('linkedin', post_url)} (thumbnail: {image_url or 'none'})")
             if plat == "facebook":
                 print(f"[photo post] image: {image_url or 'none — will fall back to link post'}")
+            if plat == "bluesky":
+                print(f"[link card] {title} → {utm_urls.get('bluesky', post_url)} (thumbnail: {image_url or 'none'}, {len(text)} chars)")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Auto Mode dry run complete for platform: {platform_id}")
         return True

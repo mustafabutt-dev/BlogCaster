@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     # FACEBOOK_{BRAND}_PAGE_ID / FACEBOOK_{BRAND}_PAGE_ACCESS_TOKEN
     # e.g. FACEBOOK_GROUPDOCS_PAGE_ID, FACEBOOK_CONHOLDATE_PAGE_ID
 
+    # Bluesky — one account per blog platform, loaded dynamically from env:
+    # BLUESKY_{PLATFORM_ID}_HANDLE / BLUESKY_{PLATFORM_ID}_APP_PASSWORD
+    # e.g. BLUESKY_ASPOSE_CLOUD_HANDLE (see helpers.get_bluesky_credentials)
+
     # Metrics — Team (Google Sheets via POST + token query param)
     METRICS_GOOGLE_SCRIPT_URL_TEAM: str = ""
     METRICS_TOKEN_TEAM: str = ""
@@ -66,6 +70,7 @@ class Settings(BaseSettings):
     X_POSTER_PATH: str = "mcp-servers/x-poster/server.py"
     FACEBOOK_POSTER_PATH: str = "mcp-servers/facebook-poster/server.py"
     DEVTO_POSTER_PATH: str = "mcp-servers/devto-poster/server.py"
+    BLUESKY_POSTER_PATH: str = "mcp-servers/bluesky-poster/server.py"
     RECORD_KEEPER_PATH: str = "mcp-servers/record-keeper/server.py"
     GSC_FETCHER_PATH: str = "mcp-servers/gsc-fetcher/server.py"
 

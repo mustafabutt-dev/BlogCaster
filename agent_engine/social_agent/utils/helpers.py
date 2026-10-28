@@ -160,11 +160,29 @@ def build_utm_urls(url: str, campaign: str) -> dict:
         "x": "twitter",
         "devto": "devto",
         "facebook": "facebook",
+        "bluesky": "bluesky",
     }
     return {
         platform: f"{url}{separator}utm_source={source}&utm_medium=social&utm_campaign={campaign}"
         for platform, source in sources.items()
     }
+
+
+def get_bluesky_credentials(platform_id: str) -> tuple[str, str]:
+    """Return (handle, app_password) for a blog platform's Bluesky account.
+
+    Each brand has its own account. Convention: BLUESKY_{PLATFORM_ID}_HANDLE /
+    BLUESKY_{PLATFORM_ID}_APP_PASSWORD, e.g. aspose-cloud → BLUESKY_ASPOSE_CLOUD_HANDLE.
+    Uses the full platform ID (not just the brand prefix), so "aspose" and
+    "aspose-cloud" never collide. Returns empty strings if not configured.
+    """
+    if not platform_id:
+        return "", ""
+    key = platform_id.upper().replace("-", "_")
+    return (
+        os.environ.get(f"BLUESKY_{key}_HANDLE", ""),
+        os.environ.get(f"BLUESKY_{key}_APP_PASSWORD", ""),
+    )
 
 
 def build_post_url(platform_name: str, post_id: str) -> str:
