@@ -3520,6 +3520,12 @@
           "post_id": "207189803258967_1631951145611866",
           "post_url": "https://www.facebook.com/207189803258967_1631951145611866",
           "shared_at": "2026-10-28 10:56:43"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:i2p7vq2scbvz2ucjgdbsxyzg/app.bsky.feed.post/3myxhv6m5kb2g",
+          "post_url": "https://bsky.app/profile/conholdate.bsky.social/post/3myxhv6m5kb2g",
+          "shared_at": "2026-10-29 00:20:55"
         }
       }
     }
