@@ -33,6 +33,7 @@ on:
           - X
           - Facebook
           - Dev.to
+          - Bluesky
         default: All
       url:
         description: "Blog post URL (for manual mode)"
@@ -116,6 +117,8 @@ jobs:
           FACEBOOK_CONHOLDATE_PAGE_ID: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ID }}
           FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN }}
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          BLUESKY_CONHOLDATE_HANDLE: ${{ secrets.BLUESKY_CONHOLDATE_HANDLE }}
+          BLUESKY_CONHOLDATE_PASSWORD: ${{ secrets.BLUESKY_CONHOLDATE_PASSWORD }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
           METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
@@ -142,6 +145,8 @@ jobs:
           FACEBOOK_CONHOLDATE_PAGE_ID: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ID }}
           FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_CONHOLDATE_PAGE_ACCESS_TOKEN }}
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          BLUESKY_CONHOLDATE_HANDLE: ${{ secrets.BLUESKY_CONHOLDATE_HANDLE }}
+          BLUESKY_CONHOLDATE_PASSWORD: ${{ secrets.BLUESKY_CONHOLDATE_PASSWORD }}
           METRICS_GOOGLE_SCRIPT_URL_TEAM: ${{ secrets.METRICS_GOOGLE_SCRIPT_URL_TEAM }}
           METRICS_TOKEN_TEAM: ${{ secrets.METRICS_TOKEN_TEAM }}
           METRICS_API_URL: ${{ secrets.METRICS_API_URL }}
