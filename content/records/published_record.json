@@ -3382,6 +3382,12 @@
           "post_id": "118018898863167_1427723976132475",
           "post_url": "https://www.facebook.com/118018898863167_1427723976132475",
           "shared_at": "2026-10-23 09:47:19"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3myxcqvvlma2f",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3myxcqvvlma2f",
+          "shared_at": "2026-10-28 22:49:03"
         }
       }
     },
@@ -3439,6 +3445,12 @@
           "post_id": "118018898863167_1430522499185956",
           "post_url": "https://www.facebook.com/118018898863167_1430522499185956",
           "shared_at": "2026-10-26 10:36:26"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3myxbsb6t3e25",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3myxbsb6t3e25",
+          "shared_at": "2026-10-28 00:00:00"
         }
       }
     },
