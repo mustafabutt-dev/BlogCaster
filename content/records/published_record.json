@@ -3479,6 +3479,25 @@
           "shared_at": "2026-10-27 10:14:54"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/convert-tiff-to-jpg-in-java",
+      "title": "Convert TIFF to JPG in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7521163014708879362",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7521163014708879362/",
+          "shared_at": "2026-10-28 10:56:43"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1631951145611866",
+          "post_url": "https://www.facebook.com/207189803258967_1631951145611866",
+          "shared_at": "2026-10-28 10:56:43"
+        }
+      }
     }
   ]
 }
