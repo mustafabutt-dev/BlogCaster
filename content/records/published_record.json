@@ -3457,6 +3457,12 @@
           "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3myxbsb6t3e25",
           "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3myxbsb6t3e25",
           "shared_at": "2026-10-28 00:00:00"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117523516246529911",
+          "post_url": "https://mastodon.social/@aspose_cloud/117523516246529911",
+          "shared_at": "2026-10-29 14:35:44"
         }
       }
     },
