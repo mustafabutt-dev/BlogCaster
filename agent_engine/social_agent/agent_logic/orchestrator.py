@@ -29,6 +29,8 @@ from agent_engine.social_agent.tools.mcp_tools import (
     gsc_get_page_stats,
     linkedin_post,
     linkedin_validate_token,
+    mastodon_post,
+    mastodon_validate_credentials,
     record_get_all,
     record_save,
     rss_fetch_post_by_url,
@@ -43,9 +45,10 @@ from agent_engine.social_agent.utils.helpers import (
     find_platform_by_id,
     get_active_platforms,
     get_bluesky_credentials,
+    get_mastodon_token,
     load_registry,
 )
-from agent_engine.social_agent.utils.llm_service import LLMResult, format_for_bluesky, format_for_devto, format_for_facebook, format_for_linkedin, format_for_x
+from agent_engine.social_agent.utils.llm_service import LLMResult, format_for_bluesky, format_for_devto, format_for_mastodon, format_for_facebook, format_for_linkedin, format_for_x
 from agent_engine.social_agent.utils.metrics import MetricsRecorder
 
 logger = logging.getLogger("social_agent")
@@ -58,6 +61,8 @@ def _get_expected_platforms(platform_config: dict | None) -> frozenset:
         platforms.add("devto")
     if platform_config and all(get_bluesky_credentials(platform_config["id"])):
         platforms.add("bluesky")
+    if platform_config and get_mastodon_token(platform_config["id"]):
+        platforms.add("mastodon")
     return frozenset(platforms)
 
 
@@ -202,6 +207,24 @@ async def _validate_platforms(sessions: MCPSessions, skip_platforms: set = None,
         logger.info("Bluesky not configured for this platform — skipping")
         results["bluesky"] = False
 
+    # Mastodon — each blog platform has its own account (MASTODON_{PLATFORM_ID}_ACCESS_TOKEN)
+    if target not in ("all", "mastodon"):
+        logger.info(f"Mastodon excluded by --target {target}")
+        results["mastodon"] = False
+    elif "mastodon" in skip_platforms:
+        logger.info("Mastodon already succeeded for this URL — skipping")
+        results["mastodon"] = False
+    elif get_mastodon_token(platform):
+        logger.info("Validating Mastodon token...")
+        results["mastodon"] = await mastodon_validate_credentials(sessions)
+        if results["mastodon"]:
+            logger.info("Mastodon token is valid")
+        else:
+            logger.warning("Mastodon token is invalid or revoked")
+    else:
+        logger.info("Mastodon not configured for this platform — skipping")
+        results["mastodon"] = False
+
     return results
 
 
@@ -297,6 +320,14 @@ async def _format_for_platforms(
             logger.error(f"LLM formatting for Bluesky failed: {e}")
             print(f"Error formatting for Bluesky: {e}")
 
+    if valid_platforms.get("mastodon"):
+        logger.info("Formatting post for Mastodon via LLM...")
+        try:
+            formatted["mastodon"] = await format_for_mastodon(title, content, utm_urls.get("mastodon", blog_url))
+        except Exception as e:
+            logger.error(f"LLM formatting for Mastodon failed: {e}")
+            print(f"Error formatting for Mastodon: {e}")
+
     return formatted
 
 
@@ -389,6 +420,21 @@ async def _post_to_platforms(
         else:
             logger.error(f"Bluesky posting failed: {bluesky_result.get('error')}")
             print(f"Error posting to Bluesky: {bluesky_result.get('error')}")
+
+    if "mastodon" in formatted:
+        logger.info("Posting to Mastodon...")
+        text = formatted["mastodon"].text if isinstance(formatted["mastodon"], LLMResult) else formatted["mastodon"]
+        mastodon_result = await mastodon_post(
+            sessions, text, utm_urls.get("mastodon", blog_url), image_url=image_url, image_alt=blog_title,
+        )
+        results["mastodon"] = mastodon_result
+        if mastodon_result.get("status") == "success":
+            url = mastodon_result.get("url", "")
+            logger.info(f"Mastodon post successful: url={url}")
+            print(f"Successfully posted to Mastodon! URL: {url}")
+        else:
+            logger.error(f"Mastodon posting failed: {mastodon_result.get('error')}")
+            print(f"Error posting to Mastodon: {mastodon_result.get('error')}")
 
     return results
 
@@ -709,6 +755,8 @@ async def run_manual_mode(
                 print(f"[photo post] image: {image_url or 'none — will fall back to link post'}")
             if plat == "bluesky":
                 print(f"[link card] {title} → {utm_urls.get('bluesky', url)} (thumbnail: {image_url or 'none'}, {len(text)} chars)")
+            if plat == "mastodon":
+                print(f"[{len(text)} chars] image: {image_url or 'none — Mastodon will show its link card'}")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Manual Mode dry run complete for: {url}")
         return True
@@ -855,6 +903,8 @@ async def run_auto_mode(
                 print(f"[photo post] image: {image_url or 'none — will fall back to link post'}")
             if plat == "bluesky":
                 print(f"[link card] {title} → {utm_urls.get('bluesky', post_url)} (thumbnail: {image_url or 'none'}, {len(text)} chars)")
+            if plat == "mastodon":
+                print(f"[{len(text)} chars] image: {image_url or 'none — Mastodon will show its link card'}")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Auto Mode dry run complete for platform: {platform_id}")
         return True

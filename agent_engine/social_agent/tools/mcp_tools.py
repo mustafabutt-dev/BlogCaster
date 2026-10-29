@@ -16,7 +16,7 @@ from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from agent_engine.social_agent.config import settings
-from agent_engine.social_agent.utils.helpers import get_bluesky_credentials
+from agent_engine.social_agent.utils.helpers import get_bluesky_credentials, get_mastodon_token
 
 logger = logging.getLogger("social_agent")
 
@@ -61,6 +61,7 @@ class MCPSessions:
     facebook_poster: ClientSession
     devto_poster: ClientSession
     bluesky_poster: ClientSession
+    mastodon_poster: ClientSession
     gsc_fetcher: ClientSession
 
 
@@ -132,6 +133,12 @@ async def open_mcp_sessions(platform: str = ""):
     bluesky_env["BLUESKY_HANDLE"], bluesky_env["BLUESKY_APP_PASSWORD"] = get_bluesky_credentials(platform)
     bluesky_params = StdioServerParameters(command=sys.executable, args=[bluesky_path], env=bluesky_env)
 
+    mastodon_path = settings.resolve_path(settings.MASTODON_POSTER_PATH)
+    mastodon_env = os.environ.copy()
+    mastodon_env["MASTODON_ACCESS_TOKEN"] = get_mastodon_token(platform)
+    mastodon_env["MASTODON_INSTANCE_URL"] = settings.MASTODON_INSTANCE_URL
+    mastodon_params = StdioServerParameters(command=sys.executable, args=[mastodon_path], env=mastodon_env)
+
     gsc_path = settings.resolve_path(settings.GSC_FETCHER_PATH)
     gsc_env = os.environ.copy()
     gsc_env["GSC_SERVICE_ACCOUNT_KEY_PATH"] = (
@@ -174,22 +181,28 @@ async def open_mcp_sessions(platform: str = ""):
                                                         async with ClientSession(bs_read, bs_write) as bluesky_session:
                                                             await bluesky_session.initialize()
 
-                                                            logger.info(f"{_MAGENTA}{_BOLD}Starting GSC Fetcher MCP server...{_RESET}")
-                                                            async with stdio_client(gsc_params) as (gsc_read, gsc_write):
-                                                                async with ClientSession(gsc_read, gsc_write) as gsc_session:
-                                                                    await gsc_session.initialize()
+                                                            logger.info(f"{_MAGENTA}{_BOLD}Starting Mastodon Poster MCP server...{_RESET}")
+                                                            async with stdio_client(mastodon_params) as (md_read, md_write):
+                                                                async with ClientSession(md_read, md_write) as mastodon_session:
+                                                                    await mastodon_session.initialize()
 
-                                                                    logger.info("All MCP servers started")
-                                                                    yield MCPSessions(
-                                                                        rss_fetcher=rss_session,
-                                                                        record_keeper=record_session,
-                                                                        linkedin_poster=linkedin_session,
-                                                                        x_poster=x_session,
-                                                                        facebook_poster=facebook_session,
-                                                                        devto_poster=devto_session,
-                                                                        bluesky_poster=bluesky_session,
-                                                                        gsc_fetcher=gsc_session,
-                                                                    )
+                                                                    logger.info(f"{_MAGENTA}{_BOLD}Starting GSC Fetcher MCP server...{_RESET}")
+                                                                    async with stdio_client(gsc_params) as (gsc_read, gsc_write):
+                                                                        async with ClientSession(gsc_read, gsc_write) as gsc_session:
+                                                                            await gsc_session.initialize()
+
+                                                                            logger.info("All MCP servers started")
+                                                                            yield MCPSessions(
+                                                                                rss_fetcher=rss_session,
+                                                                                record_keeper=record_session,
+                                                                                linkedin_poster=linkedin_session,
+                                                                                x_poster=x_session,
+                                                                                facebook_poster=facebook_session,
+                                                                                devto_poster=devto_session,
+                                                                                bluesky_poster=bluesky_session,
+                                                                                mastodon_poster=mastodon_session,
+                                                                                gsc_fetcher=gsc_session,
+                                                                            )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -374,6 +387,30 @@ async def bluesky_post(
             "article_description": article_description,
             "image_url": image_url,
         },
+    )
+    return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Mastodon Poster Tools
+# ─────────────────────────────────────────────────────────────────────────────
+
+async def mastodon_validate_credentials(sessions: MCPSessions) -> bool:
+    """Validate the Mastodon access token."""
+    result = await sessions.mastodon_poster.call_tool("validate_credentials", {})
+    return _parse_result(result) or False
+
+
+async def mastodon_post(
+    sessions: MCPSessions, content: str, blog_url: str, image_url: str = "", image_alt: str = "",
+) -> dict:
+    """Publish a status to Mastodon. The blog URL must already be in content.
+
+    With image_url set, the featured image is attached (image_alt is its alt text).
+    """
+    result = await sessions.mastodon_poster.call_tool(
+        "post_to_mastodon",
+        {"content": content, "blog_url": blog_url, "image_url": image_url, "image_alt": image_alt},
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}
 

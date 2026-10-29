@@ -52,6 +52,10 @@ class Settings(BaseSettings):
     # BLUESKY_{PLATFORM_ID}_HANDLE / BLUESKY_{PLATFORM_ID}_APP_PASSWORD
     # e.g. BLUESKY_ASPOSE_CLOUD_HANDLE (see helpers.get_bluesky_credentials)
 
+    # Mastodon — one account per blog platform, token loaded dynamically from env:
+    # MASTODON_{PLATFORM_ID}_ACCESS_TOKEN (see helpers.get_mastodon_token)
+    MASTODON_INSTANCE_URL: str = "https://mastodon.social"
+
     # Metrics — Team (Google Sheets via POST + token query param)
     METRICS_GOOGLE_SCRIPT_URL_TEAM: str = ""
     METRICS_TOKEN_TEAM: str = ""
@@ -71,6 +75,7 @@ class Settings(BaseSettings):
     FACEBOOK_POSTER_PATH: str = "mcp-servers/facebook-poster/server.py"
     DEVTO_POSTER_PATH: str = "mcp-servers/devto-poster/server.py"
     BLUESKY_POSTER_PATH: str = "mcp-servers/bluesky-poster/server.py"
+    MASTODON_POSTER_PATH: str = "mcp-servers/mastodon-poster/server.py"
     RECORD_KEEPER_PATH: str = "mcp-servers/record-keeper/server.py"
     GSC_FETCHER_PATH: str = "mcp-servers/gsc-fetcher/server.py"
 

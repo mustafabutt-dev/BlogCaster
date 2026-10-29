@@ -17,11 +17,13 @@ from agent_engine.social_agent.utils.prompts import (
     DEVTO_SYSTEM_PROMPT,
     FACEBOOK_SYSTEM_PROMPT,
     LINKEDIN_SYSTEM_PROMPT,
+    MASTODON_SYSTEM_PROMPT,
     X_SYSTEM_PROMPT,
     build_bluesky_prompt,
     build_devto_prompt,
     build_facebook_prompt,
     build_linkedin_prompt,
+    build_mastodon_prompt,
     build_x_prompt,
 )
 
@@ -533,6 +535,120 @@ async def format_for_bluesky(title: str, summary: str, blog_url: str) -> LLMResu
 
     logger.info(f"Bluesky formatted post ({len(result)} chars)")
     logger.debug(f"Bluesky LLM output: {result}")
+
+    return LLMResult(
+        text=result,
+        input_tokens=total_input_tokens,
+        output_tokens=total_output_tokens,
+        total_tokens=total_tokens,
+        api_call_count=api_call_count,
+    )
+
+
+MAX_MASTODON_LENGTH = 500
+MASTODON_URL_LENGTH = 23  # Mastodon counts every URL as 23 characters, whatever its real length
+
+
+async def format_for_mastodon(title: str, summary: str, blog_url: str) -> LLMResult:
+    """Format blog post content into a Mastodon post (max 500 characters).
+
+    The LLM writes text + hashtags without a URL; the blog URL is appended on
+    its own line so Mastodon builds a link preview card from it. Retries if
+    the text is empty or too long to fit alongside the URL; as a last resort
+    the longest attempt is truncated.
+
+    Args:
+        title: Blog post title
+        summary: Blog post summary (HTML already stripped)
+        blog_url: URL of the blog post (appended to the text)
+
+    Returns:
+        LLMResult with formatted text (URL included) and token usage
+
+    Raises:
+        ValueError: If LLM returns empty response after retries
+    """
+    client = _get_client()
+    user_prompt = build_mastodon_prompt(title, summary)
+
+    logger.debug(f"Mastodon LLM prompt: {user_prompt[:200]}...")
+
+    max_text_chars = MAX_MASTODON_LENGTH - MASTODON_URL_LENGTH - 2  # "\n\n" before the URL
+    max_attempts = 3
+    result = None
+    too_long = None
+    total_input_tokens = 0
+    total_output_tokens = 0
+    total_tokens = 0
+    api_call_count = 0
+
+    for attempt in range(1, max_attempts + 1):
+        response = await client.chat.completions.create(
+            model=settings.PROFESSIONALIZE_LLM_MODEL,
+            messages=[
+                {"role": "system", "content": MASTODON_SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=4000,
+        )
+        api_call_count += 1
+
+        if response.usage:
+            total_input_tokens += response.usage.prompt_tokens
+            total_output_tokens += response.usage.completion_tokens
+            total_tokens += response.usage.total_tokens
+
+        if not response or not response.choices:
+            raise ValueError("LLM returned empty response")
+
+        content = response.choices[0].message.content
+
+        if not content or not content.strip():
+            logger.warning(
+                f"LLM returned None/empty content for Mastodon (attempt {attempt}/{max_attempts}). "
+                "Reasoning model likely spent all tokens on chain-of-thought."
+            )
+            continue
+
+        cleaned = _strip_thinking_tags(content)
+        cleaned = _strip_markdown(cleaned)
+        # The URL is appended below — drop it if the LLM included it anyway
+        cleaned = _remove_url_lines(cleaned, blog_url).replace(blog_url, "").strip()
+        cleaned = "\n".join(line.rstrip() for line in cleaned.splitlines())
+
+        if not cleaned:
+            logger.warning(f"Mastodon LLM output empty after cleaning (attempt {attempt}/{max_attempts}). Retrying...")
+            continue
+
+        if not _has_hashtags(cleaned):
+            cleaned = cleaned.rstrip() + "\n\n#Developer #Programming"
+
+        if len(cleaned) <= max_text_chars:
+            result = cleaned
+            logger.info(f"LLM returned valid Mastodon post on attempt {attempt} ({len(cleaned)} chars + URL)")
+            break
+
+        logger.warning(
+            f"Mastodon LLM output too long (attempt {attempt}/{max_attempts}): "
+            f"{len(cleaned)} chars, max {max_text_chars}. Retrying..."
+        )
+        too_long = cleaned
+
+    if not result and too_long:
+        logger.warning("Truncating over-length Mastodon output to fit the 500-character limit")
+        result = _truncate_to_char_limit(too_long, max_text_chars)
+
+    if not result:
+        raise ValueError(
+            f"LLM failed to produce a valid Mastodon post after {max_attempts} attempts. "
+            "Output was None or empty each time."
+        )
+
+    result = f"{result}\n\n{blog_url}"
+
+    logger.info(f"Mastodon formatted post ({len(result)} chars)")
+    logger.debug(f"Mastodon LLM output: {result}")
 
     return LLMResult(
         text=result,

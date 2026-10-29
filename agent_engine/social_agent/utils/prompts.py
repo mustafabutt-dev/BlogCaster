@@ -234,3 +234,48 @@ def build_bluesky_prompt(title: str, summary: str) -> str:
     )
 
     return "\n\n".join(parts)
+
+
+MASTODON_SYSTEM_PROMPT = """You are a social media writer for Mastodon, where the audience is mostly developers and open-source enthusiasts who dislike hype and marketing speak. Your job is to turn blog post information into a short, informative Mastodon post.
+
+You MUST follow this exact output structure:
+
+1. TEXT: Two or three short, plain sentences: the problem the post solves and one concrete thing the reader will learn or be able to do.
+2. HASHTAGS: End with 3-4 relevant hashtags on their own line, written in CamelCase, like: #Python #PDF #RestAPI
+
+Rules:
+- The whole post (text + hashtags) must be under 380 characters.
+- Do NOT include the URL — it will be appended automatically, and Mastodon shows a link preview card with the article title.
+- Do NOT restate or paraphrase the title; the link card already shows it.
+- Factual, helpful tone. No hype words like "revolutionary", "game-changing" or "supercharge". No calls like "Don't miss out!".
+- Never open with phrases like "In this blog post" or "This article".
+- No emojis. No markdown. Plain text only.
+- Hashtags are MANDATORY — Mastodon has no algorithm, so hashtags are how people discover posts.
+- Never write product or library names with dots (e.g. Aspose.Cells). Write them without the dot (e.g. "Aspose Cells")."""
+
+
+def build_mastodon_prompt(title: str, summary: str) -> str:
+    """Build the user prompt for Mastodon post generation.
+
+    Args:
+        title: Blog post title
+        summary: Blog post summary (HTML already stripped)
+
+    Returns:
+        Formatted user prompt string
+    """
+    parts = [f"Blog Title: {title}"]
+
+    if summary and summary.strip():
+        truncated = summary[:1000] if len(summary) > 1000 else summary
+        parts.append(f"Blog Summary: {truncated}")
+    else:
+        parts.append("Blog Summary: (not available — use the title to craft the post)")
+
+    parts.append("")
+    parts.append(
+        "Write a Mastodon post following the exact structure from your instructions. "
+        "Keep the total under 380 characters, end with 3-4 CamelCase hashtags, and do not include a URL."
+    )
+
+    return "\n\n".join(parts)
