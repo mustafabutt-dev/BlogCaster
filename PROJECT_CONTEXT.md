@@ -106,7 +106,7 @@ Adding a new platform = new JSON entry only, no code change.
 | Stage 10 | GSC Selection Strategy (orchestrator + CLI) | COMPLETE (live-tested; `--strategy latest` regression-checked) |
 | Stage 11 | Workflow scheduling — 2nd weekly run per brand uses GSC strategy | COMPLETE (logic simulated locally; not yet observed on a real scheduled trigger) |
 | Stage 12 | Bluesky Poster Integration | COMPLETE (live for aspose-cloud, aspose, groupdocs-cloud, conholdate) |
-| Stage 13 | Mastodon Poster Integration | COMPLETE (live-tested for aspose-cloud via manual mode) |
+| Stage 13 | Mastodon Poster Integration | COMPLETE (live for aspose-cloud, groupdocs-cloud, conholdate, aspose) |
 
 ## Decision Log
 | ID | Decision | Rationale |
