@@ -45,9 +45,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--target",
         type=str,
-        choices=["all", "linkedin", "x", "facebook", "devto", "bluesky"],
+        choices=["all", "linkedin", "x", "facebook", "devto", "bluesky", "mastodon"],
         default="all",
-        help="Social media target: all, linkedin, x, facebook, devto, or bluesky (default: all)",
+        help="Social media target: all, linkedin, x, facebook, devto, bluesky, or mastodon (default: all)",
     )
     parser.add_argument(
         "--strategy",

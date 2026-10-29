@@ -161,6 +161,7 @@ def build_utm_urls(url: str, campaign: str) -> dict:
         "devto": "devto",
         "facebook": "facebook",
         "bluesky": "bluesky",
+        "mastodon": "mastodon",
     }
     return {
         platform: f"{url}{separator}utm_source={source}&utm_medium=social&utm_campaign={campaign}"
@@ -184,6 +185,18 @@ def get_bluesky_credentials(platform_id: str) -> tuple[str, str]:
         os.environ.get(f"BLUESKY_{key}_HANDLE", ""),
         os.environ.get(f"BLUESKY_{key}_APP_PASSWORD", "") or os.environ.get(f"BLUESKY_{key}_PASSWORD", ""),
     )
+
+
+def get_mastodon_token(platform_id: str) -> str:
+    """Return the Mastodon access token for a blog platform's account.
+
+    Same per-brand convention as Bluesky: MASTODON_{PLATFORM_ID}_ACCESS_TOKEN,
+    e.g. aspose-cloud → MASTODON_ASPOSE_CLOUD_ACCESS_TOKEN. Empty if not configured.
+    """
+    if not platform_id:
+        return ""
+    key = platform_id.upper().replace("-", "_")
+    return os.environ.get(f"MASTODON_{key}_ACCESS_TOKEN", "")
 
 
 def build_post_url(platform_name: str, post_id: str) -> str:
