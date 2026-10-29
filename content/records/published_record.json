@@ -3540,6 +3540,37 @@
           "shared_at": "2026-10-29 00:20:55"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.groupdocs.cloud/comparison/compare-two-images-and-highlight-differences-using-python",
+      "title": "Compare Two Images and Highlight Differences using Python",
+      "platform_id": "groupdocs-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7521529520114556929",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7521529520114556929/",
+          "shared_at": "2026-10-29 11:13:07"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "397134737390236_1634005271534402",
+          "post_url": "https://www.facebook.com/397134737390236_1634005271534402",
+          "shared_at": "2026-10-29 11:13:07"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:kjmha4zyfddzrhv627ofjtj4/app.bsky.feed.post/3myz53sjxgv2d",
+          "post_url": "https://bsky.app/profile/groupdocs-cloud.bsky.social/post/3myz53sjxgv2d",
+          "shared_at": "2026-10-29 11:13:07"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117523899160920775",
+          "post_url": "https://mastodon.social/@groupdocs_cloud/117523899160920775",
+          "shared_at": "2026-10-29 11:13:07"
+        }
+      }
     }
   ]
 }
