@@ -3538,6 +3538,12 @@
           "post_id": "at://did:plc:i2p7vq2scbvz2ucjgdbsxyzg/app.bsky.feed.post/3myxhv6m5kb2g",
           "post_url": "https://bsky.app/profile/conholdate.bsky.social/post/3myxhv6m5kb2g",
           "shared_at": "2026-10-29 00:20:55"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117524814333709306",
+          "post_url": "https://mastodon.social/@conholdate/117524814333709306",
+          "shared_at": "2026-10-29 20:05:51"
         }
       }
     },
