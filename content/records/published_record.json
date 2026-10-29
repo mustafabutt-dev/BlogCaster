@@ -3488,6 +3488,12 @@
           "post_id": "at://did:plc:eggoktuifgtllh2d3med5xm7/app.bsky.feed.post/3myxepy7tix2w",
           "post_url": "https://bsky.app/profile/aspose.bsky.social/post/3myxepy7tix2w",
           "shared_at": "2026-10-28 23:24:20"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117524909807015814",
+          "post_url": "https://mastodon.social/@aspose/117524909807015814",
+          "shared_at": "2026-10-29 20:30:08"
         }
       }
     },
