@@ -3507,6 +3507,12 @@
           "post_id": "397134737390236_1631966091738320",
           "post_url": "https://www.facebook.com/397134737390236_1631966091738320",
           "shared_at": "2026-10-27 10:14:54"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117523611677082194",
+          "post_url": "https://mastodon.social/@groupdocs_cloud/117523611677082194",
+          "shared_at": "2026-10-29 15:00:01"
         }
       }
     },
