@@ -3583,6 +3583,37 @@
           "shared_at": "2026-10-29 11:13:07"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/imaging/convert-jpg-to-webp-in-java",
+      "title": "Converting JPG, PNG, JPEG, and GIF to WebP using Java",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7521892128898334720",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7521892128898334720/",
+          "shared_at": "2026-10-30 11:14:01"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1434431348795071",
+          "post_url": "https://www.facebook.com/118018898863167_1434431348795071",
+          "shared_at": "2026-10-30 11:14:01"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3mz3nmdaxh22n",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3mz3nmdaxh22n",
+          "shared_at": "2026-10-30 11:14:01"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117529565018206004",
+          "post_url": "https://mastodon.social/@aspose_cloud/117529565018206004",
+          "shared_at": "2026-10-30 11:14:01"
+        }
+      }
     }
   ]
 }
