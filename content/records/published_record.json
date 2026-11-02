@@ -3707,6 +3707,37 @@
           "shared_at": "2026-11-02 12:55:53"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.com/pub/convert-publisher-to-powerpoint",
+      "title": "Convert Publisher to PowerPoint",
+      "platform_id": "aspose",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7523007066517549056",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7523007066517549056/",
+          "shared_at": "2026-11-02 13:04:24"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "21217093093_2086064019001056",
+          "post_url": "https://www.facebook.com/21217093093_2086064019001056",
+          "shared_at": "2026-11-02 13:04:24"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:eggoktuifgtllh2d3med5xm7/app.bsky.feed.post/3mzdf6gxkuk2p",
+          "post_url": "https://bsky.app/profile/aspose.bsky.social/post/3mzdf6gxkuk2p",
+          "shared_at": "2026-11-02 13:04:24"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117546986004671389",
+          "post_url": "https://mastodon.social/@aspose/117546986004671389",
+          "shared_at": "2026-11-02 13:04:24"
+        }
+      }
     }
   ]
 }
