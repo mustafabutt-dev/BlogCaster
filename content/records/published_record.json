@@ -3676,6 +3676,37 @@
           "shared_at": "2026-11-01 11:44:36"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/html/step-by-step-guide-for-vsd-to-svg-conversion-in-python",
+      "title": "Step-by-Step Guide for VSD to SVG Conversion in Python",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7523004931201536001",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7523004931201536001/",
+          "shared_at": "2026-11-02 12:55:53"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1437564215148451",
+          "post_url": "https://www.facebook.com/118018898863167_1437564215148451",
+          "shared_at": "2026-11-02 12:55:53"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3mzdepabduk2p",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3mzdepabduk2p",
+          "shared_at": "2026-11-02 12:55:53"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117546952496053628",
+          "post_url": "https://mastodon.social/@aspose_cloud/117546952496053628",
+          "shared_at": "2026-11-02 12:55:53"
+        }
+      }
     }
   ]
 }
