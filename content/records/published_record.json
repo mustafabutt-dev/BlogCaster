@@ -3769,6 +3769,37 @@
           "shared_at": "2026-11-03 12:40:25"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/convert-webp-to-jpg-or-png-in-java",
+      "title": "Convert WEBP to JPG or PNG in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7523726797641990144",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7523726797641990144/",
+          "shared_at": "2026-11-04 12:44:22"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1640097984797182",
+          "post_url": "https://www.facebook.com/207189803258967_1640097984797182",
+          "shared_at": "2026-11-04 12:44:22"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:i2p7vq2scbvz2ucjgdbsxyzg/app.bsky.feed.post/3mzieyhyntx2a",
+          "post_url": "https://bsky.app/profile/conholdate.bsky.social/post/3mzieyhyntx2a",
+          "shared_at": "2026-11-04 12:44:22"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117558231864117787",
+          "post_url": "https://mastodon.social/@conholdate/117558231864117787",
+          "shared_at": "2026-11-04 12:44:22"
+        }
+      }
     }
   ]
 }
