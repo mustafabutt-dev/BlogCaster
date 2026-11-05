@@ -228,6 +228,12 @@ async def rss_fetch_post_by_url(sessions: MCPSessions, url: str) -> dict:
 # Record Keeper Tools
 # ─────────────────────────────────────────────────────────────────────────────
 
+async def rss_fetch_post_markdown(sessions: MCPSessions, url: str, skip_image: str = "") -> dict:
+    """Fetch a blog post's full body as Dev.to Markdown."""
+    result = await sessions.rss_fetcher.call_tool("fetch_post_markdown", {"url": url, "skip_image": skip_image})
+    return _parse_result(result) or {"status": "failed", "error": "Empty response"}
+
+
 async def record_is_published(sessions: MCPSessions, blog_url: str) -> bool:
     """Check if a blog URL has already been posted."""
     result = await sessions.record_keeper.call_tool("is_published", {"blog_url": blog_url})
@@ -347,8 +353,9 @@ async def devto_post(
     tags: list,
     org_id: int | None = None,
     main_image: str = "",
+    published: bool = False,
 ) -> dict:
-    """Publish an article to Dev.to."""
+    """Publish (or save as draft) an article on Dev.to."""
     result = await sessions.devto_poster.call_tool(
         "post_to_devto",
         {
@@ -358,6 +365,7 @@ async def devto_post(
             "tags": tags,
             "org_id": org_id,
             "main_image": main_image,
+            "published": published,
         },
     )
     return _parse_result(result) or {"status": "failure", "post_id": None, "url": None, "error": "Empty response"}
