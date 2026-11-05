@@ -72,7 +72,9 @@ def _get_expected_platforms(platform_config: dict | None) -> frozenset:
 # blog. We now cross-post full articles, and only ones that are clearly
 # developer tutorials — not announcements or marketing.
 _DEVTO_MIN_PROSE_WORDS = 300
-_DEVTO_MIN_HOURS_BETWEEN_POSTS = 24
+# 20h, not 24h: the Aspose workflow runs Sun + Mon at 05:00 UTC, exactly 24h apart,
+# so a late-starting Sunday run would otherwise make Monday's Dev.to post skip.
+_DEVTO_MIN_HOURS_BETWEEN_POSTS = 20
 _DEVTO_PROMO_TITLE_RE = re.compile(
     r"\b(release[sd]?|announc\w*|now available|what'?s new|new version|introducing|webinar|"
     r"discount|offer|sale|pricing|black friday|cyber monday|newsletter|roundup|monthly)\b",
