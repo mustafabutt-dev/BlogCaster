@@ -37,9 +37,9 @@ class Settings(BaseSettings):
 
     # Dev.to Configuration
     DEVTO_API_KEY: str = ""
-    # False → Dev.to posts are saved as drafts for manual review/publish on dev.to.
-    # Flip to true only once drafts have been reviewed for a while.
-    DEVTO_PUBLISH: bool = False
+    # True → Dev.to cross-posts go live immediately. Set DEVTO_PUBLISH=false to
+    # save them as drafts on dev.to for manual review instead.
+    DEVTO_PUBLISH: bool = True
 
     # Google Search Console Configuration
     GSC_SERVICE_ACCOUNT_KEY_PATH: str = ""
