@@ -21,6 +21,8 @@ import httpx
 from bs4 import BeautifulSoup
 from mcp.server.fastmcp import FastMCP
 
+from markdown_converter import gist_key, gist_refs, html_to_devto_markdown
+
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger("rss-fetcher")
 logger.setLevel(logging.WARNING)
@@ -287,6 +289,89 @@ async def fetch_post_by_url(url: str) -> dict:
         "url": url,
         "image_url": image_url,
     }
+
+
+async def _fetch_gists(refs: list[tuple[str, str, str]]) -> dict:
+    """Download gist source so it can be inlined. Returns gist_key → [(filename, code)].
+
+    With ?file= only that file is used; otherwise every file except readmes.
+    Failed fetches are left out (the converter falls back to a gist embed).
+    """
+    out: dict = {}
+    if not refs:
+        return out
+    async with httpx.AsyncClient(timeout=HTTP_TIMEOUT, follow_redirects=True) as client:
+        for user, gid, file in refs:
+            key = gist_key(user, gid, file)
+            if key in out:
+                continue
+            try:
+                meta = await client.get(f"https://api.github.com/gists/{gid}", headers={"User-Agent": USER_AGENT})
+                meta.raise_for_status()
+                files = meta.json().get("files", {})
+                wanted = [file] if file in files else [
+                    n for n in files if not n.lower().startswith("readme")
+                ]
+                pairs = []
+                for name in wanted:
+                    f = files[name]
+                    code = f.get("content") or ""
+                    if f.get("truncated") and f.get("raw_url"):
+                        raw = await client.get(f["raw_url"], headers={"User-Agent": USER_AGENT})
+                        raw.raise_for_status()
+                        code = raw.text
+                    pairs.append((name, code))
+                if pairs:
+                    out[key] = pairs
+            except (httpx.HTTPError, ValueError) as e:
+                # API rate limit (60/h unauthenticated) is common on shared CI runners —
+                # the raw URL needs no API quota when the embed names its file
+                if file:
+                    try:
+                        raw = await client.get(
+                            f"https://gist.githubusercontent.com/{user}/{gid}/raw/{file}",
+                            headers={"User-Agent": USER_AGENT},
+                        )
+                        raw.raise_for_status()
+                        out[key] = [(file, raw.text)]
+                        continue
+                    except httpx.HTTPError:
+                        pass
+                logger.warning(f"Could not fetch gist {gid} ({file or 'all files'}): {e}")
+    return out
+
+
+@mcp.tool()
+async def fetch_post_markdown(url: str, skip_image: str = "") -> dict:
+    """Fetch a blog post and convert its full body to Dev.to Markdown.
+
+    Used for full-article Dev.to cross-posts: keeps prose, headings, lists,
+    code blocks, gists, images and tables; drops promo sections (free
+    license / trial, See Also, Read More) and sales/download links.
+
+    Args:
+        url: The direct URL of the blog post
+        skip_image: Image URL already used as the Dev.to cover (omitted from body)
+
+    Returns:
+        Dict with status, markdown, word_count (prose only), code_blocks,
+        dropped_sections and dropped_links. status="failed" with error on fetch failure.
+    """
+    logger.info(f"Fetching post as Markdown: {url}")
+    try:
+        async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
+            response = await client.get(url, headers={"User-Agent": USER_AGENT}, follow_redirects=True)
+            response.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        return {"status": "failed", "error": f"HTTP {e.response.status_code} fetching {url}"}
+    except httpx.RequestError as e:
+        return {"status": "failed", "error": f"Network error fetching {url}: {e}"}
+
+    gists = await _fetch_gists(gist_refs(response.text))
+    result = html_to_devto_markdown(response.text, str(response.url), skip_image=skip_image, gists=gists)
+    if not result["markdown"]:
+        return {"status": "failed", "error": f"No article body found at {url}"}
+    return {"status": "ok", **result}
 
 
 if __name__ == "__main__":

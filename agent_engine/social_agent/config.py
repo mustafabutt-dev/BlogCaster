@@ -37,6 +37,9 @@ class Settings(BaseSettings):
 
     # Dev.to Configuration
     DEVTO_API_KEY: str = ""
+    # False → Dev.to posts are saved as drafts for manual review/publish on dev.to.
+    # Flip to true only once drafts have been reviewed for a while.
+    DEVTO_PUBLISH: bool = False
 
     # Google Search Console Configuration
     GSC_SERVICE_ACCOUNT_KEY_PATH: str = ""

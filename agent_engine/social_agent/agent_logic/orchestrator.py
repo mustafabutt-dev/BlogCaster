@@ -22,6 +22,7 @@ from agent_engine.social_agent.tools.mcp_tools import (
     bluesky_post,
     bluesky_validate_credentials,
     devto_post,
+    rss_fetch_post_markdown,
     devto_validate_credentials,
     facebook_check_token_expiry,
     facebook_post,
@@ -64,6 +65,75 @@ def _get_expected_platforms(platform_config: dict | None) -> frozenset:
     if platform_config and get_mastodon_token(platform_config["id"]):
         platforms.add("mastodon")
     return frozenset(platforms)
+
+
+# ── Dev.to cross-post guardrails ─────────────────────────────────────────────
+# Dev.to flagged the account (Nov 2026) for teaser posts that only linked to the
+# blog. We now cross-post full articles, and only ones that are clearly
+# developer tutorials — not announcements or marketing.
+_DEVTO_MIN_PROSE_WORDS = 300
+_DEVTO_MIN_HOURS_BETWEEN_POSTS = 24
+_DEVTO_PROMO_TITLE_RE = re.compile(
+    r"\b(release[sd]?|announc\w*|now available|what'?s new|new version|introducing|webinar|"
+    r"discount|offer|sale|pricing|black friday|cyber monday|newsletter|roundup|monthly)\b",
+    re.I,
+)
+
+
+def _devto_posted_recently(records: list, platform_id: str) -> str | None:
+    """Return the shared_at timestamp if this brand posted to Dev.to within the cooldown window."""
+    cutoff = datetime.now() - timedelta(hours=_DEVTO_MIN_HOURS_BETWEEN_POSTS)
+    for record in records:
+        if record.get("platform_id") != platform_id:
+            continue
+        devto = record.get("shared_on", {}).get("devto", {})
+        if devto.get("status") != "success" or not devto.get("shared_at"):
+            continue
+        try:
+            if datetime.strptime(devto["shared_at"], "%Y-%m-%d %H:%M:%S") > cutoff:
+                return devto["shared_at"]
+        except ValueError:
+            continue
+    return None
+
+
+async def _prepare_devto_article(
+    sessions: MCPSessions, url: str, title: str, image_url: str, platform_id: str,
+) -> str | None:
+    """Build the full-article Markdown for Dev.to, or None if the post shouldn't go to Dev.to.
+
+    Skip reasons are logged and printed so it's clear why Dev.to was left out.
+    """
+    def skip(reason: str) -> None:
+        logger.info(f"Dev.to skipped for this post: {reason}")
+        print(f"Dev.to skipped: {reason}")
+
+    if _DEVTO_PROMO_TITLE_RE.search(title):
+        skip(f"title looks like an announcement/promo, not a tutorial ({title!r})")
+        return None
+
+    recent = _devto_posted_recently(await record_get_all(sessions), platform_id)
+    if recent:
+        skip(f"'{platform_id}' already posted to Dev.to at {recent} (limit: one per {_DEVTO_MIN_HOURS_BETWEEN_POSTS}h)")
+        return None
+
+    article = await rss_fetch_post_markdown(sessions, url, skip_image=image_url)
+    if article.get("status") != "ok":
+        skip(f"could not convert article to Markdown — {article.get('error')}")
+        return None
+
+    if article.get("code_blocks", 0) < 1:
+        skip("article has no code samples — only hands-on tutorials are cross-posted")
+        return None
+    if article.get("word_count", 0) < _DEVTO_MIN_PROSE_WORDS:
+        skip(f"article too short ({article.get('word_count')} prose words, need {_DEVTO_MIN_PROSE_WORDS}+)")
+        return None
+
+    logger.info(
+        f"Dev.to article ready: {article['word_count']} prose words, {article['code_blocks']} code blocks, "
+        f"dropped sections {article.get('dropped_sections')}, {article.get('dropped_links')} promo links unlinked"
+    )
+    return article["markdown"]
 
 
 def _normalize_url(url: str) -> str:
@@ -273,7 +343,7 @@ async def _check_token_expiry_warnings(sessions: MCPSessions, valid_platforms: d
 
 async def _format_for_platforms(
     valid_platforms: dict, title: str, content: str, blog_url: str,
-    utm_urls: dict | None = None,
+    utm_urls: dict | None = None, devto_markdown: str = "",
 ) -> dict:
     """Format content for each valid platform via LLM. Returns dict of platform → formatted text."""
     utm_urls = utm_urls or {}
@@ -304,10 +374,10 @@ async def _format_for_platforms(
             logger.error(f"LLM formatting for Facebook failed: {e}")
             print(f"Error formatting for Facebook: {e}")
 
-    if valid_platforms.get("devto"):
-        logger.info("Formatting article for Dev.to via LLM...")
+    if valid_platforms.get("devto") and devto_markdown:
+        logger.info("Preparing full-article cross-post for Dev.to (LLM picks tags only)...")
         try:
-            formatted["devto"] = await format_for_devto(title, content, utm_urls.get("devto", blog_url))
+            formatted["devto"] = await format_for_devto(title, devto_markdown)
         except Exception as e:
             logger.error(f"LLM formatting for Dev.to failed: {e}")
             print(f"Error formatting for Dev.to: {e}")
@@ -394,13 +464,20 @@ async def _post_to_platforms(
         tags = llm_result.tags if isinstance(llm_result, LLMResult) and llm_result.tags else []
         # canonical_url must be the clean blog URL — a UTM-tagged canonical would
         # make search engines treat the tracking URL as the article's true location
-        devto_result = await devto_post(sessions, blog_title, body, blog_url, tags, devto_org_id, main_image=image_url)
+        devto_result = await devto_post(
+            sessions, blog_title, body, blog_url, tags, devto_org_id,
+            main_image=image_url, published=settings.DEVTO_PUBLISH,
+        )
         results["devto"] = devto_result
         if devto_result.get("status") == "success":
             post_id = devto_result.get("post_id", "")
             url = devto_result.get("url", "")
-            logger.info(f"Dev.to post successful: post_id={post_id} url={url}")
-            print(f"Successfully posted to Dev.to! URL: {url}")
+            if devto_result.get("draft"):
+                logger.info(f"Dev.to draft saved: post_id={post_id} — review and publish at {url}")
+                print(f"Saved Dev.to draft (id {post_id}) — review and publish it at {url}")
+            else:
+                logger.info(f"Dev.to post successful: post_id={post_id} url={url}")
+                print(f"Successfully posted to Dev.to! URL: {url}")
         else:
             logger.error(f"Dev.to posting failed: {devto_result.get('error')}")
             print(f"Error posting to Dev.to: {devto_result.get('error')}")
@@ -725,8 +802,15 @@ async def run_manual_mode(
     if utm_urls:
         logger.info(f"UTM tracking enabled for platform '{platform_id}' (campaign={utm_campaign})")
 
+    devto_markdown = ""
+    if valid_platforms.get("devto"):
+        devto_markdown = await _prepare_devto_article(sessions, url, title, image_url, platform_id) or ""
+        valid_platforms["devto"] = bool(devto_markdown)
+
     # 5. Format via LLM for each valid platform
-    formatted = await _format_for_platforms(valid_platforms, title, content, url, utm_urls=utm_urls)
+    formatted = await _format_for_platforms(
+        valid_platforms, title, content, url, utm_urls=utm_urls, devto_markdown=devto_markdown,
+    )
 
     if not formatted:
         logger.error("Failed to format content for any platform")
@@ -757,6 +841,10 @@ async def run_manual_mode(
                 print(f"[link card] {title} → {utm_urls.get('bluesky', url)} (thumbnail: {image_url or 'none'}, {len(text)} chars)")
             if plat == "mastodon":
                 print(f"[{len(text)} chars] image: {image_url or 'none — Mastodon will show its link card'}")
+            if plat == "devto":
+                tags = llm_result.tags if isinstance(llm_result, LLMResult) else []
+                mode = "publish" if settings.DEVTO_PUBLISH else "draft"
+                print(f"[full article, {len(text.split())} words] title: {title} | tags: {tags} | canonical: {url} | cover: {image_url or 'none'} | mode: {mode}")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Manual Mode dry run complete for: {url}")
         return True
@@ -874,7 +962,14 @@ async def run_auto_mode(
 
     # 6. Format via LLM for each valid platform
     content_for_llm = fetched_content
-    formatted = await _format_for_platforms(valid_platforms, title, content_for_llm, post_url, utm_urls=utm_urls)
+    devto_markdown = ""
+    if valid_platforms.get("devto"):
+        devto_markdown = await _prepare_devto_article(sessions, post_url, title, image_url, platform_id) or ""
+        valid_platforms["devto"] = bool(devto_markdown)
+
+    formatted = await _format_for_platforms(
+        valid_platforms, title, content_for_llm, post_url, utm_urls=utm_urls, devto_markdown=devto_markdown,
+    )
 
     if not formatted:
         logger.error("Failed to format content for any platform")
@@ -905,6 +1000,10 @@ async def run_auto_mode(
                 print(f"[link card] {title} → {utm_urls.get('bluesky', post_url)} (thumbnail: {image_url or 'none'}, {len(text)} chars)")
             if plat == "mastodon":
                 print(f"[{len(text)} chars] image: {image_url or 'none — Mastodon will show its link card'}")
+            if plat == "devto":
+                tags = llm_result.tags if isinstance(llm_result, LLMResult) else []
+                mode = "publish" if settings.DEVTO_PUBLISH else "draft"
+                print(f"[full article, {len(text.split())} words] title: {title} | tags: {tags} | canonical: {post_url} | cover: {image_url or 'none'} | mode: {mode}")
         print("\n--- DRY RUN complete ---")
         logger.info(f"Auto Mode dry run complete for platform: {platform_id}")
         return True

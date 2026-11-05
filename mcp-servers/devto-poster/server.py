@@ -71,6 +71,7 @@ def post_to_devto(
     tags: list,
     org_id: int | None = None,
     main_image: str = "",
+    published: bool = False,
 ) -> dict:
     """Publish a markdown article to Dev.to.
 
@@ -81,6 +82,7 @@ def post_to_devto(
         tags: List of up to 4 tags (lowercase, no spaces)
         org_id: Dev.to organization ID to publish under (optional)
         main_image: URL of the cover image shown in feeds and atop the article (optional)
+        published: True publishes immediately; False (default) saves a draft on Dev.to
 
     Returns:
         Dict with status ("success" or "failure"), post_id, url, and error fields.
@@ -101,7 +103,7 @@ def post_to_devto(
     article_payload: dict = {
         "title": title,
         "body_markdown": body_markdown,
-        "published": True,
+        "published": bool(published),
         "tags": tags[:4],
     }
     if canonical_url:
@@ -126,8 +128,11 @@ def post_to_devto(
             data = resp.json()
             post_id = str(data.get("id", ""))
             url = data.get("url", "")
+            if not published:
+                # Drafts have no public URL yet — point at the dashboard where they're reviewed
+                url = "https://dev.to/dashboard"
             logger.info(f"Dev.to post successful: post_id={post_id} url={url}")
-            return {"status": "success", "post_id": post_id, "url": url, "error": None}
+            return {"status": "success", "post_id": post_id, "url": url, "draft": not published, "error": None}
 
         if resp.status_code == 401:
             error = "Dev.to API key is invalid or expired (401)"

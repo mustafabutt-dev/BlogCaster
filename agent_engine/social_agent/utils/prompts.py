@@ -104,48 +104,25 @@ def build_facebook_prompt(title: str, summary: str, blog_url: str) -> str:
     return "\n\n".join(parts)
 
 
-DEVTO_SYSTEM_PROMPT = """You are a technical content writer for Dev.to. Transform blog post information into a short teaser post that hooks developers and drives them to read the full article on the original blog.
+# Dev.to posts are full-article cross-posts (body converted from the blog's HTML,
+# canonical_url pointing back). The LLM only picks tags — it must NOT rewrite the
+# body: Dev.to flagged our earlier LLM-written teasers under its content policy
+# (Terms §11: posts may not merely reference an external link with the full post).
+DEVTO_SYSTEM_PROMPT = """You pick Dev.to tags for a technical article.
 
-Your output MUST follow this exact format — no exceptions:
+Output exactly one line and nothing else:
+TAGS: tag1, tag2, tag3, tag4
 
-Line 1: TAGS: tag1, tag2, tag3, tag4
-Line 2: (blank)
-Line 3+: Teaser body in Markdown
-
-TAGS rules:
-- Exactly "TAGS: " followed by 2-4 comma-separated tags
-- Tags must be lowercase, alphanumeric only — no hyphens, no spaces (e.g. "machinelearning" not "machine-learning")
-- Choose technical tags relevant to the content (e.g. csharp, python, java, pdf, api, tutorial, automation, dotnet, cloud)
-
-Teaser body rules:
-- Write 120-160 words total
-- Open with one punchy sentence that states the problem or benefit
-- Write 2-3 short paragraphs covering what the article is about and what the reader will learn
-- End with a clear call-to-action on its own line: "Read the full guide → [blog URL]" (use the exact blog URL provided)
-- Use **bold** sparingly for key terms, no section headings needed
-- Do NOT include a title heading at the top — the title is set separately
-- IMPORTANT: Never write product or library names with dots (e.g. Aspose.Cells, GroupDocs.Parser). Write them without the dot (e.g. "Aspose Cells", "GroupDocs Parser") or refer to them generically"""
+Rules:
+- 2-4 tags, lowercase, alphanumeric only — no hyphens or spaces (e.g. "machinelearning")
+- Prefer widely used Dev.to tags: programming language (java, csharp, python, javascript, dotnet, node), domain (pdf, excel, api, cloud, automation), and "tutorial" when it is a how-to
+- Never use brand or product names as tags"""
 
 
-def build_devto_prompt(title: str, summary: str, blog_url: str) -> str:
-    """Build the user prompt for Dev.to teaser generation."""
-    parts = [f"Blog Title: {title}"]
-
-    if summary and summary.strip():
-        truncated = summary[:1000] if len(summary) > 1000 else summary
-        parts.append(f"Blog Summary:\n{truncated}")
-    else:
-        parts.append("Blog Summary: (not available — use the title to craft the teaser)")
-
-    parts.append(f"Blog URL: {blog_url}")
-    parts.append("")
-    parts.append(
-        "Write a Dev.to teaser following the exact format from your instructions. "
-        "Start with TAGS: on line 1, then a blank line, then the teaser body. "
-        "End the teaser with the call-to-action linking to the blog URL above."
-    )
-
-    return "\n\n".join(parts)
+def build_devto_prompt(title: str, article_markdown: str) -> str:
+    """Build the user prompt for Dev.to tag selection."""
+    excerpt = article_markdown[:2500]
+    return f"Article title: {title}\n\nArticle (excerpt):\n{excerpt}\n\nReply with the TAGS line only."
 
 
 X_SYSTEM_PROMPT = """You are a concise social media writer for X (Twitter). Your job is to transform blog post information into a single engaging tweet.
