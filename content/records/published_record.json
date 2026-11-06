@@ -3837,6 +3837,43 @@
           "shared_at": "2026-11-05 12:52:33"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/imaging/convert-image-to-grayscale",
+      "title": "Convert Picture to Black and White Online - Easy Color to B&W Converter",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7524452042346688512",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7524452042346688512/",
+          "shared_at": "2026-11-06 12:46:13"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1441560744748798",
+          "post_url": "https://www.facebook.com/118018898863167_1441560744748798",
+          "shared_at": "2026-11-06 12:46:13"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4988429",
+          "post_url": "https://dev.to/asposecloud/convert-picture-to-black-and-white-online-easy-color-to-bw-converter-3h2g",
+          "shared_at": "2026-11-06 12:46:13"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3mznfzmsvtf2n",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3mznfzmsvtf2n",
+          "shared_at": "2026-11-06 12:46:13"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117569563723878716",
+          "post_url": "https://mastodon.social/@aspose_cloud/117569563723878716",
+          "shared_at": "2026-11-06 12:46:13"
+        }
+      }
     }
   ]
 }
