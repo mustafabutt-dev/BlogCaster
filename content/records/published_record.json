@@ -3874,6 +3874,43 @@
           "shared_at": "2026-11-06 12:46:13"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/convert-glb-to-fbx-online",
+      "title": "Convert GLB to FBX Online",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7524794947225620480",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7524794947225620480/",
+          "shared_at": "2026-11-07 11:28:47"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1643344331139214",
+          "post_url": "https://www.facebook.com/207189803258967_1643344331139214",
+          "shared_at": "2026-11-07 11:28:47"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "4993310",
+          "post_url": "https://dev.to/conholdate/convert-glb-to-fbx-online-1il9",
+          "shared_at": "2026-11-07 11:28:47"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:i2p7vq2scbvz2ucjgdbsxyzg/app.bsky.feed.post/3mzps635jw62q",
+          "post_url": "https://bsky.app/profile/conholdate.bsky.social/post/3mzps635jw62q",
+          "shared_at": "2026-11-07 11:28:47"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117574921542417242",
+          "post_url": "https://mastodon.social/@conholdate/117574921542417242",
+          "shared_at": "2026-11-07 11:28:47"
+        }
+      }
     }
   ]
 }
