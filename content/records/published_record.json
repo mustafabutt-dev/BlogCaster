@@ -3948,6 +3948,43 @@
           "shared_at": "2026-11-08 11:47:17"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/slides/gif-to-dicom-conversion-example-in-python",
+      "title": "GIF to DICOM Conversion Example in Python",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7525549683570716672",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7525549683570716672/",
+          "shared_at": "2026-11-09 13:27:52"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1444668237771382",
+          "post_url": "https://www.facebook.com/118018898863167_1444668237771382",
+          "shared_at": "2026-11-09 13:27:52"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5004641",
+          "post_url": "https://dev.to/asposecloud/gif-to-dicom-conversion-example-in-python-2635",
+          "shared_at": "2026-11-09 13:27:52"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3mzuzqu5kmr2z",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3mzuzqu5kmr2z",
+          "shared_at": "2026-11-09 13:27:52"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117586714436567885",
+          "post_url": "https://mastodon.social/@aspose_cloud/117586714436567885",
+          "shared_at": "2026-11-09 13:27:52"
+        }
+      }
     }
   ]
 }
