@@ -3985,6 +3985,43 @@
           "shared_at": "2026-11-09 13:27:52"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.com/page/convert-xps-to-pdf-online",
+      "title": "Convert XPS to PDF Online - Free Converter",
+      "platform_id": "aspose",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7525551860896825344",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7525551860896825344/",
+          "shared_at": "2026-11-09 13:36:31"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "21217093093_2094030394871085",
+          "post_url": "https://www.facebook.com/21217093093_2094030394871085",
+          "shared_at": "2026-11-09 13:36:31"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5004695",
+          "post_url": "https://dev.to/aspose-com/convert-xps-to-pdf-online-free-converter-32kp",
+          "shared_at": "2026-11-09 13:36:31"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:eggoktuifgtllh2d3med5xm7/app.bsky.feed.post/3mzv2ae5spi2x",
+          "post_url": "https://bsky.app/profile/aspose.bsky.social/post/3mzv2ae5spi2x",
+          "shared_at": "2026-11-09 13:36:31"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117586748488814159",
+          "post_url": "https://mastodon.social/@aspose/117586748488814159",
+          "shared_at": "2026-11-09 13:36:31"
+        }
+      }
     }
   ]
 }
