@@ -4059,6 +4059,43 @@
           "shared_at": "2026-11-10 13:19:04"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/visio-to-word-conversion-in-java",
+      "title": "Visio to Word Conversion in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7526257641925451778",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7526257641925451778/",
+          "shared_at": "2026-11-11 12:21:00"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1648182837322030",
+          "post_url": "https://www.facebook.com/207189803258967_1648182837322030",
+          "shared_at": "2026-11-11 12:21:00"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5016882",
+          "post_url": "https://dev.to/conholdate/visio-to-word-conversion-in-java-4lm4",
+          "shared_at": "2026-11-11 12:21:00"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:i2p7vq2scbvz2ucjgdbsxyzg/app.bsky.feed.post/3mzzwx64miv2k",
+          "post_url": "https://bsky.app/profile/conholdate.bsky.social/post/3mzzwx64miv2k",
+          "shared_at": "2026-11-11 12:21:00"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117597776142564237",
+          "post_url": "https://mastodon.social/@conholdate/117597776142564237",
+          "shared_at": "2026-11-11 12:21:00"
+        }
+      }
     }
   ]
 }
