@@ -4133,6 +4133,37 @@
           "shared_at": "2026-11-12 13:29:37"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/slides/convert-powerpoint-to-pdf-document-with-aspose-slides-cloud-sdk-for-net",
+      "title": "Convert PowerPoint to PDF Document with Aspose.Slides Cloud SDK for .NET",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7526990995679412224",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7526990995679412224/",
+          "shared_at": "2026-11-13 12:55:06"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1448776350693904",
+          "post_url": "https://www.facebook.com/118018898863167_1448776350693904",
+          "shared_at": "2026-11-13 12:55:06"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3n26zrxc2pe2i",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3n26zrxc2pe2i",
+          "shared_at": "2026-11-13 12:55:06"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117609234830164182",
+          "post_url": "https://mastodon.social/@aspose_cloud/117609234830164182",
+          "shared_at": "2026-11-13 12:55:06"
+        }
+      }
     }
   ]
 }
