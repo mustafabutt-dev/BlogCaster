@@ -4201,6 +4201,43 @@
           "shared_at": "2026-11-14 11:55:48"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.com/cad/convert-dgn-to-psd-in-csharp",
+      "title": "Convert DGN Drawings to PSD Using C#",
+      "platform_id": "aspose",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7527710338239340544",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7527710338239340544/",
+          "shared_at": "2026-11-15 12:33:32"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "21217093093_2101245357482922",
+          "post_url": "https://www.facebook.com/21217093093_2101245357482922",
+          "shared_at": "2026-11-15 12:33:32"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5041439",
+          "post_url": "https://dev.to/aspose-com/convert-dgn-drawings-to-psd-using-c-2c3f",
+          "shared_at": "2026-11-15 12:33:32"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:eggoktuifgtllh2d3med5xm7/app.bsky.feed.post/3n2dzjaoazu2k",
+          "post_url": "https://bsky.app/profile/aspose.bsky.social/post/3n2dzjaoazu2k",
+          "shared_at": "2026-11-15 12:33:32"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117620474670798257",
+          "post_url": "https://mastodon.social/@aspose/117620474670798257",
+          "shared_at": "2026-11-15 12:33:32"
+        }
+      }
     }
   ]
 }
