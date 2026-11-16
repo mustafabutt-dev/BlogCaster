@@ -4238,6 +4238,43 @@
           "shared_at": "2026-11-15 12:33:32"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/imaging/batch-resize-images-in-java-with-asposeimaging-cloud-sdk-highperformance-bulk-processing",
+      "title": "Batch Resize Images in Java with Aspose.Imaging Cloud SDK - High\u2011Performance Bulk Processing",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7528082738130788354",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7528082738130788354/",
+          "shared_at": "2026-11-16 13:13:19"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1452237320347807",
+          "post_url": "https://www.facebook.com/118018898863167_1452237320347807",
+          "shared_at": "2026-11-16 13:13:19"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5048141",
+          "post_url": "https://dev.to/asposecloud/batch-resize-images-in-java-with-asposeimaging-cloud-sdk-high-performance-bulk-processing-408h",
+          "shared_at": "2026-11-16 13:13:19"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3n2gm7bphx52s",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3n2gm7bphx52s",
+          "shared_at": "2026-11-16 13:13:19"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117626293432602546",
+          "post_url": "https://mastodon.social/@aspose_cloud/117626293432602546",
+          "shared_at": "2026-11-16 13:13:19"
+        }
+      }
     }
   ]
 }
