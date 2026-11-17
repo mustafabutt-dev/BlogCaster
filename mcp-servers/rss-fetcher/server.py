@@ -21,6 +21,7 @@ import httpx
 from bs4 import BeautifulSoup
 from mcp.server.fastmcp import FastMCP
 
+from health_check import check_page_health
 from markdown_converter import gist_key, gist_refs, html_to_devto_markdown
 
 logging.basicConfig(level=logging.WARNING)
@@ -372,6 +373,33 @@ async def fetch_post_markdown(url: str, skip_image: str = "") -> dict:
     if not result["markdown"]:
         return {"status": "failed", "error": f"No article body found at {url}"}
     return {"status": "ok", **result}
+
+
+@mcp.tool()
+async def check_post_health(url: str) -> dict:
+    """Check a blog post page for problems the blog team should fix.
+
+    Checks og:title/description/image, meta description, canonical tag, and
+    that the featured image, article images and article links load.
+
+    Args:
+        url: The direct URL of the blog post
+
+    Returns:
+        Dict with status ("ok" / "failed") and issues: list of {type, detail}.
+    """
+    logger.info(f"Health-checking post: {url}")
+    try:
+        async with httpx.AsyncClient(timeout=HTTP_TIMEOUT) as client:
+            response = await client.get(url, headers={"User-Agent": USER_AGENT}, follow_redirects=True)
+            response.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        return {"status": "failed", "error": f"HTTP {e.response.status_code} fetching {url}", "issues": []}
+    except httpx.RequestError as e:
+        return {"status": "failed", "error": f"Network error fetching {url}: {e}", "issues": []}
+
+    issues = await check_page_health(response.text, str(response.url), USER_AGENT)
+    return {"status": "ok", "issues": issues}
 
 
 if __name__ == "__main__":

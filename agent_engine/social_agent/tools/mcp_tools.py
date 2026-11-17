@@ -234,6 +234,12 @@ async def rss_fetch_post_markdown(sessions: MCPSessions, url: str, skip_image: s
     return _parse_result(result) or {"status": "failed", "error": "Empty response"}
 
 
+async def rss_check_post_health(sessions: MCPSessions, url: str) -> dict:
+    """Run the pre-share health check on a blog post page."""
+    result = await sessions.rss_fetcher.call_tool("check_post_health", {"url": url})
+    return _parse_result(result) or {"status": "failed", "error": "Empty response", "issues": []}
+
+
 async def record_is_published(sessions: MCPSessions, blog_url: str) -> bool:
     """Check if a blog URL has already been posted."""
     result = await sessions.record_keeper.call_tool("is_published", {"blog_url": blog_url})
