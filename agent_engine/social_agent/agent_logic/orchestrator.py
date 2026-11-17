@@ -23,6 +23,7 @@ from agent_engine.social_agent.tools.mcp_tools import (
     bluesky_validate_credentials,
     devto_post,
     rss_fetch_post_markdown,
+    rss_check_post_health,
     devto_validate_credentials,
     facebook_check_token_expiry,
     facebook_post,
@@ -136,6 +137,32 @@ async def _prepare_devto_article(
         f"dropped sections {article.get('dropped_sections')}, {article.get('dropped_links')} promo links unlinked"
     )
     return article["markdown"]
+
+
+async def _log_post_health(sessions: MCPSessions, url: str, platform_id: str) -> None:
+    """Pre-share health check. Never blocks sharing — only logs.
+
+    The BlogCaster dashboard parses these lines, so keep the format stable:
+        HEALTH_CHECK | <brand> | <post url> | <issue type> | <detail>
+        HEALTH_CHECK | <brand> | <post url> | OK | no issues found
+        HEALTH_CHECK | <brand> | <post url> | CHECK_FAILED | <error>
+    """
+    try:
+        result = await rss_check_post_health(sessions, url)
+    except Exception as e:  # a failed check must never stop the run
+        result = {"status": "failed", "error": str(e), "issues": []}
+
+    prefix = f"HEALTH_CHECK | {platform_id} | {url}"
+    if result.get("status") != "ok":
+        logger.warning(f"{prefix} | CHECK_FAILED | {result.get('error')}")
+        return
+    issues = result.get("issues", [])
+    if not issues:
+        logger.info(f"{prefix} | OK | no issues found")
+        return
+    for issue in issues:
+        logger.warning(f"{prefix} | {issue['type']} | {issue['detail']}")
+    logger.warning(f"Health check found {len(issues)} issue(s) on {url} — sharing anyway")
 
 
 def _normalize_url(url: str) -> str:
@@ -783,6 +810,7 @@ async def run_manual_mode(
     content = post_data.get("content", "")
     image_url = post_data.get("image_url", "")
     logger.info(f"Fetched post: \"{title}\" ({len(content)} chars, image: {image_url or 'none'})")
+    await _log_post_health(sessions, url, platform_id)
 
     if metrics:
         metrics.items_discovered = 1
@@ -941,6 +969,7 @@ async def run_auto_mode(
     title = candidate["title"]
     fetched_content = candidate["content"]
     image_url = candidate["image_url"]
+    await _log_post_health(sessions, post_url, platform_id)
 
     if metrics:
         metrics.items_discovered = 1
