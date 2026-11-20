@@ -4417,6 +4417,43 @@
           "shared_at": "2026-11-19 14:02:30"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/cells/convert-excel-to-pdf-in-nodejs",
+      "title": "Convert Excel to PDF in Node.js | Export XLSX to PDF Online with REST API",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7529542516187041792",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7529542516187041792/",
+          "shared_at": "2026-11-20 13:53:59"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1456154213289451",
+          "post_url": "https://www.facebook.com/118018898863167_1456154213289451",
+          "shared_at": "2026-11-20 13:53:59"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5082236",
+          "post_url": "https://dev.to/asposecloud/convert-excel-to-pdf-in-nodejs-export-xlsx-to-pdf-online-with-rest-api-1a3f",
+          "shared_at": "2026-11-20 13:53:59"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3n2qqdnn5in2f",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3n2qqdnn5in2f",
+          "shared_at": "2026-11-20 13:53:59"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117649102535785008",
+          "post_url": "https://mastodon.social/@aspose_cloud/117649102535785008",
+          "shared_at": "2026-11-20 13:53:59"
+        }
+      }
     }
   ]
 }
