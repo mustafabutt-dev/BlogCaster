@@ -4528,6 +4528,43 @@
           "shared_at": "2026-11-22 13:08:28"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/barcode/decode-barcodes-from-pdf-documents-with-asposebarcode-cloud-sdk-in-python",
+      "title": "Decode Barcodes from PDF Documents with Aspose.BarCode Cloud SDK in Python",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7530653642085920771",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7530653642085920771/",
+          "shared_at": "2026-11-23 15:29:10"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1459296119641927",
+          "post_url": "https://www.facebook.com/118018898863167_1459296119641927",
+          "shared_at": "2026-11-23 15:29:10"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5101464",
+          "post_url": "https://dev.to/asposecloud/decode-barcodes-from-pdf-documents-with-asposebarcode-cloud-sdk-in-python-1ood",
+          "shared_at": "2026-11-23 15:29:10"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3n2yh2myycz2k",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3n2yh2myycz2k",
+          "shared_at": "2026-11-23 15:29:10"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117666463756950472",
+          "post_url": "https://mastodon.social/@aspose_cloud/117666463756950472",
+          "shared_at": "2026-11-23 15:29:10"
+        }
+      }
     }
   ]
 }
