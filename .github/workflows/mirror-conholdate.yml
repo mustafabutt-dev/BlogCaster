@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Push main to conholdate/blog-caster
         env:
@@ -29,9 +30,9 @@ jobs:
             exit 1
           fi
           MIRROR="https://x-access-token:${CONHOLDATE_PUSH_TOKEN}@github.com/conholdate/blog-caster.git"
-          git fetch "$MIRROR" main:refs/remotes/mirror/main
+          git -c http.https://github.com/.extraheader= fetch "$MIRROR" main:refs/remotes/mirror/main
           if git merge-base --is-ancestor HEAD refs/remotes/mirror/main; then
             echo "conholdate already has this commit, nothing to do"
             exit 0
           fi
-          git push "$MIRROR" HEAD:main
+          git -c http.https://github.com/.extraheader= push "$MIRROR" HEAD:main

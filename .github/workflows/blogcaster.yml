@@ -179,4 +179,4 @@ jobs:
             exit 0
           fi
           git fetch --unshallow origin || true
-          git push "https://x-access-token:${CONHOLDATE_PUSH_TOKEN}@github.com/conholdate/blog-caster.git" HEAD:main
+          git -c http.https://github.com/.extraheader= push "https://x-access-token:${CONHOLDATE_PUSH_TOKEN}@github.com/conholdate/blog-caster.git" HEAD:main
