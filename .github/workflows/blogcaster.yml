@@ -168,3 +168,15 @@ jobs:
           git diff --cached --quiet || git commit -m "Update published records [skip ci]"
           git pull --rebase
           git push
+
+      - name: Mirror to conholdate/blog-caster
+        continue-on-error: true
+        env:
+          CONHOLDATE_PUSH_TOKEN: ${{ secrets.CONHOLDATE_PUSH_TOKEN }}
+        run: |
+          if [ -z "$CONHOLDATE_PUSH_TOKEN" ]; then
+            echo "::warning::CONHOLDATE_PUSH_TOKEN not set, skipping mirror push"
+            exit 0
+          fi
+          git fetch --unshallow origin || true
+          git push "https://x-access-token:${CONHOLDATE_PUSH_TOKEN}@github.com/conholdate/blog-caster.git" HEAD:main
