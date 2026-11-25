@@ -4633,6 +4633,43 @@
           "shared_at": "2026-11-24 15:35:37"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/xps-to-pdf-conversion-in-java",
+      "title": "XPS to PDF Conversion in Java",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7531374719791423488",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7531374719791423488/",
+          "shared_at": "2026-11-25 15:14:27"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1664671025673211",
+          "post_url": "https://www.facebook.com/207189803258967_1664671025673211",
+          "shared_at": "2026-11-25 15:14:27"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5117379",
+          "post_url": "https://dev.to/conholdate/xps-to-pdf-conversion-in-java-4ild",
+          "shared_at": "2026-11-25 15:14:27"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:i2p7vq2scbvz2ucjgdbsxyzg/app.bsky.feed.post/3n35h675pgm2h",
+          "post_url": "https://bsky.app/profile/conholdate.bsky.social/post/3n35h675pgm2h",
+          "shared_at": "2026-11-25 15:14:27"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117677730493527647",
+          "post_url": "https://mastodon.social/@conholdate/117677730493527647",
+          "shared_at": "2026-11-25 15:14:27"
+        }
+      }
     }
   ]
 }
