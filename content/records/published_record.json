@@ -4707,6 +4707,43 @@
           "shared_at": "2026-11-26 14:38:17"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.aspose.cloud/cells/convert-csv-to-json-in-dotnet",
+      "title": "Export CSV to JSON in C# | Convert CSV to JSON Online",
+      "platform_id": "aspose-cloud",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7532092820325822464",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7532092820325822464/",
+          "shared_at": "2026-11-27 14:47:55"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "118018898863167_1463470052557867",
+          "post_url": "https://www.facebook.com/118018898863167_1463470052557867",
+          "shared_at": "2026-11-27 14:47:55"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5133439",
+          "post_url": "https://dev.to/asposecloud/export-csv-to-json-in-c-convert-csv-to-json-online-2nfc",
+          "shared_at": "2026-11-27 14:47:55"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:mcmc7a7e2buqim2xxxr2ljgk/app.bsky.feed.post/3n3cgmlcsoq2j",
+          "post_url": "https://bsky.app/profile/aspose-cloud.bsky.social/post/3n3cgmlcsoq2j",
+          "shared_at": "2026-11-27 14:47:55"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117688950771811822",
+          "post_url": "https://mastodon.social/@aspose_cloud/117688950771811822",
+          "shared_at": "2026-11-27 14:47:55"
+        }
+      }
     }
   ]
 }
