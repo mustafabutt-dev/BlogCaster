@@ -4744,6 +4744,43 @@
           "shared_at": "2026-11-27 14:47:55"
         }
       }
+    },
+    {
+      "blog_url": "https://blog.conholdate.com/total/edit-presentations-online",
+      "title": "Edit PowerPoint Presentations Online",
+      "platform_id": "conholdate",
+      "shared_on": {
+        "linkedin": {
+          "status": "success",
+          "post_id": "urn:li:share:7532441014465286144",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:share:7532441014465286144/",
+          "shared_at": "2026-11-28 13:51:31"
+        },
+        "facebook": {
+          "status": "success",
+          "post_id": "207189803258967_1668064115333902",
+          "post_url": "https://www.facebook.com/207189803258967_1668064115333902",
+          "shared_at": "2026-11-28 13:51:31"
+        },
+        "devto": {
+          "status": "success",
+          "post_id": "5139352",
+          "post_url": "https://dev.to/conholdate/edit-powerpoint-presentations-online-16mh",
+          "shared_at": "2026-11-28 13:51:31"
+        },
+        "bluesky": {
+          "status": "success",
+          "post_id": "at://did:plc:i2p7vq2scbvz2ucjgdbsxyzg/app.bsky.feed.post/3n3etwodkaj2h",
+          "post_url": "https://bsky.app/profile/conholdate.bsky.social/post/3n3etwodkaj2h",
+          "shared_at": "2026-11-28 13:51:31"
+        },
+        "mastodon": {
+          "status": "success",
+          "post_id": "117694391346613254",
+          "post_url": "https://mastodon.social/@conholdate/117694391346613254",
+          "shared_at": "2026-11-28 13:51:31"
+        }
+      }
     }
   ]
 }
